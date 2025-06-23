@@ -39,6 +39,47 @@ export interface RegisterCGRequest {
   description: string;
 }
 
+// Service Request Types
+export interface CreateServiceRequestRequest {
+  category: string;
+  service: string;
+  description: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  address?: string;
+  urgency?: 'low' | 'medium' | 'high';
+  budget?: {
+    min?: number;
+    max?: number;
+    currency: string;
+  };
+}
+
+export interface ServiceRequestResponse {
+  id: string;
+  clientId: string;
+  clientName: string;
+  category: string;
+  service: string;
+  description: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  address?: string;
+  urgency: 'low' | 'medium' | 'high';
+  budget?: {
+    min?: number;
+    max?: number;
+    currency: string;
+  };
+  status: 'pending' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
+}
+
 // API Response for login (only token)
 export interface AuthResponse {
   token: string;

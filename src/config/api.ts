@@ -20,4 +20,10 @@ export const API_ENDPOINTS = {
   CG: {
     IN_RANGE: '/cg/inRange',
   },
+  REQUESTS: {
+    CREATE: '/requests',
+    LIST: '/requests',
+    UPDATE: '/requests',
+    DELETE: '/requests',
+  },
 } as const;
