@@ -72,8 +72,22 @@ export interface ServiceRequestResponse {
     currency: string;
   };
   status: 'pending' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
+  assignedCGId?: string;
+  assignedCGName?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// CG Assignment Types
+export interface AssignCGRequest {
+  requestId: string;
+  cgId: string;
+}
+
+export interface AssignCGResponse {
+  success: boolean;
+  message: string;
+  request: ServiceRequestResponse;
 }
 
 // API Response for login (only token)

@@ -106,6 +106,39 @@ class MockRequestsService {
     
     return [...mockRequests];
   }
+
+  /**
+   * Assign CG to request (mock)
+   */
+  public assignCGToRequest = async (requestId: string, cgId: string, cgName: string): Promise<ServiceRequestResponse> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const requestIndex = mockRequests.findIndex(req => req.id === requestId);
+    if (requestIndex === -1) {
+      throw new Error('Service request not found');
+    }
+
+    // Check if request is already assigned
+    if (mockRequests[requestIndex].assignedCGId) {
+      throw new Error('Request is already assigned to another CG');
+    }
+
+    // Check if request is still pending
+    if (mockRequests[requestIndex].status !== 'pending') {
+      throw new Error('Request is no longer available');
+    }
+
+    mockRequests[requestIndex] = {
+      ...mockRequests[requestIndex],
+      assignedCGId: cgId,
+      assignedCGName: cgName,
+      status: 'accepted',
+      updatedAt: new Date().toISOString()
+    };
+
+    return mockRequests[requestIndex];
+  }
 }
 
 export const mockRequestsService = new MockRequestsService();

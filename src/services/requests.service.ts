@@ -1,6 +1,6 @@
 import { httpService } from './http.service';
 import { API_ENDPOINTS } from '../config/api';
-import { CreateServiceRequestRequest, ServiceRequestResponse } from '../types/api';
+import { CreateServiceRequestRequest, ServiceRequestResponse, AssignCGRequest, AssignCGResponse } from '../types/api';
 
 class RequestsService {
   /**
@@ -21,7 +21,7 @@ class RequestsService {
   }
 
   /**
-   * Get user's service requests
+   * Get user's service requests (for clients)
    */
   public async getUserRequests(): Promise<ServiceRequestResponse[]> {
     try {
@@ -42,7 +42,7 @@ class RequestsService {
   public async updateRequestStatus(requestId: string, status: string): Promise<ServiceRequestResponse> {
     try {
       const response = await httpService.put<ServiceRequestResponse>(
-        `${API_ENDPOINTS.REQUESTS.UPDATE}/${requestId}`,
+        `${API_ENDPOINTS.REQUESTS.UPDATE_STATUS}/${requestId}`,
         { status }
       );
       
@@ -62,6 +62,23 @@ class RequestsService {
     } catch (error) {
       console.error('Failed to delete service request:', error);
       throw new Error('Failed to delete service request');
+    }
+  }
+
+  /**
+   * Assign CG to a request (admin/system function)
+   */
+  public async assignCGToRequest(requestId: string, cgId: string): Promise<AssignCGResponse> {
+    try {
+      const response = await httpService.post<AssignCGResponse>(
+        API_ENDPOINTS.REQUESTS.ASSIGN_CG,
+        { requestId, cgId }
+      );
+      
+      return response;
+    } catch (error) {
+      console.error('Failed to assign CG to request:', error);
+      throw new Error('Failed to assign CG to request');
     }
   }
 }
