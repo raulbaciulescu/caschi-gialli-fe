@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useService } from '../contexts/ServiceContext';
+import { useChat } from '../contexts/ChatContext';
 import Map from './Map';
 import { MapPin, Clock, DollarSign, Star, MessageSquare, Settings } from 'lucide-react';
 
 const CGDashboard: React.FC = () => {
   const { user } = useAuth();
   const { serviceRequests, findMatches } = useService();
+  const { createChat } = useChat();
+  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'opportunities' | 'active' | 'completed'>('opportunities');
 
   if (!user || user.type !== 'cg') return null;
@@ -45,6 +49,16 @@ const CGDashboard: React.FC = () => {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
   }
+
+  const handleContactClient = async (clientId: string, clientName: string) => {
+    try {
+      await createChat([user.id, clientId], [user.name, clientName]);
+      navigate('/chat');
+    } catch (error) {
+      console.error('Failed to create chat:', error);
+      alert('Failed to start conversation. Please try again.');
+    }
+  };
 
   const tabs = [
     { id: 'opportunities', label: 'Opportunities', count: matchingRequests.length },
@@ -184,7 +198,10 @@ const CGDashboard: React.FC = () => {
                                       <button className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors">
                                         View Details
                                       </button>
-                                      <button className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-3 py-1 rounded text-sm hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                                      <button 
+                                        onClick={() => handleContactClient(request.clientId, request.clientName)}
+                                        className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-3 py-1 rounded text-sm hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                                      >
                                         Contact Client
                                       </button>
                                     </div>

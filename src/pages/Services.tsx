@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useService } from '../contexts/ServiceContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
@@ -11,7 +12,8 @@ const Services: React.FC = () => {
   const { user } = useAuth();
   const { createChat } = useChat();
   const { data: cgInRange, loading, error, searchCGInRange, reset } = useCGInRange();
-
+  const navigate = useNavigate();
+  
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showMap, setShowMap] = useState(false);
@@ -120,10 +122,20 @@ const Services: React.FC = () => {
         offer.services.some(service => service.toLowerCase().includes(searchQuery.toLowerCase()));
   });
 
-  const handleContactCG = (cgId: string, cgName: string) => {
-    if (!user) return;
-    const chatId = createChat([user.id, cgId], [user.name, cgName]);
-    alert(`Chat created with ${cgName}! Check your messages.`);
+  const handleContactCG = async (cgId: string, cgName: string) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      // Create chat and navigate to chat page
+      const chatId = await createChat([user.id, cgId], [user.name, cgName]);
+      navigate('/chat');
+    } catch (error) {
+      console.error('Failed to create chat:', error);
+      alert('Failed to start conversation. Please try again.');
+    }
   };
 
   return (
@@ -327,15 +339,13 @@ const Services: React.FC = () => {
                                       Service radius: {offer.radius} km
                                     </div>
 
-                                    {user && (
-                                        <button
-                                            onClick={() => handleContactCG(offer.id.toString(), offer.name)}
-                                            className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
-                                        >
-                                          <MessageSquare className="h-4 w-4 mr-2" />
-                                          Contact
-                                        </button>
-                                    )}
+                                    <button
+                                        onClick={() => handleContactCG(offer.id.toString(), offer.name)}
+                                        className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
+                                    >
+                                      <MessageSquare className="h-4 w-4 mr-2" />
+                                      {user ? 'Contact' : 'Login to Contact'}
+                                    </button>
                                   </div>
 
                                   {offer.photos && offer.photos.length > 0 && (
