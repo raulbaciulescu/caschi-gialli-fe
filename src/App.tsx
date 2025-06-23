@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/services" element={<Services />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/edit-profile" element={<EditProfile />} />
               </Routes>
             </Layout>
           </Router>

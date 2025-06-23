@@ -63,6 +63,8 @@ export interface User {
   address?: string;
   phone?: string;
   avatar?: string;
+  profileImage?: string; // New field for profile image
+  galleryImages?: string[]; // New field for gallery images
   services?: string[];
   radius?: number;
   description?: string;
