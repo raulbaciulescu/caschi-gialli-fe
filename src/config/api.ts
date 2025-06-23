@@ -17,4 +17,7 @@ export const API_ENDPOINTS = {
     PROFILE: '/users/profile',
     UPDATE_PROFILE: '/users/profile',
   },
+  CG: {
+    IN_RANGE: '/cg/inRange',
+  },
 } as const;

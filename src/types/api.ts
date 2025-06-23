@@ -56,8 +56,10 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  type: 'client' | 'cg';
+  type: 'client' | 'cg' | 'customer'; // Added 'customer' to match backend
   location?: { lat: number; lng: number };
+  lat?: number; // Direct lat/lng fields to match backend
+  lng?: number;
   address?: string;
   phone?: string;
   avatar?: string;

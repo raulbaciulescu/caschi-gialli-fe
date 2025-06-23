@@ -23,39 +23,39 @@ export function useCGInRange(): UseCGInRangeReturn {
   });
 
   const searchCGInRange = useCallback(
-    async (params: CGInRangeParams): Promise<void> => {
-      setState(prev => ({
-        ...prev,
-        loading: true,
-        error: null,
-      }));
-
-      try {
-        const service = useMockData ? mockCGService : cgService;
-        const result = await service.getCGInRange(params);
-        
+      async (params: CGInRangeParams): Promise<void> => {
         setState(prev => ({
           ...prev,
-          data: result,
-          loading: false,
+          loading: true,
+          error: null,
         }));
-      } catch (error) {
-        let errorMessage = 'Failed to search for service providers';
-        
-        if (error instanceof Error) {
-          errorMessage = error.message;
+
+        try {
+          const service = useMockData ? mockCGService : cgService;
+          const result = await service.getCGInRange(params);
+
+          setState(prev => ({
+            ...prev,
+            data: result,
+            loading: false,
+          }));
+        } catch (error) {
+          let errorMessage = 'Failed to search for service providers';
+
+          if (error instanceof Error) {
+            errorMessage = error.message;
+          }
+
+          setState(prev => ({
+            ...prev,
+            loading: false,
+            error: errorMessage,
+          }));
+
+          throw error;
         }
-
-        setState(prev => ({
-          ...prev,
-          loading: false,
-          error: errorMessage,
-        }));
-
-        throw error;
-      }
-    },
-    [useMockData]
+      },
+      [useMockData]
   );
 
   const reset = useCallback(() => {

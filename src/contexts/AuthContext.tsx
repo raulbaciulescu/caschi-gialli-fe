@@ -37,6 +37,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const getAuthService = () => useMockData ? mockAuthService : authService;
 
+  // Normalize user data to handle both backend formats
+  const normalizeUser = (userData: any): User => {
+    return {
+      ...userData,
+      // Ensure we have location object
+      location: userData.location || (userData.lat && userData.lng ? { lat: userData.lat, lng: userData.lng } : undefined),
+      // Normalize type field (backend returns 'customer', frontend expects 'client')
+      type: userData.type === 'customer' ? 'client' : userData.type
+    };
+  };
+
   useEffect(() => {
     localStorage.setItem('use_mock_data', JSON.stringify(useMockData));
   }, [useMockData]);
@@ -49,12 +60,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     try {
       const service = getAuthService();
-      
+
       // Check if we have a valid token and user data
       if (service.isAuthenticated()) {
         const userData = service.getUserFromStorage();
         if (userData) {
-          setUser(userData);
+          setUser(normalizeUser(userData));
           setIsAuthenticated(true);
         } else {
           // Token exists but no user data - clear everything
@@ -81,7 +92,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const service = getAuthService();
       const response = await service.loginClient(credentials);
-      setUser(response.user);
+      setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Client login failed:', error);
@@ -93,7 +104,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const service = getAuthService();
       const response = await service.loginCG(credentials);
-      setUser(response.user);
+      setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
       console.error('CG login failed:', error);
@@ -105,7 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const service = getAuthService();
       const response = await service.registerClient(userData);
-      setUser(response.user);
+      setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Client registration failed:', error);
@@ -117,7 +128,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const service = getAuthService();
       const response = await service.registerCG(userData);
-      setUser(response.user);
+      setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
       console.error('CG registration failed:', error);
@@ -143,19 +154,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      loginClient,
-      loginCG,
-      logout,
-      registerClient,
-      registerCG,
-      isAuthenticated,
-      loading,
-      useMockData,
-      toggleMockData,
-    }}>
-      {children}
-    </AuthContext.Provider>
+      <AuthContext.Provider value={{
+        user,
+        loginClient,
+        loginCG,
+        logout,
+        registerClient,
+        registerCG,
+        isAuthenticated,
+        loading,
+        useMockData,
+        toggleMockData,
+      }}>
+        {children}
+      </AuthContext.Provider>
   );
 };

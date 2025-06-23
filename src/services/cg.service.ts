@@ -1,5 +1,5 @@
-import {httpService} from './http.service';
-import {API_ENDPOINTS} from '../config/api';
+import { httpService } from './http.service';
+import { API_ENDPOINTS } from '../config/api';
 
 export interface CGInRangeParams {
     lat: number;
@@ -11,8 +11,8 @@ export interface CGInRangeParams {
 // Updated to match backend response format
 export interface CGInRangeResponse {
     id: number;
-    fullName: string;
-    phoneNumber: string;
+    fullName: string | null;
+    phoneNumber: string | null;
     email: string;
     street: string;
     latitude: number;
@@ -36,7 +36,7 @@ export interface CGDisplayData extends CGInRangeResponse {
 
 class CGService {
     /**
-     * Get Caschi Gialli in range of specified location
+     * Get Caschi Gialle in range of specified location
      */
     public async getCGInRange(params: CGInRangeParams): Promise<CGDisplayData[]> {
         try {
@@ -55,9 +55,13 @@ class CGService {
                 });
             }
 
-            const response = await httpService.get<CGInRangeResponse[]>(
-                `${API_ENDPOINTS.CG.IN_RANGE}?${queryParams.toString()}`
-            );
+            // Construct the full URL
+            const endpoint = API_ENDPOINTS.CG?.IN_RANGE || '/cg/inRange';
+            const url = `${endpoint}?${queryParams.toString()}`;
+
+            console.log('Making CG search request to:', url);
+
+            const response = await httpService.get<CGInRangeResponse[]>(url);
 
             // Transform backend response to frontend format
             return response.map(cg => this.transformCGResponse(cg, params.lat, params.lng));
@@ -76,8 +80,8 @@ class CGService {
 
         return {
             ...cg,
-            name: cg.fullName,
-            location: {lat: cg.latitude, lng: cg.longitude},
+            name: cg.fullName || cg.email, // Use email as fallback if fullName is null
+            location: { lat: cg.latitude, lng: cg.longitude },
             radius: cg.serviceRadius,
             description: `Professional ${cg.services.join(', ').toLowerCase()} services. Contact for detailed consultation.`,
             rating: 4.2 + Math.random() * 0.6, // Mock rating 4.2-4.8
@@ -98,10 +102,10 @@ class CGService {
         const R = 6371; // Earth's radius in kilometers
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLng = (lng2 - lng1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return R * c;
     }
 }
