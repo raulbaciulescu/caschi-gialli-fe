@@ -1,3 +1,5 @@
+import { API_CONFIG } from '../config/api';
+
 export interface ChatMessage {
   id: string;
   chatId: string;
@@ -30,8 +32,17 @@ class WebSocketService {
     return new Promise((resolve, reject) => {
       this.userId = userId;
       
-      // Use mock WebSocket URL for development
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws';
+      // Dynamically construct WebSocket URL from API base URL
+      let wsUrl: string;
+      if (import.meta.env.VITE_WS_URL) {
+        wsUrl = import.meta.env.VITE_WS_URL;
+      } else {
+        // Convert HTTP/HTTPS base URL to WebSocket URL
+        const baseUrl = API_CONFIG.BASE_URL;
+        wsUrl = baseUrl.replace(/^https?:\/\//, (match) => {
+          return match === 'https://' ? 'wss://' : 'ws://';
+        }) + '/ws';
+      }
       
       try {
         this.ws = new WebSocket(`${wsUrl}?userId=${userId}`);

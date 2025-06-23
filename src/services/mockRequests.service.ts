@@ -4,14 +4,14 @@ import { CreateServiceRequestRequest, ServiceRequestResponse } from '../types/ap
 let mockRequests: ServiceRequestResponse[] = [];
 
 class MockRequestsService {
-  private generateId(): string {
+  private generateId = (): string => {
     return `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
    * Create a new service request (mock)
    */
-  public async createServiceRequest(requestData: CreateServiceRequestRequest): Promise<ServiceRequestResponse> {
+  public createServiceRequest = async (requestData: CreateServiceRequestRequest): Promise<ServiceRequestResponse> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -45,7 +45,7 @@ class MockRequestsService {
   /**
    * Get user's service requests (mock)
    */
-  public async getUserRequests(): Promise<ServiceRequestResponse[]> {
+  public getUserRequests = async (): Promise<ServiceRequestResponse[]> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -64,7 +64,7 @@ class MockRequestsService {
   /**
    * Update service request status (mock)
    */
-  public async updateRequestStatus(requestId: string, status: string): Promise<ServiceRequestResponse> {
+  public updateRequestStatus = async (requestId: string, status: string): Promise<ServiceRequestResponse> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -85,7 +85,7 @@ class MockRequestsService {
   /**
    * Delete service request (mock)
    */
-  public async deleteRequest(requestId: string): Promise<void> {
+  public deleteRequest = async (requestId: string): Promise<void> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -100,7 +100,7 @@ class MockRequestsService {
   /**
    * Get all requests (for CG dashboard)
    */
-  public async getAllRequests(): Promise<ServiceRequestResponse[]> {
+  public getAllRequests = async (): Promise<ServiceRequestResponse[]> => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
     
