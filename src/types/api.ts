@@ -48,8 +48,6 @@ export interface CreateServiceRequestRequest {
     lat: number;
     lng: number;
   };
-  address?: string;
-  urgency?: 'low' | 'medium' | 'high';
   budget?: {
     min?: number;
     max?: number;
@@ -68,8 +66,6 @@ export interface ServiceRequestResponse {
     lat: number;
     lng: number;
   };
-  address?: string;
-  urgency: 'low' | 'medium' | 'high';
   budget?: {
     min?: number;
     max?: number;

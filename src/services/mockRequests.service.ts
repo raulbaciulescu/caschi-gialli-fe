@@ -31,8 +31,6 @@ class MockRequestsService {
       service: requestData.service,
       description: requestData.description,
       location: requestData.location,
-      address: requestData.address,
-      urgency: requestData.urgency || 'medium',
       budget: requestData.budget,
       status: 'pending',
       createdAt: new Date().toISOString(),

@@ -22,9 +22,7 @@ const ClientDashboard: React.FC = () => {
     category: '',
     service: '',
     description: '',
-    location: user?.location || { lat: 41.9028, lng: 12.4964 },
-    address: user?.address || '',
-    urgency: 'medium'
+    location: user?.location || { lat: 41.9028, lng: 12.4964 }
   });
 
   // API hooks
@@ -61,9 +59,7 @@ const ClientDashboard: React.FC = () => {
         category: '',
         service: '',
         description: '',
-        location: user.location || { lat: 41.9028, lng: 12.4964 },
-        address: user.address || '',
-        urgency: 'medium'
+        location: user.location || { lat: 41.9028, lng: 12.4964 }
       });
     } catch (error) {
       console.error('Failed to create request:', error);
@@ -111,15 +107,6 @@ const ClientDashboard: React.FC = () => {
       case 'in_progress': return MessageSquare;
       case 'completed': return CheckCircle;
       default: return Clock;
-    }
-  };
-
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
     }
   };
 
@@ -235,14 +222,9 @@ const ClientDashboard: React.FC = () => {
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="font-semibold text-gray-900">{request.service}</h3>
-                              <div className="flex items-center space-x-2">
-                                <div className={`px-2 py-1 rounded-full text-xs font-medium ${getUrgencyColor(request.urgency)}`}>
-                                  {request.urgency}
-                                </div>
-                                <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
-                                  <StatusIcon className="h-3 w-3 inline mr-1" />
-                                  {request.status}
-                                </div>
+                              <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+                                <StatusIcon className="h-3 w-3 inline mr-1" />
+                                {request.status}
                               </div>
                             </div>
                             <p className="text-sm text-gray-600 mb-2">{request.category}</p>
@@ -254,7 +236,7 @@ const ClientDashboard: React.FC = () => {
                         <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                           <div className="flex items-center">
                             <MapPin className="h-4 w-4 mr-1" />
-                            {request.address || `${request.location.lat.toFixed(4)}, ${request.location.lng.toFixed(4)}`}
+                            Location: {request.location.lat.toFixed(4)}, {request.location.lng.toFixed(4)}
                           </div>
                           <div className="text-xs">
                             {new Date(request.createdAt).toLocaleDateString()}
@@ -296,33 +278,35 @@ const ClientDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Map */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Your Location</h2>
+          {/* Map - Only show when modal is NOT open */}
+          {!showRequestForm && (
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Your Location</h2>
+              </div>
+              <div className="p-6">
+                {user?.location && (
+                  <Map
+                    center={[user.location.lat, user.location.lng]}
+                    zoom={12}
+                    markers={[
+                      {
+                        position: [user.location.lat, user.location.lng],
+                        type: 'client',
+                        popup: 'Your Location'
+                      },
+                      ...userRequests.map(request => ({
+                        position: [request.location.lat, request.location.lng] as [number, number],
+                        type: 'client' as const,
+                        popup: `${request.service} - ${request.status}`
+                      }))
+                    ]}
+                    className="h-64 w-full rounded-lg"
+                  />
+                )}
+              </div>
             </div>
-            <div className="p-6">
-              {user?.location && (
-                <Map
-                  center={[user.location.lat, user.location.lng]}
-                  zoom={12}
-                  markers={[
-                    {
-                      position: [user.location.lat, user.location.lng],
-                      type: 'client',
-                      popup: 'Your Location'
-                    },
-                    ...userRequests.map(request => ({
-                      position: [request.location.lat, request.location.lng] as [number, number],
-                      type: 'client' as const,
-                      popup: `${request.service} - ${request.status}`
-                    }))
-                  ]}
-                  className="h-64 w-full rounded-lg"
-                />
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
         {/* New Request Modal */}
@@ -375,34 +359,6 @@ const ClientDashboard: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                       placeholder="Describe what you need..."
                       required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Urgency
-                    </label>
-                    <select
-                      value={requestForm.urgency}
-                      onChange={(e) => setRequestForm(prev => ({ ...prev, urgency: e.target.value as any }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
-                    >
-                      <option value="low">Low - Can wait a few days</option>
-                      <option value="medium">Medium - Within a week</option>
-                      <option value="high">High - Urgent, ASAP</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={requestForm.address}
-                      onChange={(e) => setRequestForm(prev => ({ ...prev, address: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
-                      placeholder="Specific address for the service"
                     />
                   </div>
 
