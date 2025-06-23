@@ -225,16 +225,14 @@ const Chat: React.FC = () => {
                       </div>
                       
                       {/* Contact Info */}
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <div className="flex items-center text-sm text-gray-600">
-                            <Phone className="h-4 w-4 mr-1" />
-                            <span>{getOtherParticipantPhone(currentChat)}</span>
-                          </div>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Tap to call
-                          </p>
-                        </div>
+                      <div className="flex items-center">
+                        <a
+                          href={`tel:${getOtherParticipantPhone(currentChat)}`}
+                          className="flex items-center text-sm text-gray-600 hover:text-yellow-600 transition-colors px-3 py-2 rounded-lg hover:bg-yellow-50"
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          <span>{getOtherParticipantPhone(currentChat)}</span>
+                        </a>
                       </div>
                     </div>
                   </div>
