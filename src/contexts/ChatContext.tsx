@@ -141,6 +141,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
 
     if (existingChat) {
+      // Set this chat as active when creating/finding it
+      setActiveChat(existingChat.id);
       return existingChat.id;
     }
 
@@ -149,7 +151,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       websocketService.createChat(participantIds, participantNames);
       
       // Return a temporary ID - the real ID will come from the server
-      return `temp-${Date.now()}`;
+      const tempId = `temp-${Date.now()}`;
+      setActiveChat(tempId);
+      return tempId;
     } else {
       // Fallback to local chat creation
       const newChat: ChatRoom = {
@@ -162,6 +166,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       setChats(prev => [...prev, newChat]);
       setMessages(prev => ({ ...prev, [newChat.id]: [] }));
+      
+      // Set this chat as active
+      setActiveChat(newChat.id);
       
       return newChat.id;
     }
