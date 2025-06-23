@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
-import { MessageSquare, Send, ArrowLeft, Users, Wifi, WifiOff, Phone, Video, MoreVertical } from 'lucide-react';
+import { MessageSquare, Send, ArrowLeft, Users, Wifi, WifiOff, Phone } from 'lucide-react';
 
 const Chat: React.FC = () => {
   const { user } = useAuth();
@@ -50,6 +50,12 @@ const Chat: React.FC = () => {
     if (!user) return 'Unknown';
     const otherIndex = chat.participants.findIndex((id: string) => id !== user.id);
     return otherIndex !== -1 ? chat.participantNames[otherIndex] : 'Unknown';
+  };
+
+  // Mock function to get phone number - in real app this would come from user data
+  const getOtherParticipantPhone = (chat: any) => {
+    // This would normally come from the backend user data
+    return '+39 333 123 4567'; // Mock phone number
   };
 
   const formatTime = (date: Date) => {
@@ -217,16 +223,18 @@ const Chat: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                          <Phone className="h-5 w-5" />
-                        </button>
-                        <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                          <Video className="h-5 w-5" />
-                        </button>
-                        <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                          <MoreVertical className="h-5 w-5" />
-                        </button>
+                      
+                      {/* Contact Info */}
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Phone className="h-4 w-4 mr-1" />
+                            <span>{getOtherParticipantPhone(currentChat)}</span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Tap to call
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
