@@ -39,6 +39,57 @@ export interface RegisterCGRequest {
   description: string;
 }
 
+// Service Request Types
+export interface CreateServiceRequestRequest {
+  category: string;
+  service: string;
+  description: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  budget?: {
+    min?: number;
+    max?: number;
+    currency: string;
+  };
+}
+
+export interface ServiceRequestResponse {
+  id: string;
+  clientId: string;
+  clientName: string;
+  category: string;
+  service: string;
+  description: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  budget?: {
+    min?: number;
+    max?: number;
+    currency: string;
+  };
+  status: 'pending' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
+  assignedCGId?: string;
+  assignedCGName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// CG Assignment Types
+export interface AssignCGRequest {
+  requestId: string;
+  cgId: string;
+}
+
+export interface AssignCGResponse {
+  success: boolean;
+  message: string;
+  request: ServiceRequestResponse;
+}
+
 // API Response for login (only token)
 export interface AuthResponse {
   token: string;
@@ -63,6 +114,8 @@ export interface User {
   address?: string;
   phone?: string;
   avatar?: string;
+  profileImage?: string; // New field for profile image
+  galleryImages?: string[]; // New field for gallery images
   services?: string[];
   radius?: number;
   description?: string;

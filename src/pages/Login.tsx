@@ -69,9 +69,9 @@ const Login: React.FC = () => {
 
   // Mock user suggestions
   const mockUsers = useMockData ? [
-    { email: 'mario.rossi@email.com', type: 'client', name: 'Mario Rossi' },
+    { email: 'client1@gmail.com', type: 'client', name: 'Client 1' },
     { email: 'giulia.bianchi@email.com', type: 'client', name: 'Giulia Bianchi' },
-    { email: 'luca.ferrari@email.com', type: 'cg', name: 'Luca Ferrari (Idraulico)' },
+    { email: 'cg@gmail.com', type: 'cg', name: 'CG Professional' },
     { email: 'anna.verdi@email.com', type: 'cg', name: 'Anna Verdi (Pulizie)' },
     { email: 'marco.neri@email.com', type: 'cg', name: 'Marco Neri (Falegname)' },
     { email: 'sofia.russo@email.com', type: 'cg', name: 'Sofia Russo (IT Support)' }

@@ -19,5 +19,16 @@ export const API_ENDPOINTS = {
   },
   CG: {
     IN_RANGE: '/cg/inRange',
+    AVAILABLE_REQUESTS: '/cg/available-requests',
+    MY_REQUESTS: '/cg/my-requests',
+    ASSIGN_REQUEST: '/cg/assign-request',
+  },
+  REQUESTS: {
+    CREATE: '/requests',
+    LIST: '/requests',
+    UPDATE: '/requests',
+    DELETE: '/requests',
+    ASSIGN_CG: '/requests/assign-cg',
+    UPDATE_STATUS: '/requests/update-status',
   },
 } as const;

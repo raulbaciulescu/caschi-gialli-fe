@@ -34,7 +34,8 @@ class MockAuthService {
       throw new Error('Invalid email or password');
     }
 
-    if (mockUser.type !== 'client') {
+    // Accept both 'client' and 'customer' types for client login
+    if (mockUser.type !== 'client' && mockUser.type !== 'customer') {
       throw new Error('Invalid credentials for client login');
     }
 
@@ -100,8 +101,10 @@ class MockAuthService {
       email: userData.email,
       password: userData.password,
       name: userData.name,
-      type: 'client',
+      type: 'customer', // Use 'customer' to match backend
       location: userData.location,
+      lat: userData.location.lat,
+      lng: userData.location.lng,
       address: userData.address,
       phone: userData.phone,
       createdAt: new Date().toISOString(),
@@ -144,6 +147,8 @@ class MockAuthService {
       name: userData.name,
       type: 'cg',
       location: userData.location,
+      lat: userData.location.lat,
+      lng: userData.location.lng,
       address: userData.address,
       phone: userData.phone,
       services: userData.services,
