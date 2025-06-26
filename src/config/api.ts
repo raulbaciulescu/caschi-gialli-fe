@@ -31,4 +31,8 @@ export const API_ENDPOINTS = {
     MY_CG_REQUESTS: '/requests/my-cg-requests',
     ASSIGN_TO_REQUEST: '/requests/assign-to-request',
   },
+  CHAT: {
+    LIST: '/chat',
+    MESSAGES: '/chat/{chatId}/messages',
+  },
 } as const;

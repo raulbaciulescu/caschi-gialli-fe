@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { websocketService, ChatMessage, ChatRoom } from '../services/websocket.service';
+import { chatService, MessageDto, ChatDto } from '../services/chat.service';
 import { useAuth } from './AuthContext';
 
 interface ChatContextType {
@@ -11,7 +12,9 @@ interface ChatContextType {
   createChat: (participantIds: string[], participantNames: string[]) => Promise<string>;
   markAsRead: (chatId: string) => void;
   isConnected: boolean;
+  loading: boolean;
   loadChatHistory: (chatId: string) => Promise<void>;
+  refreshChats: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -30,11 +33,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
   const [isConnected, setIsConnected] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Initialize WebSocket connection when user is authenticated
+  // Initialize WebSocket connection and load chats when user is authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      connectWebSocket();
+      initializeChat();
     } else {
       disconnectWebSocket();
     }
@@ -43,6 +47,23 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       disconnectWebSocket();
     };
   }, [isAuthenticated, user]);
+
+  const initializeChat = async () => {
+    if (!user) return;
+
+    try {
+      // Connect to WebSocket
+      await connectWebSocket();
+      
+      // Load existing chats from REST API
+      await loadChatsFromAPI();
+    } catch (error) {
+      console.error('Failed to initialize chat:', error);
+      setIsConnected(false);
+      // Still try to load chats even if WebSocket fails
+      await loadChatsFromAPI();
+    }
+  };
 
   const connectWebSocket = async () => {
     if (!user) return;
@@ -54,8 +75,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
       setIsConnected(false);
-      // Fallback to mock mode
-      setupMockMode();
     }
   };
 
@@ -64,11 +83,65 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsConnected(false);
   };
 
+  const loadChatsFromAPI = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      const chatsData = await chatService.getUserChats();
+      
+      // Transform backend chat data to frontend format
+      const transformedChats: ChatRoom[] = chatsData.map(chat => ({
+        id: chat.id.toString(),
+        participants: chat.participantIds,
+        participantNames: chat.participantNames,
+        lastMessage: chat.lastMessage ? transformMessageDto(chat.lastMessage, chat.id.toString()) : undefined,
+        unreadCount: chat.unreadCount || 0,
+        createdAt: new Date(chat.createdAt)
+      }));
+
+      setChats(transformedChats);
+    } catch (error) {
+      console.error('Failed to load chats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadChatHistory = async (chatId: string) => {
+    try {
+      const messagesData = await chatService.getChatMessages(chatId);
+      
+      // Transform backend message data to frontend format
+      const transformedMessages: ChatMessage[] = messagesData.map(msg => 
+        transformMessageDto(msg, chatId)
+      );
+
+      setMessages(prev => ({
+        ...prev,
+        [chatId]: transformedMessages
+      }));
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+    }
+  };
+
+  const transformMessageDto = (dto: MessageDto, chatId: string): ChatMessage => {
+    return {
+      id: dto.id.toString(),
+      chatId: chatId,
+      senderId: dto.senderId,
+      content: dto.content,
+      timestamp: new Date(dto.timestamp),
+      type: (dto.type as 'text' | 'image') || 'text'
+    };
+  };
+
   const setupMessageHandlers = () => {
     // Handle incoming chat messages
     websocketService.onMessage('chat_message', (data: any) => {
       const message: ChatMessage = {
-        id: data.id,
+        id: data.id.toString(),
         chatId: data.chatId,
         senderId: data.senderId,
         content: data.content,
@@ -114,11 +187,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Set as active chat when created
       setActiveChat(data.chatId);
     });
-  };
-
-  const setupMockMode = () => {
-    console.log('Setting up mock chat mode');
-    setIsConnected(false);
   };
 
   const createChat = async (participantIds: string[], participantNames: string[]): Promise<string> => {
@@ -174,7 +242,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: Date.now().toString(),
         chatId,
         senderId: user.id,
-        senderName: user.name,
         content,
         timestamp: new Date(),
         type
@@ -199,20 +266,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const loadChatHistory = async (chatId: string) => {
-    if (!isConnected) return;
-
-    try {
-      const history = await websocketService.getChatHistory(chatId);
-      setMessages(prev => ({
-        ...prev,
-        [chatId]: history
-      }));
-    } catch (error) {
-      console.error('Failed to load chat history:', error);
-    }
-  };
-
   const markAsRead = (chatId: string) => {
     setChats(prev =>
       prev.map(chat =>
@@ -231,6 +284,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const refreshChats = async () => {
+    await loadChatsFromAPI();
+  };
+
   return (
     <ChatContext.Provider value={{
       chats,
@@ -241,7 +298,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       createChat,
       markAsRead,
       isConnected,
-      loadChatHistory
+      loading,
+      loadChatHistory,
+      refreshChats
     }}>
       {children}
     </ChatContext.Provider>

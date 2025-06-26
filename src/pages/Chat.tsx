@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
-import { MessageSquare, Send, ArrowLeft, Users, Wifi, WifiOff, Phone } from 'lucide-react';
+import { MessageSquare, Send, ArrowLeft, Users, Wifi, WifiOff, Phone, RefreshCw } from 'lucide-react';
 
 const Chat: React.FC = () => {
   const { user } = useAuth();
@@ -11,7 +11,9 @@ const Chat: React.FC = () => {
     messages, 
     setActiveChat, 
     sendMessage, 
-    isConnected 
+    isConnected,
+    loading,
+    refreshChats
   } = useChat();
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
@@ -101,7 +103,7 @@ const Chat: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Connection Status */}
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
             isConnected 
               ? 'bg-green-100 text-green-800' 
@@ -119,6 +121,15 @@ const Chat: React.FC = () => {
               </>
             )}
           </div>
+
+          <button
+            onClick={refreshChats}
+            disabled={loading}
+            className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
         </div>
 
         <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-12rem)] overflow-hidden">
@@ -141,7 +152,14 @@ const Chat: React.FC = () => {
               </div>
               
               <div className="flex-1 overflow-y-auto">
-                {chats.length === 0 ? (
+                {loading ? (
+                  <div className="p-6">
+                    <div className="text-center py-12">
+                      <RefreshCw className="h-8 w-8 text-gray-400 mx-auto mb-4 animate-spin" />
+                      <p className="text-gray-500">Loading conversations...</p>
+                    </div>
+                  </div>
+                ) : chats.length === 0 ? (
                   <div className="p-6">
                     <div className="text-center py-12">
                       <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />

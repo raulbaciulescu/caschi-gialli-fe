@@ -206,37 +206,6 @@ class WebSocketService {
   public get connected(): boolean {
     return this.isConnected;
   }
-
-  // Method to fetch chat history from REST API
-  public async getChatHistory(chatId: string): Promise<ChatMessage[]> {
-    try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}/chat/${chatId}/messages`, {
-        headers: {
-          'Authorization': localStorage.getItem('auth_token') || '',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch chat history');
-      }
-
-      const messages = await response.json();
-      
-      // Transform backend message format to frontend format
-      return messages.map((msg: any) => ({
-        id: msg.id.toString(),
-        chatId: chatId,
-        senderId: msg.senderId,
-        content: msg.content,
-        timestamp: new Date(msg.timestamp),
-        type: msg.type || 'text'
-      }));
-    } catch (error) {
-      console.error('Failed to fetch chat history:', error);
-      return [];
-    }
-  }
 }
 
 export const websocketService = new WebSocketService();
