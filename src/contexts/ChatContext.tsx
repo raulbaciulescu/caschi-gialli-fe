@@ -11,6 +11,7 @@ interface ChatContextType {
   createChat: (participantIds: string[], participantNames: string[]) => Promise<string>;
   markAsRead: (chatId: string) => void;
   isConnected: boolean;
+  loadChatHistory: (chatId: string) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -67,10 +68,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Handle incoming chat messages
     websocketService.onMessage('chat_message', (data: any) => {
       const message: ChatMessage = {
-        id: data.id || Date.now().toString(),
+        id: data.id,
         chatId: data.chatId,
         senderId: data.senderId,
-        senderName: data.senderName,
         content: data.content,
         timestamp: new Date(data.timestamp),
         type: data.messageType || 'text'
@@ -110,19 +110,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (exists) return prev;
         return [...prev, newChat];
       });
-    });
 
-    // Handle chat list updates
-    websocketService.onMessage('chat_list', (data: any) => {
-      setChats(data.chats || []);
-    });
-
-    // Handle chat history
-    websocketService.onMessage('chat_history', (data: any) => {
-      setMessages(prev => ({
-        ...prev,
-        [data.chatId]: data.messages || []
-      }));
+      // Set as active chat when created
+      setActiveChat(data.chatId);
     });
   };
 
@@ -152,7 +142,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Return a temporary ID - the real ID will come from the server
       const tempId = `temp-${Date.now()}`;
-      setActiveChat(tempId);
       return tempId;
     } else {
       // Fallback to local chat creation
@@ -210,6 +199,20 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const loadChatHistory = async (chatId: string) => {
+    if (!isConnected) return;
+
+    try {
+      const history = await websocketService.getChatHistory(chatId);
+      setMessages(prev => ({
+        ...prev,
+        [chatId]: history
+      }));
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+    }
+  };
+
   const markAsRead = (chatId: string) => {
     setChats(prev =>
       prev.map(chat =>
@@ -218,18 +221,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   };
 
-  const handleSetActiveChat = (chatId: string | null) => {
-    if (activeChat && isConnected) {
-      websocketService.leaveChat(activeChat);
-    }
-
+  const handleSetActiveChat = async (chatId: string | null) => {
     setActiveChat(chatId);
 
     if (chatId) {
       markAsRead(chatId);
-      if (isConnected) {
-        websocketService.joinChat(chatId);
-      }
+      // Load chat history when switching to a chat
+      await loadChatHistory(chatId);
     }
   };
 
@@ -242,7 +240,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       sendMessage,
       createChat,
       markAsRead,
-      isConnected
+      isConnected,
+      loadChatHistory
     }}>
       {children}
     </ChatContext.Provider>
