@@ -146,7 +146,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         senderId: data.senderId,
         content: data.content,
         timestamp: new Date(data.timestamp),
-        type: data.messageType || 'text'
+        type: data.type || 'text'
       };
 
       setMessages(prev => ({
@@ -168,24 +168,24 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       );
     });
 
-    // Handle chat creation
+    // Handle chat creation - backend format
     websocketService.onMessage('chat_created', (data: any) => {
       const newChat: ChatRoom = {
-        id: data.chatId,
-        participants: data.participants,
-        participantNames: data.participantNames,
-        unreadCount: 0,
+        id: data.id,
+        participants: [data.customerId, data.cgId],
+        participantNames: [data.customerName, data.cgName],
+        unreadCount: data.unreadCount || 0,
         createdAt: new Date(data.createdAt)
       };
 
       setChats(prev => {
-        const exists = prev.find(chat => chat.id === data.chatId);
+        const exists = prev.find(chat => chat.id === data.id);
         if (exists) return prev;
         return [...prev, newChat];
       });
 
       // Set as active chat when created
-      setActiveChat(data.chatId);
+      setActiveChat(data.id);
     });
   };
 
@@ -205,8 +205,19 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     if (isConnected) {
-      // Use WebSocket to create chat
-      websocketService.createChat(participantIds, participantNames);
+      // Determine who is customer and who is CG based on user type
+      let customerId: string, cgId: string;
+      
+      if (user.type === 'client' || user.type === 'customer') {
+        customerId = user.id;
+        cgId = participantIds.find(id => id !== user.id) || participantIds[1];
+      } else {
+        cgId = user.id;
+        customerId = participantIds.find(id => id !== user.id) || participantIds[0];
+      }
+
+      // Use WebSocket to create chat with backend format
+      websocketService.createChat(customerId, cgId);
       
       // Return a temporary ID - the real ID will come from the server
       const tempId = `temp-${Date.now()}`;

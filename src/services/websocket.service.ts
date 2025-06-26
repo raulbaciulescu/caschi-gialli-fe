@@ -114,7 +114,7 @@ class WebSocketService {
     this.ws.send(JSON.stringify(payload));
   }
 
-  public createChat(participantIds: string[], participantNames: string[]): void {
+  public createChat(customerId: string, cgId: string): void {
     if (!this.isConnected || !this.ws) {
       console.error('WebSocket not connected');
       return;
@@ -123,8 +123,8 @@ class WebSocketService {
     const payload: ChatPayload = {
       type: 'create_chat',
       data: {
-        participantIds,
-        participantNames
+        customerId,
+        cgId
       }
     };
 
@@ -160,10 +160,13 @@ class WebSocketService {
     if (handler) {
       // Transform backend data to frontend format
       const chatData = {
-        chatId: data.id,
-        participants: data.participants,
-        participantNames: data.participantNames,
-        createdAt: data.createdAt
+        id: data.id,
+        customerId: data.customerId,
+        customerName: data.customerName,
+        cgId: data.cgId,
+        cgName: data.cgName,
+        createdAt: data.createdAt,
+        unreadCount: data.unreadCount || 0
       };
       handler(chatData);
     }
@@ -172,16 +175,8 @@ class WebSocketService {
   private handleChatMessage(data: any): void {
     const handler = this.messageHandlers.get('chat_message');
     if (handler) {
-      // Transform backend message data to frontend format
-      const messageData = {
-        id: data.id,
-        chatId: data.chatId,
-        senderId: data.senderId,
-        content: data.content,
-        messageType: data.type,
-        timestamp: data.timestamp
-      };
-      handler(messageData);
+      // Backend sends message data directly
+      handler(data);
     }
   }
 
