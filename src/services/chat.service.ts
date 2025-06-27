@@ -11,8 +11,10 @@ export interface MessageDto {
 
 export interface ChatDto {
   id: number;
-  participantIds: string[];
-  participantNames: string[];
+  customerId: number;
+  customerName: string;
+  cgId: number;
+  cgName: string;
   createdAt: string; // ISO string from backend
   lastMessage?: MessageDto;
   unreadCount?: number;
