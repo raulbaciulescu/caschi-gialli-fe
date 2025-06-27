@@ -91,14 +91,20 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const chatsData = await chatService.getUserChats();
       
       // Transform backend chat data to frontend format
-      const transformedChats: ChatRoom[] = chatsData.map(chat => ({
-        id: chat.id.toString(),
-        participants: chat.participantIds,
-        participantNames: chat.participantNames,
-        lastMessage: chat.lastMessage ? transformMessageDto(chat.lastMessage, chat.id.toString()) : undefined,
-        unreadCount: chat.unreadCount || 0,
-        createdAt: new Date(chat.createdAt)
-      }));
+      const transformedChats: ChatRoom[] = chatsData.map(chat => {
+        // Transform backend format to frontend format
+        const participants = [chat.customerId.toString(), chat.cgId.toString()];
+        const participantNames = [chat.customerName, chat.cgName];
+        
+        return {
+          id: chat.id.toString(),
+          participants,
+          participantNames,
+          lastMessage: chat.lastMessage ? transformMessageDto(chat.lastMessage, chat.id.toString()) : undefined,
+          unreadCount: chat.unreadCount || 0,
+          createdAt: new Date(chat.createdAt)
+        };
+      });
 
       setChats(transformedChats);
     } catch (error) {
