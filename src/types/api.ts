@@ -107,7 +107,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  type: 'client' | 'cg' | 'customer'; // Added 'customer' to match backend
+  type: 'client' | 'cg' | 'customer';
   location?: { lat: number; lng: number };
   lat?: number; // Direct lat/lng fields to match backend
   lng?: number;

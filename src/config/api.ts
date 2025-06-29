@@ -19,9 +19,6 @@ export const API_ENDPOINTS = {
   },
   CG: {
     IN_RANGE: '/cg/inRange',
-    AVAILABLE_REQUESTS: '/cg/available-requests',
-    MY_REQUESTS: '/cg/my-requests',
-    ASSIGN_REQUEST: '/cg/assign-request',
   },
   REQUESTS: {
     CREATE: '/requests',
@@ -30,5 +27,12 @@ export const API_ENDPOINTS = {
     DELETE: '/requests',
     ASSIGN_CG: '/requests/assign-cg',
     UPDATE_STATUS: '/requests/update-status',
+    AVAILABLE_FOR_CG: '/requests/available-for-cg',
+    MY_CG_REQUESTS: '/requests/my-cg-requests',
+    ASSIGN_TO_REQUEST: '/requests/assign-to-request',
+  },
+  CHAT: {
+    LIST: '/chat',
+    MESSAGES: '/chat/{chatId}/messages',
   },
 } as const;

@@ -4,7 +4,7 @@ export interface ChatMessage {
   id: string;
   chatId: string;
   senderId: string;
-  senderName: string;
+  senderName?: string; // Optional since backend doesn't store this
   content: string;
   timestamp: Date;
   type: 'text' | 'image';
@@ -12,11 +12,22 @@ export interface ChatMessage {
 
 export interface ChatRoom {
   id: string;
+  // Backend specific fields
+  customerId: string;
+  customerName: string;
+  cgId: string;
+  cgName: string;
+  // Legacy compatibility fields
   participants: string[];
   participantNames: string[];
   lastMessage?: ChatMessage;
   unreadCount: number;
   createdAt: Date;
+}
+
+interface ChatPayload {
+  type: string;
+  data: any;
 }
 
 class WebSocketService {
@@ -31,22 +42,23 @@ class WebSocketService {
   public connect(userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.userId = userId;
-      
-      // Dynamically construct WebSocket URL from API base URL
+
+      // Construct WebSocket URL to match backend endpoint
       let wsUrl: string;
       if (import.meta.env.VITE_WS_URL) {
-        wsUrl = import.meta.env.VITE_WS_URL;
+        wsUrl = `${import.meta.env.VITE_WS_URL}?userId=${userId}`;
       } else {
         // Convert HTTP/HTTPS base URL to WebSocket URL
         const baseUrl = API_CONFIG.BASE_URL;
-        wsUrl = baseUrl.replace(/^https?:\/\//, (match) => {
+        const wsBaseUrl = baseUrl.replace(/^https?:\/\//, (match) => {
           return match === 'https://' ? 'wss://' : 'ws://';
-        }) + '/ws';
+        });
+        wsUrl = `${wsBaseUrl}/ws?userId=${userId}`;
       }
-      
+
       try {
-        this.ws = new WebSocket(`${wsUrl}?userId=${userId}`);
-        
+        this.ws = new WebSocket(wsUrl);
+
         this.ws.onopen = () => {
           console.log('WebSocket connected');
           this.isConnected = true;
@@ -56,8 +68,8 @@ class WebSocketService {
 
         this.ws.onmessage = (event) => {
           try {
-            const data = JSON.parse(event.data);
-            this.handleMessage(data);
+            const payload: ChatPayload = JSON.parse(event.data);
+            this.handleMessage(payload);
           } catch (error) {
             console.error('Failed to parse WebSocket message:', error);
           }
@@ -95,63 +107,34 @@ class WebSocketService {
       return;
     }
 
-    const message = {
+    const payload: ChatPayload = {
       type: 'chat_message',
       data: {
         chatId,
-        content,
-        messageType: type,
         senderId: this.userId,
-        timestamp: new Date().toISOString()
+        content,
+        messageType: type
       }
     };
 
-    this.ws.send(JSON.stringify(message));
+    this.ws.send(JSON.stringify(payload));
   }
 
-  public joinChat(chatId: string): void {
+  public createChat(customerId: string, cgId: string): void {
     if (!this.isConnected || !this.ws) {
       console.error('WebSocket not connected');
       return;
     }
 
-    const message = {
-      type: 'join_chat',
-      data: { chatId }
-    };
-
-    this.ws.send(JSON.stringify(message));
-  }
-
-  public leaveChat(chatId: string): void {
-    if (!this.isConnected || !this.ws) {
-      console.error('WebSocket not connected');
-      return;
-    }
-
-    const message = {
-      type: 'leave_chat',
-      data: { chatId }
-    };
-
-    this.ws.send(JSON.stringify(message));
-  }
-
-  public createChat(participantIds: string[], participantNames: string[]): void {
-    if (!this.isConnected || !this.ws) {
-      console.error('WebSocket not connected');
-      return;
-    }
-
-    const message = {
+    const payload: ChatPayload = {
       type: 'create_chat',
       data: {
-        participantIds,
-        participantNames
+        customerId,
+        cgId
       }
     };
 
-    this.ws.send(JSON.stringify(message));
+    this.ws.send(JSON.stringify(payload));
   }
 
   public onMessage(type: string, handler: (data: any) => void): void {
@@ -162,14 +145,44 @@ class WebSocketService {
     this.messageHandlers.delete(type);
   }
 
-  private handleMessage(data: any): void {
-    const { type, data: messageData } = data;
-    const handler = this.messageHandlers.get(type);
-    
+  private handleMessage(payload: ChatPayload): void {
+    const { type, data } = payload;
+
+    // Handle different message types from backend
+    switch (type) {
+      case 'chat_created':
+        this.handleChatCreated(data);
+        break;
+      case 'chat_message':
+        this.handleChatMessage(data);
+        break;
+      default:
+        console.log('Unhandled WebSocket message type:', type);
+    }
+  }
+
+  private handleChatCreated(data: any): void {
+    const handler = this.messageHandlers.get('chat_created');
     if (handler) {
-      handler(messageData);
-    } else {
-      console.log('Unhandled WebSocket message type:', type);
+      // Transform backend data to frontend format
+      const chatData = {
+        id: data.id,
+        customerId: data.customerId,
+        customerName: data.customerName,
+        cgId: data.cgId,
+        cgName: data.cgName,
+        createdAt: data.createdAt,
+        unreadCount: data.unreadCount || 0
+      };
+      handler(chatData);
+    }
+  }
+
+  private handleChatMessage(data: any): void {
+    const handler = this.messageHandlers.get('chat_message');
+    if (handler) {
+      // Backend sends message data directly
+      handler(data);
     }
   }
 

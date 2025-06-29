@@ -1,6 +1,6 @@
-import { httpService } from './http.service';
-import { API_ENDPOINTS } from '../config/api';
-import { ServiceRequestResponse, AssignCGRequest, AssignCGResponse } from '../types/api';
+import {httpService} from './http.service';
+import {API_ENDPOINTS} from '../config/api';
+import {AssignCGResponse, ServiceRequestResponse} from '../types/api';
 
 export interface CGInRangeParams {
   lat: number;
@@ -78,9 +78,9 @@ class CGService {
   public async getAvailableRequests(): Promise<ServiceRequestResponse[]> {
     try {
       const response = await httpService.get<ServiceRequestResponse[]>(
-        API_ENDPOINTS.CG.AVAILABLE_REQUESTS
+          API_ENDPOINTS.REQUESTS.AVAILABLE_FOR_CG
       );
-      
+
       return response;
     } catch (error) {
       console.error('Failed to get available requests:', error);
@@ -93,11 +93,9 @@ class CGService {
    */
   public async getMyCGRequests(): Promise<ServiceRequestResponse[]> {
     try {
-      const response = await httpService.get<ServiceRequestResponse[]>(
-        API_ENDPOINTS.CG.MY_REQUESTS
+      return await httpService.get<ServiceRequestResponse[]>(
+          API_ENDPOINTS.REQUESTS.MY_CG_REQUESTS
       );
-      
-      return response;
     } catch (error) {
       console.error('Failed to get CG requests:', error);
       throw new Error('Failed to get CG requests');
@@ -110,10 +108,10 @@ class CGService {
   public async assignToRequest(requestId: string): Promise<AssignCGResponse> {
     try {
       const response = await httpService.post<AssignCGResponse>(
-        API_ENDPOINTS.CG.ASSIGN_REQUEST,
-        { requestId }
+          API_ENDPOINTS.REQUESTS.ASSIGN_TO_REQUEST,
+          { requestId }
       );
-      
+
       return response;
     } catch (error) {
       console.error('Failed to assign to request:', error);
@@ -153,8 +151,8 @@ class CGService {
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLng = (lng2 - lng1) * Math.PI / 180;
     const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLng/2) * Math.sin(dLng/2);
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng/2) * Math.sin(dLng/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
   }
