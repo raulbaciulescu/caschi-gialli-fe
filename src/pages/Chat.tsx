@@ -50,8 +50,23 @@ const Chat: React.FC = () => {
 
   const getOtherParticipant = (chat: any) => {
     if (!user) return 'Unknown';
-    const otherIndex = chat.participants.findIndex((id: string) => id !== user.id);
-    return otherIndex !== -1 ? chat.participantNames[otherIndex] : 'Unknown';
+    
+    // Verifică dacă utilizatorul curent este customer sau CG și returnează numele celuilalt
+    const currentUserId = user.id;
+    const customerIdStr = chat.participants[0]; // customerId convertit la string
+    const cgIdStr = chat.participants[1]; // cgId convertit la string
+    
+    if (currentUserId === customerIdStr) {
+      // Utilizatorul curent este customer, afișează numele CG-ului
+      return chat.participantNames[1]; // cgName
+    } else if (currentUserId === cgIdStr) {
+      // Utilizatorul curent este CG, afișează numele customer-ului
+      return chat.participantNames[0]; // customerName
+    } else {
+      // Fallback - încearcă să găsești numele celuilalt participant
+      const otherIndex = chat.participants.findIndex((id: string) => id !== currentUserId);
+      return otherIndex !== -1 ? chat.participantNames[otherIndex] : 'Unknown';
+    }
   };
 
   // Mock function to get phone number - in real app this would come from user data
@@ -266,6 +281,7 @@ const Chat: React.FC = () => {
                     ) : (
                       <>
                         {currentMessages.map((message, index) => {
+                          // Verifică dacă mesajul este trimis de utilizatorul curent
                           const isOwn = message.senderId === user.id;
                           const showDate = index === 0 || 
                             formatDate(message.timestamp) !== formatDate(currentMessages[index - 1].timestamp);
