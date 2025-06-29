@@ -12,6 +12,12 @@ export interface ChatMessage {
 
 export interface ChatRoom {
   id: string;
+  // Backend specific fields
+  customerId: string;
+  customerName: string;
+  cgId: string;
+  cgName: string;
+  // Legacy compatibility fields
   participants: string[];
   participantNames: string[];
   lastMessage?: ChatMessage;

@@ -51,22 +51,19 @@ const Chat: React.FC = () => {
   const getOtherParticipant = (chat: any) => {
     if (!user) return 'Unknown';
     
-    // Verifică dacă utilizatorul curent este customer sau CG și returnează numele celuilalt
+    // Verifică tipul utilizatorului curent și returnează numele celuilalt participant
     const currentUserId = user.id;
-    const customerIdStr = chat.participants[0]; // customerId convertit la string
-    const cgIdStr = chat.participants[1]; // cgId convertit la string
     
-    if (currentUserId === customerIdStr) {
+    if (currentUserId === chat.customerId) {
       // Utilizatorul curent este customer, afișează numele CG-ului
-      return chat.participantNames[1]; // cgName
-    } else if (currentUserId === cgIdStr) {
+      return chat.cgName;
+    } else if (currentUserId === chat.cgId) {
       // Utilizatorul curent este CG, afișează numele customer-ului
-      return chat.participantNames[0]; // customerName
-    } else {
-      // Fallback - încearcă să găsești numele celuilalt participant
-      const otherIndex = chat.participants.findIndex((id: string) => id !== currentUserId);
-      return otherIndex !== -1 ? chat.participantNames[otherIndex] : 'Unknown';
+      return chat.customerName;
     }
+    
+    // Fallback - nu ar trebui să ajungă aici
+    return 'Unknown User';
   };
 
   // Mock function to get phone number - in real app this would come from user data

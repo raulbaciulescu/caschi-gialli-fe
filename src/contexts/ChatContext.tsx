@@ -92,14 +92,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Transform backend chat data to frontend format
       const transformedChats: ChatRoom[] = chatsData.map(chat => {
-        // Transform backend format to frontend format
-        const participants = [chat.customerId.toString(), chat.cgId.toString()];
-        const participantNames = [chat.customerName, chat.cgName];
-        
         return {
           id: chat.id.toString(),
-          participants,
-          participantNames,
+          // Store both customer and CG info for easy access
+          customerId: chat.customerId.toString(),
+          customerName: chat.customerName,
+          cgId: chat.cgId.toString(), 
+          cgName: chat.cgName,
+          // Keep participants array for compatibility
+          participants: [chat.customerId.toString(), chat.cgId.toString()],
+          participantNames: [chat.customerName, chat.cgName],
           lastMessage: chat.lastMessage ? transformMessageDto(chat.lastMessage, chat.id.toString()) : undefined,
           unreadCount: chat.unreadCount || 0,
           createdAt: new Date(chat.createdAt)
@@ -178,7 +180,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     websocketService.onMessage('chat_created', (data: any) => {
       const newChat: ChatRoom = {
         id: data.id,
-        participants: [data.customerId, data.cgId],
+        customerId: data.customerId.toString(),
+        customerName: data.customerName,
+        cgId: data.cgId.toString(),
+        cgName: data.cgName,
+        participants: [data.customerId.toString(), data.cgId.toString()],
         participantNames: [data.customerName, data.cgName],
         unreadCount: data.unreadCount || 0,
         createdAt: new Date(data.createdAt)
@@ -200,8 +206,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Check if chat already exists
     const existingChat = chats.find(chat =>
-      chat.participants.length === participantIds.length &&
-      participantIds.every(id => chat.participants.includes(id))
+      (chat.customerId === user.id && chat.cgId === participantIds.find(id => id !== user.id)) ||
+      (chat.cgId === user.id && chat.customerId === participantIds.find(id => id !== user.id))
     );
 
     if (existingChat) {
@@ -232,6 +238,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Fallback to local chat creation
       const newChat: ChatRoom = {
         id: Date.now().toString(),
+        customerId: user.type === 'client' || user.type === 'customer' ? user.id : participantIds[0],
+        customerName: user.type === 'client' || user.type === 'customer' ? user.name : participantNames[0],
+        cgId: user.type === 'cg' ? user.id : participantIds[1],
+        cgName: user.type === 'cg' ? user.name : participantNames[1],
         participants: participantIds,
         participantNames: participantNames,
         unreadCount: 0,
