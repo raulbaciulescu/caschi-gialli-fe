@@ -96,6 +96,22 @@ const Chat: React.FC = () => {
     }
   };
 
+  const getLastMessagePreview = (chat: any) => {
+    if (!chat.lastMessage || !user) {
+      return 'No messages yet';
+    }
+
+    const currentUserId = user.id.toString();
+    const messageSenderId = chat.lastMessage.senderId.toString();
+    const isOwnMessage = messageSenderId === currentUserId;
+
+    if (isOwnMessage) {
+      return `You: ${chat.lastMessage.content}`;
+    } else {
+      return chat.lastMessage.content;
+    }
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -210,7 +226,7 @@ const Chat: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-between">
                               <p className="text-sm text-gray-500 truncate">
-                                {chat.lastMessage?.content || 'No messages yet'}
+                                {getLastMessagePreview(chat)}
                               </p>
                               {chat.unreadCount > 0 && (
                                 <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-yellow-500 rounded-full">
