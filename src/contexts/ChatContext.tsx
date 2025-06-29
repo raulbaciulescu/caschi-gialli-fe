@@ -276,6 +276,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!user) return;
 
     if (isConnected) {
+      // Send via WebSocket - the message handler will update the UI
       websocketService.sendMessage(chatId, content, type);
     } else {
       // Fallback to local message handling
@@ -293,7 +294,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         [chatId]: [...(prev[chatId] || []), message]
       }));
 
-      // For sent messages, don't increment unread count
+      // For local messages, update last message but don't change unread count
+      // since it's your own message
       setChats(prev =>
         prev.map(chat =>
           chat.id === chatId
