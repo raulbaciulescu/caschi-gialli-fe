@@ -167,13 +167,19 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }));
 
       // Update chat's last message and unread count
+      // Only increment unread count if:
+      // 1. The message is NOT from the current user
+      // 2. The chat is NOT currently active
+      const isOwnMessage = user && data.senderId.toString() === user.id.toString();
+      const shouldIncrementUnread = !isOwnMessage && activeChat !== data.chatId;
+
       setChats(prev =>
         prev.map(chat =>
           chat.id === data.chatId
             ? {
                 ...chat,
                 lastMessage: message,
-                unreadCount: activeChat === data.chatId ? 0 : chat.unreadCount + 1
+                unreadCount: shouldIncrementUnread ? chat.unreadCount + 1 : chat.unreadCount
               }
             : chat
         )
@@ -287,13 +293,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         [chatId]: [...(prev[chatId] || []), message]
       }));
 
+      // For sent messages, don't increment unread count
       setChats(prev =>
         prev.map(chat =>
           chat.id === chatId
             ? {
                 ...chat,
                 lastMessage: message,
-                unreadCount: activeChat === chatId ? 0 : chat.unreadCount + 1
+                // Don't change unread count for own messages
+                unreadCount: chat.unreadCount
               }
             : chat
         )
