@@ -56,21 +56,15 @@ const Chat: React.FC = () => {
     const customerIdStr = chat.customerId.toString();
     const cgIdStr = chat.cgId.toString();
     
-    console.log(`getOtherParticipant: currentUserId=${currentUserId}, customerIdStr=${customerIdStr}, cgIdStr=${cgIdStr}`);
-    console.log(`customerName=${chat.customerName}, cgName=${chat.cgName}`);
-    
     if (currentUserId === customerIdStr) {
-      // Utilizatorul curent este customer, afișează numele CG-ului
-      console.log('User is customer, showing CG name:', chat.cgName);
+      // Current user is customer, show CG name
       return chat.cgName;
     } else if (currentUserId === cgIdStr) {
-      // Utilizatorul curent este CG, afișează numele customer-ului
-      console.log('User is CG, showing customer name:', chat.customerName);
+      // Current user is CG, show customer name
       return chat.customerName;
     }
     
-    // Fallback - nu ar trebui să ajungă aici
-    console.log('No match found, returning Unknown User');
+    // Fallback
     return 'Unknown User';
   };
 
@@ -150,23 +144,6 @@ const Chat: React.FC = () => {
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
-        </div>
-
-        {/* Debug Info */}
-        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-800 mb-2">Debug Info:</h3>
-          <p className="text-xs text-blue-700">Current User ID: {user.id} (type: {typeof user.id})</p>
-          <p className="text-xs text-blue-700">Current User Type: {user.type}</p>
-          <p className="text-xs text-blue-700">Current User Name: {user.name}</p>
-          <p className="text-xs text-blue-700">Total Chats: {chats.length}</p>
-          {currentChat && (
-            <>
-              <p className="text-xs text-blue-700">Active Chat ID: {currentChat.id}</p>
-              <p className="text-xs text-blue-700">Customer ID: {currentChat.customerId} (name: {currentChat.customerName})</p>
-              <p className="text-xs text-blue-700">CG ID: {currentChat.cgId} (name: {currentChat.cgName})</p>
-              <p className="text-xs text-blue-700">Other Participant: {getOtherParticipant(currentChat)}</p>
-            </>
-          )}
         </div>
 
         <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-12rem)] overflow-hidden">
@@ -308,8 +285,6 @@ const Chat: React.FC = () => {
                           const messageSenderId = message.senderId.toString();
                           const isOwn = messageSenderId === currentUserId;
                           
-                          console.log(`Message ${message.id}: senderId=${messageSenderId}, currentUserId=${currentUserId}, isOwn=${isOwn}`);
-                          
                           const showDate = index === 0 || 
                             formatDate(message.timestamp) !== formatDate(currentMessages[index - 1].timestamp);
 
@@ -333,12 +308,6 @@ const Chat: React.FC = () => {
                                     isOwn ? 'text-yellow-100' : 'text-gray-500'
                                   }`}>
                                     {formatTime(message.timestamp)}
-                                  </p>
-                                  {/* Debug info for each message */}
-                                  <p className={`text-xs mt-1 ${
-                                    isOwn ? 'text-yellow-200' : 'text-gray-400'
-                                  }`}>
-                                    ID: {messageSenderId} | Own: {isOwn ? 'Yes' : 'No'}
                                   </p>
                                 </div>
                               </div>

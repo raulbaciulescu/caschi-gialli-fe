@@ -90,17 +90,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const chatsData = await chatService.getUserChats();
       
-      console.log('Backend chats data:', chatsData);
-      console.log('Current user:', user);
-      
       // Transform backend chat data to frontend format
       const transformedChats: ChatRoom[] = chatsData.map(chat => {
         // Convert IDs to strings for consistent comparison
         const customerIdStr = chat.customerId.toString();
         const cgIdStr = chat.cgId.toString();
-        const userIdStr = user.id.toString();
-        
-        console.log(`Chat ${chat.id}: customerId=${customerIdStr}, cgId=${cgIdStr}, currentUserId=${userIdStr}`);
         
         return {
           id: chat.id.toString(),
@@ -118,7 +112,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
       });
 
-      console.log('Transformed chats:', transformedChats);
       setChats(transformedChats);
     } catch (error) {
       console.error('Failed to load chats:', error);
@@ -131,14 +124,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const messagesData = await chatService.getChatMessages(chatId);
       
-      console.log('Backend messages data:', messagesData);
-      console.log('Current user for messages:', user);
-      
       // Transform backend message data to frontend format
       const transformedMessages: ChatMessage[] = messagesData.map(msg => {
-        const transformedMsg = transformMessageDto(msg, chatId);
-        console.log(`Message ${msg.id}: senderId=${msg.senderId}, currentUserId=${user?.id}, isOwn=${msg.senderId === user?.id}`);
-        return transformedMsg;
+        return transformMessageDto(msg, chatId);
       });
 
       setMessages(prev => ({
