@@ -90,17 +90,27 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const chatsData = await chatService.getUserChats();
       
+      console.log('Backend chats data:', chatsData);
+      console.log('Current user:', user);
+      
       // Transform backend chat data to frontend format
       const transformedChats: ChatRoom[] = chatsData.map(chat => {
+        // Convert IDs to strings for consistent comparison
+        const customerIdStr = chat.customerId.toString();
+        const cgIdStr = chat.cgId.toString();
+        const userIdStr = user.id.toString();
+        
+        console.log(`Chat ${chat.id}: customerId=${customerIdStr}, cgId=${cgIdStr}, currentUserId=${userIdStr}`);
+        
         return {
           id: chat.id.toString(),
           // Store both customer and CG info for easy access
-          customerId: chat.customerId.toString(),
+          customerId: customerIdStr,
           customerName: chat.customerName,
-          cgId: chat.cgId.toString(), 
+          cgId: cgIdStr,
           cgName: chat.cgName,
           // Keep participants array for compatibility
-          participants: [chat.customerId.toString(), chat.cgId.toString()],
+          participants: [customerIdStr, cgIdStr],
           participantNames: [chat.customerName, chat.cgName],
           lastMessage: chat.lastMessage ? transformMessageDto(chat.lastMessage, chat.id.toString()) : undefined,
           unreadCount: chat.unreadCount || 0,
@@ -108,6 +118,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
       });
 
+      console.log('Transformed chats:', transformedChats);
       setChats(transformedChats);
     } catch (error) {
       console.error('Failed to load chats:', error);
@@ -120,10 +131,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const messagesData = await chatService.getChatMessages(chatId);
       
+      console.log('Backend messages data:', messagesData);
+      console.log('Current user for messages:', user);
+      
       // Transform backend message data to frontend format
-      const transformedMessages: ChatMessage[] = messagesData.map(msg => 
-        transformMessageDto(msg, chatId)
-      );
+      const transformedMessages: ChatMessage[] = messagesData.map(msg => {
+        const transformedMsg = transformMessageDto(msg, chatId);
+        console.log(`Message ${msg.id}: senderId=${msg.senderId}, currentUserId=${user?.id}, isOwn=${msg.senderId === user?.id}`);
+        return transformedMsg;
+      });
 
       setMessages(prev => ({
         ...prev,
@@ -138,7 +154,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return {
       id: dto.id.toString(),
       chatId: chatId,
-      senderId: dto.senderId,
+      senderId: dto.senderId.toString(), // Ensure senderId is string
       content: dto.content,
       timestamp: new Date(dto.timestamp),
       type: (dto.type as 'text' | 'image') || 'text'
@@ -151,7 +167,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const message: ChatMessage = {
         id: data.id.toString(),
         chatId: data.chatId,
-        senderId: data.senderId,
+        senderId: data.senderId.toString(), // Ensure senderId is string
         content: data.content,
         timestamp: new Date(data.timestamp),
         type: data.type || 'text'
@@ -179,7 +195,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Handle chat creation - backend format
     websocketService.onMessage('chat_created', (data: any) => {
       const newChat: ChatRoom = {
-        id: data.id,
+        id: data.id.toString(),
         customerId: data.customerId.toString(),
         customerName: data.customerName,
         cgId: data.cgId.toString(),
@@ -191,13 +207,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       setChats(prev => {
-        const exists = prev.find(chat => chat.id === data.id);
+        const exists = prev.find(chat => chat.id === data.id.toString());
         if (exists) return prev;
         return [...prev, newChat];
       });
 
       // Set as active chat when created
-      setActiveChat(data.id);
+      setActiveChat(data.id.toString());
     });
   };
 
@@ -205,10 +221,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!user) throw new Error('User not authenticated');
 
     // Check if chat already exists
-    const existingChat = chats.find(chat =>
-      (chat.customerId === user.id && chat.cgId === participantIds.find(id => id !== user.id)) ||
-      (chat.cgId === user.id && chat.customerId === participantIds.find(id => id !== user.id))
-    );
+    const userIdStr = user.id.toString();
+    const existingChat = chats.find(chat => {
+      const customerIdStr = chat.customerId.toString();
+      const cgIdStr = chat.cgId.toString();
+      
+      return (customerIdStr === userIdStr && participantIds.includes(cgIdStr)) ||
+             (cgIdStr === userIdStr && participantIds.includes(customerIdStr));
+    });
 
     if (existingChat) {
       // Set this chat as active when creating/finding it
@@ -221,10 +241,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       let customerId: string, cgId: string;
       
       if (user.type === 'client' || user.type === 'customer') {
-        customerId = user.id;
+        customerId = user.id.toString();
         cgId = participantIds.find(id => id !== user.id) || participantIds[1];
       } else {
-        cgId = user.id;
+        cgId = user.id.toString();
         customerId = participantIds.find(id => id !== user.id) || participantIds[0];
       }
 
@@ -238,9 +258,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Fallback to local chat creation
       const newChat: ChatRoom = {
         id: Date.now().toString(),
-        customerId: user.type === 'client' || user.type === 'customer' ? user.id : participantIds[0],
+        customerId: user.type === 'client' || user.type === 'customer' ? user.id.toString() : participantIds[0],
         customerName: user.type === 'client' || user.type === 'customer' ? user.name : participantNames[0],
-        cgId: user.type === 'cg' ? user.id : participantIds[1],
+        cgId: user.type === 'cg' ? user.id.toString() : participantIds[1],
         cgName: user.type === 'cg' ? user.name : participantNames[1],
         participants: participantIds,
         participantNames: participantNames,
@@ -268,7 +288,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const message: ChatMessage = {
         id: Date.now().toString(),
         chatId,
-        senderId: user.id,
+        senderId: user.id.toString(),
         content,
         timestamp: new Date(),
         type
