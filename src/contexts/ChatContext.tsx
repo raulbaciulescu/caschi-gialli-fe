@@ -90,17 +90,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const chatsData = await chatService.getUserChats();
 
-      console.log('Backend chats data:', chatsData);
-      console.log('Current user:', user);
-
       // Transform backend chat data to frontend format
       const transformedChats: ChatRoom[] = chatsData.map(chat => {
         // Convert IDs to strings for consistent comparison
         const customerIdStr = chat.customerId.toString();
         const cgIdStr = chat.cgId.toString();
-        const userIdStr = user.id.toString();
-
-        console.log(`Chat ${chat.id}: customerId=${customerIdStr}, cgId=${cgIdStr}, currentUserId=${userIdStr}`);
 
         return {
           id: chat.id.toString(),
@@ -118,7 +112,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
       });
 
-      console.log('Transformed chats:', transformedChats);
       setChats(transformedChats);
     } catch (error) {
       console.error('Failed to load chats:', error);
@@ -131,14 +124,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const messagesData = await chatService.getChatMessages(chatId);
 
-      console.log('Backend messages data:', messagesData);
-      console.log('Current user for messages:', user);
-
       // Transform backend message data to frontend format
       const transformedMessages: ChatMessage[] = messagesData.map(msg => {
-        const transformedMsg = transformMessageDto(msg, chatId);
-        console.log(`Message ${msg.id}: senderId=${msg.senderId}, currentUserId=${user?.id}, isOwn=${msg.senderId === user?.id}`);
-        return transformedMsg;
+        return transformMessageDto(msg, chatId);
       });
 
       setMessages(prev => ({
@@ -179,13 +167,19 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }));
 
       // Update chat's last message and unread count
+      // Only increment unread count if:
+      // 1. The message is NOT from the current user
+      // 2. The chat is NOT currently active
+      const isOwnMessage = user && data.senderId.toString() === user.id.toString();
+      const shouldIncrementUnread = !isOwnMessage && activeChat !== data.chatId;
+
       setChats(prev =>
           prev.map(chat =>
               chat.id === data.chatId
                   ? {
                     ...chat,
                     lastMessage: message,
-                    unreadCount: activeChat === data.chatId ? 0 : chat.unreadCount + 1
+                    unreadCount: shouldIncrementUnread ? chat.unreadCount + 1 : chat.unreadCount
                   }
                   : chat
           )
@@ -282,6 +276,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!user) return;
 
     if (isConnected) {
+      // Send via WebSocket - the message handler will update the UI
       websocketService.sendMessage(chatId, content, type);
     } else {
       // Fallback to local message handling
@@ -299,13 +294,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         [chatId]: [...(prev[chatId] || []), message]
       }));
 
+      // For local messages, update last message but don't change unread count
+      // since it's your own message
       setChats(prev =>
           prev.map(chat =>
               chat.id === chatId
                   ? {
                     ...chat,
                     lastMessage: message,
-                    unreadCount: activeChat === chatId ? 0 : chat.unreadCount + 1
+                    // Don't change unread count for own messages
+                    unreadCount: chat.unreadCount
                   }
                   : chat
           )
