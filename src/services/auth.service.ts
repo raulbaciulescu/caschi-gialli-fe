@@ -15,22 +15,21 @@ interface AuthResponse {
 
 class AuthService {
   /**
-   * Login client - NO /me call!
+   * Login client
    */
   public async loginClient(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      // Login should return token + user data directly
       const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-        API_ENDPOINTS.AUTH.LOGIN_CLIENT,
-        credentials
+          API_ENDPOINTS.AUTH.LOGIN_CLIENT,
+          credentials
       );
-      
+
       // Store token
       httpService.setToken(response.token);
-      
+
       // Store user data locally
       localStorage.setItem('user_data', JSON.stringify(response.user));
-      
+
       return response;
     } catch (error) {
       console.error('Client login failed:', error);
@@ -39,22 +38,21 @@ class AuthService {
   }
 
   /**
-   * Login CG - NO /me call!
+   * Login CG
    */
   public async loginCG(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      // Login should return token + user data directly
       const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-        API_ENDPOINTS.AUTH.LOGIN_CG,
-        credentials
+          API_ENDPOINTS.AUTH.LOGIN_CG,
+          credentials
       );
-      
+
       // Store token
       httpService.setToken(response.token);
-      
+
       // Store user data locally
       localStorage.setItem('user_data', JSON.stringify(response.user));
-      
+
       return response;
     } catch (error) {
       console.error('CG login failed:', error);
@@ -63,21 +61,21 @@ class AuthService {
   }
 
   /**
-   * Register client - returns user data directly
+   * Register client
    */
   public async registerClient(userData: RegisterClientRequest): Promise<AuthResponse> {
     try {
       const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-        API_ENDPOINTS.AUTH.REGISTER_CLIENT,
-        userData
+          API_ENDPOINTS.AUTH.REGISTER_CLIENT,
+          userData
       );
-      
+
       // Store token
       httpService.setToken(response.token);
-      
+
       // Store user data locally
       localStorage.setItem('user_data', JSON.stringify(response.user));
-      
+
       return response;
     } catch (error) {
       console.error('Client registration failed:', error);
@@ -86,21 +84,21 @@ class AuthService {
   }
 
   /**
-   * Register CG - returns user data directly
+   * Register CG
    */
   public async registerCG(userData: RegisterCGRequest): Promise<AuthResponse> {
     try {
       const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-        API_ENDPOINTS.AUTH.REGISTER_CG,
-        userData
+          API_ENDPOINTS.AUTH.REGISTER_CG,
+          userData
       );
-      
+
       // Store token
       httpService.setToken(response.token);
-      
+
       // Store user data locally
       localStorage.setItem('user_data', JSON.stringify(response.user));
-      
+
       return response;
     } catch (error) {
       console.error('CG registration failed:', error);
@@ -122,17 +120,12 @@ class AuthService {
   }
 
   /**
-   * Logout user
+   * Logout user - only clear localStorage, no API call
    */
   public async logout(): Promise<void> {
-    try {
-      await httpService.post(API_ENDPOINTS.AUTH.LOGOUT);
-    } catch (error) {
-      console.warn('Logout API call failed:', error);
-    } finally {
-      httpService.clearToken();
-      localStorage.removeItem('user_data');
-    }
+    // Clear token and user data from localStorage
+    httpService.clearToken();
+    localStorage.removeItem('user_data');
   }
 
   /**

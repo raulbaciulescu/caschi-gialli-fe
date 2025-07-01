@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService } from '../services/auth.service';
-import { mockAuthService } from '../services/mockAuth.service';
 import { User, LoginRequest, RegisterClientRequest, RegisterCGRequest } from '../types/api';
 
 interface AuthContextType {
@@ -12,8 +11,6 @@ interface AuthContextType {
   registerCG: (userData: RegisterCGRequest) => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
-  useMockData: boolean;
-  toggleMockData: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,12 +27,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [useMockData, setUseMockData] = useState(() => {
-    const saved = localStorage.getItem('use_mock_data');
-    return saved ? JSON.parse(saved) : true;
-  });
-
-  const getAuthService = () => useMockData ? mockAuthService : authService;
 
   // Normalize user data to handle both backend formats
   const normalizeUser = (userData: any): User => {
@@ -49,27 +40,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
-    localStorage.setItem('use_mock_data', JSON.stringify(useMockData));
-  }, [useMockData]);
-
-  useEffect(() => {
     initializeAuth();
-  }, [useMockData]);
+  }, []);
 
   const initializeAuth = async () => {
     setLoading(true);
     try {
-      const service = getAuthService();
-
       // Check if we have a valid token and user data
-      if (service.isAuthenticated()) {
-        const userData = service.getUserFromStorage();
+      if (authService.isAuthenticated()) {
+        const userData = authService.getUserFromStorage();
         if (userData) {
           setUser(normalizeUser(userData));
           setIsAuthenticated(true);
         } else {
           // Token exists but no user data - clear everything
-          await service.logout();
+          await authService.logout();
           setUser(null);
           setIsAuthenticated(false);
         }
@@ -80,7 +65,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.error('Failed to initialize auth:', error);
       // Clear invalid data
-      await getAuthService().logout();
+      await authService.logout();
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -90,8 +75,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loginClient = async (credentials: LoginRequest): Promise<void> => {
     try {
-      const service = getAuthService();
-      const response = await service.loginClient(credentials);
+      const response = await authService.loginClient(credentials);
       setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
@@ -102,8 +86,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loginCG = async (credentials: LoginRequest): Promise<void> => {
     try {
-      const service = getAuthService();
-      const response = await service.loginCG(credentials);
+      const response = await authService.loginCG(credentials);
       setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
@@ -114,8 +97,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const registerClient = async (userData: RegisterClientRequest): Promise<void> => {
     try {
-      const service = getAuthService();
-      const response = await service.registerClient(userData);
+      const response = await authService.registerClient(userData);
       setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
@@ -126,8 +108,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const registerCG = async (userData: RegisterCGRequest): Promise<void> => {
     try {
-      const service = getAuthService();
-      const response = await service.registerCG(userData);
+      const response = await authService.registerCG(userData);
       setUser(normalizeUser(response.user));
       setIsAuthenticated(true);
     } catch (error) {
@@ -138,19 +119,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = async (): Promise<void> => {
     try {
-      await getAuthService().logout();
+      await authService.logout();
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
       setUser(null);
       setIsAuthenticated(false);
     }
-  };
-
-  const toggleMockData = () => {
-    setUseMockData(prev => !prev);
-    // Clear current session when switching
-    logout();
   };
 
   return (
@@ -163,8 +138,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         registerCG,
         isAuthenticated,
         loading,
-        useMockData,
-        toggleMockData,
       }}>
         {children}
       </AuthContext.Provider>

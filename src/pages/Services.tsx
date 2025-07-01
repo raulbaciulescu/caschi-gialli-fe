@@ -13,7 +13,7 @@ const Services: React.FC = () => {
   const { createChat } = useChat();
   const { data: cgInRange, loading, error, searchCGInRange, reset } = useCGInRange();
   const navigate = useNavigate();
-  
+
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showMap, setShowMap] = useState(false);

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
-import { MessageSquare, Send, ArrowLeft, Users, Wifi, WifiOff, Phone, RefreshCw } from 'lucide-react';
+import { MessageSquare, Send, ArrowLeft, Users, Phone, RefreshCw } from 'lucide-react';
 
 const Chat: React.FC = () => {
   const { user } = useAuth();
@@ -11,10 +12,10 @@ const Chat: React.FC = () => {
     messages,
     setActiveChat,
     sendMessage,
-    isConnected,
     loading,
     refreshChats
   } = useChat();
+  const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -68,10 +69,24 @@ const Chat: React.FC = () => {
     return 'Unknown User';
   };
 
-  // Mock function to get phone number - in real app this would come from user data
+  // Get phone number from chat data (from API response)
   const getOtherParticipantPhone = (chat: any) => {
-    // This would normally come from the backend user data
-    return '+39 333 123 4567'; // Mock phone number
+    if (!user) return null;
+
+    // Convert IDs to strings for consistent comparison
+    const currentUserId = user.id.toString();
+    const customerIdStr = chat.customerId.toString();
+    const cgIdStr = chat.cgId.toString();
+
+    if (currentUserId === customerIdStr) {
+      // Current user is customer, return CG phone number
+      return chat.cgPhoneNumber || null;
+    } else if (currentUserId === cgIdStr) {
+      // Current user is CG, return customer phone number
+      return chat.customerPhoneNumber || null;
+    }
+
+    return null;
   };
 
   const formatTime = (date: Date) => {
@@ -118,12 +133,12 @@ const Chat: React.FC = () => {
           <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600 text-lg mb-4">Please log in to access messages.</p>
-            <a
-                href="/login"
+            <button
+                onClick={() => navigate('/login')}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
               Go to Login
-            </a>
+            </button>
           </div>
         </div>
     );
@@ -132,26 +147,9 @@ const Chat: React.FC = () => {
   return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Connection Status */}
+          {/* Header with refresh button */}
           <div className="mb-4 flex items-center justify-between">
-            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                isConnected
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
-            }`}>
-              {isConnected ? (
-                  <>
-                    <Wifi className="h-4 w-4 mr-2" />
-                    Connected
-                  </>
-              ) : (
-                  <>
-                    <WifiOff className="h-4 w-4 mr-2" />
-                    Offline Mode
-                  </>
-              )}
-            </div>
-
+            <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
             <button
                 onClick={refreshChats}
                 disabled={loading}
@@ -170,7 +168,7 @@ const Chat: React.FC = () => {
               }`}>
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">Messages</h2>
+                    <h2 className="text-xl font-semibold text-gray-900">Conversations</h2>
                     <div className="flex items-center space-x-2">
                       {chats.length > 0 && (
                           <span className="text-sm text-gray-500">
@@ -266,22 +264,21 @@ const Chat: React.FC = () => {
                               <h3 className="text-lg font-semibold text-gray-900">
                                 {getOtherParticipant(currentChat)}
                               </h3>
-                              <p className="text-sm text-gray-500">
-                                {isConnected ? 'Online' : 'Offline'}
-                              </p>
                             </div>
                           </div>
 
-                          {/* Contact Info */}
-                          <div className="flex items-center">
-                            <a
-                                href={`tel:${getOtherParticipantPhone(currentChat)}`}
-                                className="flex items-center text-sm text-gray-600 hover:text-yellow-600 transition-colors px-3 py-2 rounded-lg hover:bg-yellow-50"
-                            >
-                              <Phone className="h-4 w-4 mr-2" />
-                              <span>{getOtherParticipantPhone(currentChat)}</span>
-                            </a>
-                          </div>
+                          {/* Contact Info - Only show if phone number is available */}
+                          {getOtherParticipantPhone(currentChat) && (
+                              <div className="flex items-center">
+                                <a
+                                    href={`tel:${getOtherParticipantPhone(currentChat)}`}
+                                    className="flex items-center text-sm text-gray-600 hover:text-yellow-600 transition-colors px-3 py-2 rounded-lg hover:bg-yellow-50"
+                                >
+                                  <Phone className="h-4 w-4 mr-2" />
+                                  <span>{getOtherParticipantPhone(currentChat)}</span>
+                                </a>
+                              </div>
+                          )}
                         </div>
                       </div>
 

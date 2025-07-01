@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { cgService, CGInRangeParams, CGDisplayData } from '../services/cg.service';
-import { mockCGService } from '../services/mockCG.service';
 
 interface UseCGInRangeState {
     data: CGDisplayData[];
@@ -15,7 +13,6 @@ interface UseCGInRangeReturn extends UseCGInRangeState {
 }
 
 export function useCGInRange(): UseCGInRangeReturn {
-    const { useMockData } = useAuth();
     const [state, setState] = useState<UseCGInRangeState>({
         data: [],
         loading: false,
@@ -31,8 +28,7 @@ export function useCGInRange(): UseCGInRangeReturn {
             }));
 
             try {
-                const service = useMockData ? mockCGService : cgService;
-                const result = await service.getCGInRange(params);
+                const result = await cgService.getCGInRange(params);
 
                 setState(prev => ({
                     ...prev,
@@ -55,7 +51,7 @@ export function useCGInRange(): UseCGInRangeReturn {
                 throw error;
             }
         },
-        [useMockData]
+        []
     );
 
     const reset = useCallback(() => {

@@ -13,8 +13,10 @@ export interface ChatDto {
     id: number;
     customerId: number;
     customerName: string;
+    customerPhoneNumber?: string; // Phone number for customer
     cgId: number;
     cgName: string;
+    cgPhoneNumber?: string; // Phone number for CG
     createdAt: string; // ISO string from backend
     lastMessage?: MessageDto;
     unreadCount?: number;

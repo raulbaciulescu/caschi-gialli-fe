@@ -15,8 +15,10 @@ export interface ChatRoom {
   // Backend specific fields
   customerId: string;
   customerName: string;
+  customerPhoneNumber?: string; // Phone number for customer
   cgId: string;
   cgName: string;
+  cgPhoneNumber?: string; // Phone number for CG
   // Legacy compatibility fields
   participants: string[];
   participantNames: string[];
@@ -169,8 +171,10 @@ class WebSocketService {
         id: data.id,
         customerId: data.customerId,
         customerName: data.customerName,
+        customerPhoneNumber: data.customerPhoneNumber,
         cgId: data.cgId,
         cgName: data.cgName,
+        cgPhoneNumber: data.cgPhoneNumber,
         createdAt: data.createdAt,
         unreadCount: data.unreadCount || 0
       };

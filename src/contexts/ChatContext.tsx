@@ -101,8 +101,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Store both customer and CG info for easy access
           customerId: customerIdStr,
           customerName: chat.customerName,
+          customerPhoneNumber: chat.customerPhoneNumber, // Add phone number
           cgId: cgIdStr,
           cgName: chat.cgName,
+          cgPhoneNumber: chat.cgPhoneNumber, // Add phone number
           // Keep participants array for compatibility
           participants: [customerIdStr, cgIdStr],
           participantNames: [chat.customerName, chat.cgName],
@@ -192,8 +194,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: data.id.toString(),
         customerId: data.customerId.toString(),
         customerName: data.customerName,
+        customerPhoneNumber: data.customerPhoneNumber,
         cgId: data.cgId.toString(),
         cgName: data.cgName,
+        cgPhoneNumber: data.cgPhoneNumber,
         participants: [data.customerId.toString(), data.cgId.toString()],
         participantNames: [data.customerName, data.cgName],
         unreadCount: data.unreadCount || 0,

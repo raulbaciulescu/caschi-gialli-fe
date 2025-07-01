@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { cgService } from '../services/cg.service';
-import { mockCGService } from '../services/mockCG.service';
 import { ServiceRequestResponse, AssignCGResponse } from '../types/api';
 
 interface UseCGRequestsState {
@@ -20,7 +18,6 @@ interface UseCGRequestsReturn extends UseCGRequestsState {
 }
 
 export function useCGRequests(): UseCGRequestsReturn {
-  const { useMockData } = useAuth();
   const [state, setState] = useState<UseCGRequestsState>({
     availableRequests: [],
     myRequests: [],
@@ -33,8 +30,7 @@ export function useCGRequests(): UseCGRequestsReturn {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
-      const service = useMockData ? mockCGService : cgService;
-      const requests = await service.getAvailableRequests();
+      const requests = await cgService.getAvailableRequests();
 
       setState(prev => ({
         ...prev,
@@ -53,14 +49,13 @@ export function useCGRequests(): UseCGRequestsReturn {
         error: errorMessage,
       }));
     }
-  }, [useMockData]);
+  }, []);
 
   const loadMyRequests = useCallback(async (): Promise<void> => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
-      const service = useMockData ? mockCGService : cgService;
-      const requests = await service.getMyCGRequests();
+      const requests = await cgService.getMyCGRequests();
 
       setState(prev => ({
         ...prev,
@@ -79,20 +74,19 @@ export function useCGRequests(): UseCGRequestsReturn {
         error: errorMessage,
       }));
     }
-  }, [useMockData]);
+  }, []);
 
   const assignToRequest = useCallback(async (requestId: string): Promise<AssignCGResponse> => {
     setState(prev => ({ ...prev, assignLoading: true, error: null }));
 
     try {
-      const service = useMockData ? mockCGService : cgService;
-      const result = await service.assignToRequest(requestId);
+      const result = await cgService.assignToRequest(requestId);
 
       // Refresh both lists after successful assignment
       await Promise.all([loadAvailableRequests(), loadMyRequests()]);
 
       setState(prev => ({ ...prev, assignLoading: false }));
-      
+
       return result;
     } catch (error) {
       let errorMessage = 'Failed to assign to request';
@@ -108,7 +102,7 @@ export function useCGRequests(): UseCGRequestsReturn {
 
       throw error;
     }
-  }, [useMockData, loadAvailableRequests, loadMyRequests]);
+  }, [loadAvailableRequests, loadMyRequests]);
 
   const reset = useCallback(() => {
     setState({
