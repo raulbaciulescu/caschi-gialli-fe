@@ -13,11 +13,24 @@ export const API_ENDPOINTS = {
     REGISTER_CG: '/auth/register/cg',
     LOGOUT: '/auth/logout',
   },
-  USERS: {
-    PROFILE: '/users/profile',
-    UPDATE_PROFILE: '/users/profile',
-  },
   CG: {
     IN_RANGE: '/cg/inRange',
+    PROFILE: '/cg/profile', // CG specific profile endpoint
+    UPDATE_PROFILE: '/cg/profile', // CG specific profile update endpoint
+  },
+  REQUESTS: {
+    CREATE: '/requests',
+    LIST: '/requests',
+    UPDATE: '/requests',
+    DELETE: '/requests',
+    ASSIGN_CG: '/requests/assign-cg',
+    UPDATE_STATUS: '/requests/update-status',
+    AVAILABLE_FOR_CG: '/requests/available-for-cg',
+    MY_CG_REQUESTS: '/requests/my-cg-requests',
+    ASSIGN_TO_REQUEST: '/requests/assign-to-request',
+  },
+  CHAT: {
+    LIST: '/chat',
+    MESSAGES: '/chat/{chatId}/messages',
   },
 } as const;

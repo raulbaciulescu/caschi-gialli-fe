@@ -130,7 +130,7 @@ class CGService {
       ...cg,
       name: cg.fullName || cg.email, // Use email as fallback if fullName is null
       location: { lat: cg.latitude, lng: cg.longitude },
-      radius: cg.serviceRadius,
+      radius: cg.serviceRadius, // Keep this for backward compatibility
       description: `Professional ${cg.services.join(', ').toLowerCase()} services. Contact for detailed consultation.`,
       rating: 4.2 + Math.random() * 0.6, // Mock rating 4.2-4.8
       reviews: Math.floor(Math.random() * 200) + 50, // Mock reviews 50-250

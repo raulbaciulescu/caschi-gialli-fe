@@ -16,27 +16,27 @@ import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
-    <AuthProvider>
-      <ServiceProvider>
-        <ChatProvider>
-          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/register-client" element={<RegisterClient />} />
-                <Route path="/register-cg" element={<RegisterCG />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/chat" element={<Chat />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/edit-profile" element={<EditProfile />} />
-              </Routes>
-            </Layout>
-          </Router>
-        </ChatProvider>
-      </ServiceProvider>
-    </AuthProvider>
+      <AuthProvider>
+        <ServiceProvider>
+          <ChatProvider>
+            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/register-client" element={<RegisterClient />} />
+                  <Route path="/register-cg" element={<RegisterCG />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/chat" element={<Chat />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/edit-profile" element={<EditProfile />} />
+                </Routes>
+              </Layout>
+            </Router>
+          </ChatProvider>
+        </ServiceProvider>
+      </AuthProvider>
   );
 }
 

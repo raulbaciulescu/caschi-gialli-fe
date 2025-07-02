@@ -8,7 +8,7 @@ class UserService {
    */
   public async updateProfile(updates: Partial<User>): Promise<User> {
     const response = await httpService.retryRequest(
-      () => httpService.put<User>(API_ENDPOINTS.USERS.UPDATE_PROFILE, updates)
+      () => httpService.put<User>(API_ENDPOINTS.CG.UPDATE_PROFILE, updates)
     );
 
     if (response.success && response.data) {
@@ -23,7 +23,7 @@ class UserService {
    */
   public async getProfile(): Promise<User> {
     const response = await httpService.retryRequest(
-      () => httpService.get<User>(API_ENDPOINTS.USERS.PROFILE)
+      () => httpService.get<User>(API_ENDPOINTS.CG.PROFILE)
     );
 
     if (response.success && response.data) {

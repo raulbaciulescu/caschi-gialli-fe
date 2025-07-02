@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { useCGInRange } from '../hooks/useCGInRange';
 import Map from '../components/Map';
-import { Search, MapPin, Star, MessageSquare, Filter, HardHat, Wrench, Zap, Hammer, Paintbrush, Flower, Sparkles, Truck, Monitor, Settings, Wind, Home, Grid3X3, ToyBrick as Brick, Bug, Loader2, AlertCircle } from 'lucide-react';
+import { Search, MapPin, Star, MessageSquare, HardHat, Wrench, Zap, Hammer, Paintbrush, Flower, Sparkles, Truck, Monitor, Settings, Wind, Home, Grid3X3, ToyBrick as Brick, Bug, Loader2, AlertCircle, User } from 'lucide-react';
 
 const Services: React.FC = () => {
   const { serviceCategories } = useService();
@@ -18,17 +18,6 @@ const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMap, setShowMap] = useState(false);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [searchRadius, setSearchRadius] = useState(25);
-
-  // Initialize search location from user data
-  useEffect(() => {
-    if (user) {
-      const userLocation = user.location || (user.lat && user.lng ? { lat: user.lat, lng: user.lng } : null);
-      if (userLocation) {
-        setSearchLocation(userLocation);
-      }
-    }
-  }, [user]);
 
   // Service category icons mapping
   const categoryIcons: Record<string, React.ComponentType<any>> = {
@@ -49,6 +38,16 @@ const Services: React.FC = () => {
     'Pest Control': Bug
   };
 
+  // Initialize search location from user data
+  useEffect(() => {
+    if (user) {
+      const userLocation = user.location || (user.lat && user.lng ? { lat: user.lat, lng: user.lng } : null);
+      if (userLocation) {
+        setSearchLocation(userLocation);
+      }
+    }
+  }, [user]);
+
   // Initial search when component mounts and we have a location
   useEffect(() => {
     if (searchLocation) {
@@ -66,7 +65,7 @@ const Services: React.FC = () => {
       const searchParams = {
         lat: searchLocation.lat,
         lng: searchLocation.lng,
-        radius: searchRadius,
+        radius: 50, // Fixed large radius to get all CGs in reasonable area
         services: selectedCategory ? [selectedCategory] : undefined
       };
 
@@ -90,24 +89,8 @@ const Services: React.FC = () => {
         const searchParams = {
           lat: searchLocation.lat,
           lng: searchLocation.lng,
-          radius: searchRadius,
+          radius: 50, // Fixed large radius
           services: category ? [category] : undefined
-        };
-        searchCGInRange(searchParams);
-      }, 100);
-    }
-  };
-
-  const handleRadiusChange = (radius: number) => {
-    setSearchRadius(radius);
-    // Auto-search when radius changes
-    if (searchLocation) {
-      setTimeout(() => {
-        const searchParams = {
-          lat: searchLocation.lat,
-          lng: searchLocation.lng,
-          radius: radius,
-          services: selectedCategory ? [selectedCategory] : undefined
         };
         searchCGInRange(searchParams);
       }, 100);
@@ -138,6 +121,10 @@ const Services: React.FC = () => {
     }
   };
 
+  const handleViewProfile = (cgId: string) => {
+    navigate(`/profile/${cgId}`);
+  };
+
   return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -152,7 +139,7 @@ const Services: React.FC = () => {
           {/* Search Controls */}
           <div className="bg-white rounded-xl shadow-lg mb-8 border border-gray-100">
             <div className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                 <div className="lg:col-span-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -176,20 +163,6 @@ const Services: React.FC = () => {
                     {serviceCategories.map(category => (
                         <option key={category} value={category}>{category}</option>
                     ))}
-                  </select>
-                </div>
-
-                <div>
-                  <select
-                      value={searchRadius}
-                      onChange={(e) => handleRadiusChange(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value={5}>5 km</option>
-                    <option value={10}>10 km</option>
-                    <option value={15}>15 km</option>
-                    <option value={25}>25 km</option>
-                    <option value={50}>50 km</option>
                   </select>
                 </div>
               </div>
@@ -273,14 +246,13 @@ const Services: React.FC = () => {
                             {cgInRange.length === 0 ? 'No service providers found in this area' : 'No providers match your search'}
                           </p>
                           <p className="text-gray-400">
-                            {cgInRange.length === 0 ? 'Try expanding your search radius or changing location' : 'Try adjusting your search criteria'}
+                            {cgInRange.length === 0 ? 'Try changing location or expanding your search' : 'Try adjusting your search criteria'}
                           </p>
                         </div>
                     ) : (
                         <>
                           <div className="text-sm text-gray-600 mb-4">
                             Found {filteredOffers.length} service provider{filteredOffers.length !== 1 ? 's' : ''}
-                            {searchLocation && ` within ${searchRadius}km`}
                           </div>
 
                           {filteredOffers.map(offer => (
@@ -336,16 +308,26 @@ const Services: React.FC = () => {
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center text-sm text-gray-500">
                                       <MapPin className="h-4 w-4 mr-1" />
-                                      Service radius: {offer.radius} km
+                                      Service radius: {offer.serviceRadius} km
                                     </div>
 
-                                    <button
-                                        onClick={() => handleContactCG(offer.id.toString(), offer.name)}
-                                        className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
-                                    >
-                                      <MessageSquare className="h-4 w-4 mr-2" />
-                                      {user ? 'Contact' : 'Login to Contact'}
-                                    </button>
+                                    <div className="flex items-center space-x-2">
+                                      <button
+                                          onClick={() => handleViewProfile(offer.id.toString())}
+                                          className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                                      >
+                                        <User className="h-4 w-4 mr-1" />
+                                        View Profile
+                                      </button>
+
+                                      <button
+                                          onClick={() => handleContactCG(offer.id.toString(), offer.name)}
+                                          className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
+                                      >
+                                        <MessageSquare className="h-4 w-4 mr-2" />
+                                        {user ? 'Contact' : 'Login to Contact'}
+                                      </button>
+                                    </div>
                                   </div>
 
                                   {offer.photos && offer.photos.length > 0 && (
@@ -376,8 +358,11 @@ const Services: React.FC = () => {
                 <div className="lg:col-span-1">
                   <div className="bg-white rounded-xl shadow-lg sticky top-8 border border-gray-100">
                     <div className="p-6 border-b border-gray-200">
-                      <h2 className="text-xl font-semibold text-gray-900">Search Area</h2>
+                      <h2 className="text-xl font-semibold text-gray-900">Service Providers Map</h2>
                       <p className="text-sm text-gray-600 mt-1">Click to change search location</p>
+                      <p className="text-xs text-yellow-600 mt-1">
+                        Yellow circles show each provider's service radius
+                      </p>
                     </div>
                     <div className="p-6">
                       <Map
@@ -390,14 +375,18 @@ const Services: React.FC = () => {
                               type: 'client' as const,
                               popup: 'Search Location'
                             }] : []),
-                            ...filteredOffers.map(offer => ({
-                              position: [offer.location.lat, offer.location.lng] as [number, number],
-                              type: 'cg' as const,
-                              popup: `${offer.name} - ${offer.distance}km away`
-                            }))
+                            ...filteredOffers.map(offer => {
+                              console.log(`Creating marker for ${offer.name} with serviceRadius: ${offer.serviceRadius}`);
+                              return {
+                                position: [offer.location.lat, offer.location.lng] as [number, number],
+                                type: 'cg' as const,
+                                popup: `${offer.name} - ${offer.distance}km away - Service radius: ${offer.serviceRadius}km`,
+                                // CRITICAL: Pass serviceRadius directly from backend data
+                                radius: offer.serviceRadius
+                              };
+                            })
                           ]}
-                          showRadius={!!searchLocation}
-                          radius={searchRadius}
+                          showRadius={false} // No global search radius
                           className="h-96 w-full rounded-lg"
                       />
                     </div>

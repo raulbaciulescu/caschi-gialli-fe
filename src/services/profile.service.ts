@@ -13,22 +13,57 @@ export interface ProfileUpdateRequest {
   galleryImages?: File[];
 }
 
-export interface ProfileImageResponse {
+export interface CGProfileResponse {
+  id: number;
+  fullName: string;
+  phoneNumber: string;
+  address: string;
+  serviceRadius: number;
+  services: string[];
   profileImageUrl: string;
   galleryImageUrls: string[];
 }
 
 class ProfileService {
   /**
-   * Update CG profile with form data including images
+   * Get CG public profile data (for viewing other CG profiles)
+   */
+  public async getCGPublicProfile(cgId: string): Promise<CGProfileResponse> {
+    try {
+      console.log('Making GET request to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${cgId}`);
+      const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${cgId}`);
+      console.log('CG public profile response:', response);
+      return response;
+    } catch (error) {
+      console.error('Failed to get CG public profile:', error);
+      throw new Error('Failed to get CG profile');
+    }
+  }
+
+  /**
+   * Update CG profile with form data including images and CG ID
    */
   public async updateCGProfile(updates: ProfileUpdateRequest): Promise<User> {
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+    if (user.type !== 'cg') {
+      throw new Error('User is not a CG');
+    }
+
     const formData = new FormData();
+
+    // CRITICAL: Add CG ID to the form data
+    formData.append('cgId', user.id.toString());
 
     // Add text fields
     Object.entries(updates).forEach(([key, value]) => {
       if (key === 'profileImage' || key === 'galleryImages') return;
-      
+
       if (Array.isArray(value)) {
         value.forEach(item => formData.append(`${key}[]`, item));
       } else if (value !== undefined) {
@@ -48,19 +83,21 @@ class ProfileService {
       });
     }
 
+    console.log('Updating CG profile with FormData containing cgId:', user.id);
+
     const response = await httpService.put<User>(
-      API_ENDPOINTS.USERS.UPDATE_PROFILE,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
+        API_ENDPOINTS.CG.UPDATE_PROFILE,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
     );
 
-    // Update local storage
+    // Update local storage with new user data
     localStorage.setItem('user_data', JSON.stringify(response));
-    
+
     return response;
   }
 
@@ -68,17 +105,29 @@ class ProfileService {
    * Upload profile image only
    */
   public async uploadProfileImage(file: File): Promise<string> {
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+    if (user.type !== 'cg') {
+      throw new Error('User is not a CG');
+    }
+
     const formData = new FormData();
+    formData.append('cgId', user.id.toString()); // Include CG ID
     formData.append('profileImage', file);
 
     const response = await httpService.post<{ profileImageUrl: string }>(
-      `${API_ENDPOINTS.USERS.PROFILE}/upload-image`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
+        `${API_ENDPOINTS.CG.PROFILE}/upload-image`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
     );
 
     return response.profileImageUrl;
@@ -88,19 +137,31 @@ class ProfileService {
    * Upload gallery images
    */
   public async uploadGalleryImages(files: File[]): Promise<string[]> {
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+    if (user.type !== 'cg') {
+      throw new Error('User is not a CG');
+    }
+
     const formData = new FormData();
+    formData.append('cgId', user.id.toString()); // Include CG ID
     files.forEach(file => {
       formData.append('galleryImages', file);
     });
 
     const response = await httpService.post<{ galleryImageUrls: string[] }>(
-      `${API_ENDPOINTS.USERS.PROFILE}/upload-gallery`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
+        `${API_ENDPOINTS.CG.PROFILE}/upload-gallery`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
     );
 
     return response.galleryImageUrls;
@@ -110,16 +171,44 @@ class ProfileService {
    * Delete gallery image
    */
   public async deleteGalleryImage(imageUrl: string): Promise<void> {
-    await httpService.delete(`${API_ENDPOINTS.USERS.PROFILE}/gallery-image`, {
-      data: { imageUrl }
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+    if (user.type !== 'cg') {
+      throw new Error('User is not a CG');
+    }
+
+    await httpService.delete(`${API_ENDPOINTS.CG.PROFILE}/gallery-image`, {
+      data: {
+        cgId: user.id.toString(), // Include CG ID
+        imageUrl
+      }
     });
   }
 
   /**
-   * Get profile data
+   * Get current user's CG profile data (for editing own profile)
    */
-  public async getProfile(): Promise<User> {
-    const response = await httpService.get<User>(API_ENDPOINTS.USERS.PROFILE);
+  public async getMyCGProfile(): Promise<User> {
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+    if (user.type !== 'cg') {
+      throw new Error('User is not a CG');
+    }
+
+    // Include CG ID as query parameter for GET request
+    console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    const response = await httpService.get<User>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    console.log('Own CG profile response:', response);
     return response;
   }
 }

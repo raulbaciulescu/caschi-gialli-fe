@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
   },
   CG: {
     IN_RANGE: '/cg/inRange',
+    PROFILE: '/cg/profile',
   },
   REQUESTS: {
     CREATE: '/requests',
