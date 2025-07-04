@@ -35,7 +35,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Ensure we have location object
       location: userData.location || (userData.lat && userData.lng ? { lat: userData.lat, lng: userData.lng } : undefined),
       // Normalize type field (backend returns 'customer', frontend expects 'client')
-      type: userData.type === 'customer' ? 'client' : userData.type
+      type: userData.type === 'customer' ? 'client' : userData.type,
+      // Ensure profile image is available
+      profileImage: userData.profileImageUrl || userData.profileImage
     };
   };
 
