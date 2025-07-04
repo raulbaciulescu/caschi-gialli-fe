@@ -44,7 +44,6 @@ class ProfileService {
       };
       
       return normalizedResponse;
-      return response;
     } catch (error) {
       console.error('Failed to get CG public profile:', error);
       throw new Error('Failed to get CG profile');

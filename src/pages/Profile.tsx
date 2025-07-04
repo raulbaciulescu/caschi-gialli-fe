@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useService } from '../contexts/ServiceContext';
-import { profileService, CGProfileResponse } from '../services/profile.service';
+import { profileService } from '../services/profile.service';
 import { useApi } from '../hooks/useApi';
 import Map from '../components/Map';
 import {
@@ -11,6 +11,19 @@ import {
   MessageSquare, Share2, ExternalLink, Loader2, AlertCircle
 } from 'lucide-react';
 
+interface CGProfileData {
+  id: number;
+  fullName: string;
+  name?: string;
+  phoneNumber: string;
+  address: string;
+  serviceRadius: number;
+  services: string[];
+  profileImageUrl?: string;
+  galleryImageUrls?: string[];
+  description?: string;
+}
+
 const Profile: React.FC = () => {
   const { user } = useAuth();
   const { serviceCategories } = useService();
@@ -18,69 +31,45 @@ const Profile: React.FC = () => {
   const { cgId } = useParams(); // For viewing other CG profiles
 
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
-  const [cgProfile, setCgProfile] = useState<CGProfileResponse | null>(null);
+  const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   // API hooks
   const getCGProfileApi = useApi(profileService.getCGPublicProfile);
-  const getOwnCGProfileApi = useApi(profileService.getCGProfileForViewing);
 
   // Determine if viewing own profile or another CG's profile
   useEffect(() => {
+    console.log('Profile useEffect triggered:', { cgId, user });
+    
     if (cgId && user) {
       // Viewing another CG's profile
-      setIsOwnProfile(cgId === user.id);
+      const isOwn = cgId === user.id.toString();
+      setIsOwnProfile(isOwn);
+      console.log('Loading CG profile for cgId:', cgId, 'isOwn:', isOwn);
       loadCGProfile(cgId);
-    } else if (user && user.type === 'cg') {
+    } else if (user) {
       // Viewing own profile
       setIsOwnProfile(true);
-      loadOwnCGProfile();
+      console.log('Viewing own profile for user type:', user.type);
+      // For own profile, we don't need to load from backend, use user data
+      setCgProfile(null); // Clear any existing CG profile data
     }
   }, [cgId, user]);
 
   const loadCGProfile = async (targetCgId: string) => {
     try {
-      setLoading(true);
       console.log('Loading CG profile for ID:', targetCgId);
       const profile = await getCGProfileApi.execute(targetCgId);
       console.log('CG profile loaded:', profile);
       setCgProfile(profile);
     } catch (error) {
       console.error('Failed to load CG profile:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const loadOwnCGProfile = async () => {
-    try {
-      setLoading(true);
-      // For own profile, we can use the viewing endpoint too
-      const profile = await getCGProfileApi.execute(user!.id);
-      setCgProfile(profile);
-    } catch (error) {
-      console.error('Failed to load own CG profile:', error);
-      // Fallback to user data if backend call fails
-      if (user) {
-        const fallbackProfile: CGProfileResponse = {
-          id: parseInt(user.id) || 0,
-          fullName: user.name,
-          name: user.name,
-          phoneNumber: user.phone || user.phoneNumber || '',
-          address: user.address || '',
-          serviceRadius: user.radius || 10,
-          services: user.services || [],
-          profileImageUrl: user.profileImage || user.profileImageUrl || '',
-          galleryImageUrls: user.galleryImages || [],
-          description: user.description || 'Professional service provider with years of experience.'
-        };
-        setCgProfile(fallbackProfile);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Show loading only when we're fetching CG profile data
+  const isLoading = getCGProfileApi.loading;
+  
   if (!user && !cgProfile) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -144,10 +133,10 @@ const Profile: React.FC = () => {
   const tabs = [
     { id: 'overview', label: 'Overview', count: null },
     { id: 'gallery', label: 'Gallery', count: displayGallery.length },
-    { id: 'reviews', label: 'Reviews', count: mockReviews.length }
+    { id: 'reviews', label: 'Reviews', count: 0 }
   ];
 
-  if (getCGProfileApi.loading || getOwnCGProfileApi.loading || loading) {
+  if (isLoading) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
@@ -158,13 +147,13 @@ const Profile: React.FC = () => {
     );
   }
 
-  if (getCGProfileApi.error || getOwnCGProfileApi.error) {
+  if (getCGProfileApi.error) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
             <p className="text-gray-600 text-lg mb-4">Failed to load profile</p>
-            <p className="text-red-600 mb-4">{getCGProfileApi.error || getOwnCGProfileApi.error}</p>
+            <p className="text-red-600 mb-4">{getCGProfileApi.error}</p>
             <button
                 onClick={() => navigate('/services')}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
@@ -218,7 +207,9 @@ const Profile: React.FC = () => {
                       {user.type === 'cg' && (
                           <div className="flex items-center mt-2">
                             <Calendar className="h-4 w-4 mr-1 text-gray-500" />
-                            <span className="text-sm text-gray-500">Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}</span>
+                            <span className="text-sm text-gray-500">
+                              Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}
+                            </span>
                           </div>
                       )}
                     </div>
@@ -291,7 +282,7 @@ const Profile: React.FC = () => {
                           <div className="flex items-center">
                             <Mail className="h-4 w-4 text-gray-400 mr-3" />
                             <span className="text-gray-700">
-                              {cgProfile ? 'Contact via platform' : (user?.email || 'Email not available')}
+                              {!isOwnProfile ? 'Contact via platform' : (user?.email || 'Email not available')}
                             </span>
                           </div>
                           {displayPhone && (
@@ -431,11 +422,37 @@ const Profile: React.FC = () => {
               {/* Reviews Tab */}
               {activeTab === 'reviews' && (
                   <div className="space-y-6">
-                    <div className="text-center py-12">
-                      <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500">Reviews coming soon</p>
-                      <p className="text-gray-400 text-sm mt-2">This feature will be available in a future update</p>
-                    </div>
+                    {mockReviews.map((review) => (
+                        <div key={review.id} className="border border-gray-200 rounded-lg p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+                                <User className="h-5 w-5 text-white" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-900">{review.clientName}</h4>
+                                <p className="text-sm text-gray-500">{review.service}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star
+                                        key={i}
+                                        className={`h-4 w-4 ${
+                                            i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                                        }`}
+                                    />
+                                ))}
+                              </div>
+                              <span className="text-sm text-gray-500">
+                                {new Date(review.date).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-gray-700">{review.comment}</p>
+                        </div>
+                    ))}
                   </div>
               )}
             </div>
