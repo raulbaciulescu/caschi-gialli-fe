@@ -67,8 +67,8 @@ class MockCGService {
         location: user.location!,
         radius: user.radius || 10,
         description: user.description || `Professional ${(user.services || []).join(', ').toLowerCase()} services.`,
-        rating: 4.2 + Math.random() * 0.6, // Mock rating between 4.2-4.8
-        reviews: Math.floor(Math.random() * 200) + 50, // Mock reviews 50-250
+        rating: 0, // Remove ratings
+        reviews: 0, // Remove reviews
         price: `€${40 + Math.floor(Math.random() * 40)}-${60 + Math.floor(Math.random() * 40)}/hour`,
         photos: [
           'https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg',

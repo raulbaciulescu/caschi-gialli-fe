@@ -191,17 +191,10 @@ const Profile: React.FC = () => {
                         {(user?.type === 'cg' || cgProfile) ? 'Professional Service Provider' : 'Client'}
                       </p>
 
-                      {(user?.type === 'cg' || cgProfile) && (
-                          <div className="flex items-center mt-2 space-x-4">
-                            <div className="flex items-center">
-                              <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                              <span className="ml-1 font-semibold">{averageRating.toFixed(1)}</span>
-                              <span className="ml-1 text-gray-500">({mockReviews.length} reviews)</span>
-                            </div>
-                            <div className="flex items-center text-gray-500">
-                              <Calendar className="h-4 w-4 mr-1" />
-                              <span className="text-sm">Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}</span>
-                            </div>
+                      {user.type === 'cg' && (
+                          <div className="flex items-center mt-2">
+                            <Calendar className="h-4 w-4 mr-1 text-gray-500" />
+                            <span className="text-sm text-gray-500">Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}</span>
                           </div>
                       )}
                     </div>
@@ -358,19 +351,12 @@ const Profile: React.FC = () => {
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
-                                <span className="text-gray-600">Total Reviews</span>
-                                <span className="font-semibold">{mockReviews.length}</span>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <span className="text-gray-600">Average Rating</span>
-                                <div className="flex items-center">
-                                  <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                                  <span className="font-semibold">{averageRating.toFixed(1)}</span>
-                                </div>
-                              </div>
-                              <div className="flex justify-between items-center">
                                 <span className="text-gray-600">Response Time</span>
                                 <span className="font-semibold">{"< 2 hours"}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Service Radius</span>
+                                <span className="font-semibold">{displayRadius || 10} km</span>
                               </div>
                             </div>
                           </div>
@@ -414,37 +400,11 @@ const Profile: React.FC = () => {
               {/* Reviews Tab */}
               {activeTab === 'reviews' && (
                   <div className="space-y-6">
-                    {mockReviews.map((review) => (
-                        <div key={review.id} className="border border-gray-200 rounded-lg p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
-                                <User className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <h4 className="font-semibold text-gray-900">{review.clientName}</h4>
-                                <p className="text-sm text-gray-500">{review.service}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        className={`h-4 w-4 ${
-                                            i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                                        }`}
-                                    />
-                                ))}
-                              </div>
-                              <span className="text-sm text-gray-500">
-                          {new Date(review.date).toLocaleDateString()}
-                        </span>
-                            </div>
-                          </div>
-                          <p className="text-gray-700">{review.comment}</p>
-                        </div>
-                    ))}
+                    <div className="text-center py-12">
+                      <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">Reviews coming soon</p>
+                      <p className="text-gray-400 text-sm mt-2">This feature will be available in a future update</p>
+                    </div>
                   </div>
               )}
             </div>

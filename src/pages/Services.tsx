@@ -267,13 +267,6 @@ const Services: React.FC = () => {
                                       <div>
                                         <h3 className="text-xl font-semibold text-gray-900">{offer.name}</h3>
                                         <div className="flex items-center space-x-2 mt-1">
-                                          <div className="flex items-center">
-                                            <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                            <span className="text-sm font-medium text-gray-700 ml-1">{offer.rating.toFixed(1)}</span>
-                                          </div>
-                                          <span className="text-gray-300">•</span>
-                                          <span className="text-sm text-gray-600">{offer.reviews} reviews</span>
-                                          <span className="text-gray-300">•</span>
                                           <span className="text-sm text-blue-600 font-medium">{offer.distance}km away</span>
                                         </div>
                                       </div>

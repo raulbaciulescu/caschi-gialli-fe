@@ -132,8 +132,8 @@ class CGService {
       location: { lat: cg.latitude, lng: cg.longitude },
       radius: cg.serviceRadius, // Keep this for backward compatibility
       description: `Professional ${cg.services.join(', ').toLowerCase()} services. Contact for detailed consultation.`,
-      rating: 4.2 + Math.random() * 0.6, // Mock rating 4.2-4.8
-      reviews: Math.floor(Math.random() * 200) + 50, // Mock reviews 50-250
+      rating: 0, // Remove ratings
+      reviews: 0, // Remove reviews
       price: `€${40 + Math.floor(Math.random() * 40)}-${60 + Math.floor(Math.random() * 40)}/hour`,
       photos: [
         'https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg',
