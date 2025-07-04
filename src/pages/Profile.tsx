@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useChat } from '../contexts/ChatContext';
 import { useService } from '../contexts/ServiceContext';
 import { profileService } from '../services/profile.service';
 import { useApi } from '../hooks/useApi';
@@ -26,6 +27,7 @@ interface CGProfileData {
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
+  const { createChat } = useChat();
   const { serviceCategories } = useService();
   const navigate = useNavigate();
   const { cgId } = useParams(); // For viewing other CG profiles
@@ -67,6 +69,18 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleContactCG = async () => {
+    if (!user || !cgProfile) return;
+
+    try {
+      await createChat([user.id, cgProfile.id.toString()], [user.name, cgProfile.fullName]);
+      navigate('/chat');
+    } catch (error) {
+      console.error('Failed to create chat:', error);
+      alert('Failed to start conversation. Please try again.');
+    }
+  };
+
   // Show loading only when we're fetching CG profile data
   const isLoading = getCGProfileApi.loading;
   
@@ -96,44 +110,17 @@ const Profile: React.FC = () => {
   const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || []);
   const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : user?.profileImage;
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
+  const displayEmail = cgProfile ? 'Contact via platform' : user?.email;
 
   // Get location data - prioritize CG profile data, then user data
   const displayLocation = cgProfile ? 
     (user?.location || { lat: 41.9028, lng: 12.4964 }) : // For now, use user location as backend doesn't return coordinates
     user?.location;
-  const mockReviews = [
-    {
-      id: 1,
-      clientName: "Marco Rossi",
-      rating: 5,
-      comment: "Excellent work! Very professional and completed the job on time.",
-      date: "2024-01-15",
-      service: "Plumbing"
-    },
-    {
-      id: 2,
-      clientName: "Anna Bianchi",
-      rating: 5,
-      comment: "Great attention to detail and fair pricing. Highly recommended!",
-      date: "2024-01-10",
-      service: "Electrical"
-    },
-    {
-      id: 3,
-      clientName: "Giuseppe Verde",
-      rating: 4,
-      comment: "Good work overall, arrived on time and cleaned up after the job.",
-      date: "2024-01-05",
-      service: "Carpentry"
-    }
-  ];
-
-  const averageRating = mockReviews.reduce((acc, review) => acc + review.rating, 0) / mockReviews.length;
 
   const tabs = [
     { id: 'overview', label: 'Overview', count: null },
     { id: 'gallery', label: 'Gallery', count: displayGallery.length },
-    { id: 'reviews', label: 'Reviews', count: 0 }
+    { id: 'reviews', label: 'Reviews', count: null, disabled: true }
   ];
 
   if (isLoading) {
@@ -225,7 +212,10 @@ const Profile: React.FC = () => {
                           </button>
                       )}
                       {(user?.type === 'cg' || cgProfile) && !isOwnProfile && (
-                          <button className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                          <button 
+                              onClick={handleContactCG}
+                              className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                          >
                             <MessageSquare className="h-4 w-4 mr-2" />
                             Contact
                           </button>
@@ -245,7 +235,11 @@ const Profile: React.FC = () => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
+                        disabled={tab.disabled}
                         className={`py-4 px-6 border-b-2 font-medium text-sm transition-all duration-200 ${
+                            tab.disabled 
+                                ? 'border-transparent text-gray-400 cursor-not-allowed'
+                                : 
                             activeTab === tab.id
                                 ? 'border-yellow-500 text-yellow-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -254,12 +248,18 @@ const Profile: React.FC = () => {
                       {tab.label}
                       {tab.count !== null && (
                           <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
+                              tab.disabled
+                                  ? 'bg-gray-100 text-gray-400'
+                                  :
                               activeTab === tab.id
                                   ? 'bg-yellow-100 text-yellow-800'
                                   : 'bg-gray-100 text-gray-600'
                           }`}>
                       {tab.count}
                     </span>
+                      )}
+                      {tab.disabled && (
+                          <span className="ml-2 text-xs text-gray-400">(Coming Soon)</span>
                       )}
                     </button>
                 ))}
@@ -282,7 +282,7 @@ const Profile: React.FC = () => {
                           <div className="flex items-center">
                             <Mail className="h-4 w-4 text-gray-400 mr-3" />
                             <span className="text-gray-700">
-                              {!isOwnProfile ? 'Contact via platform' : (user?.email || 'Email not available')}
+                              {displayEmail || 'Email not available'}
                             </span>
                           </div>
                           {displayPhone && (
@@ -421,38 +421,12 @@ const Profile: React.FC = () => {
 
               {/* Reviews Tab */}
               {activeTab === 'reviews' && (
-                  <div className="space-y-6">
-                    {mockReviews.map((review) => (
-                        <div key={review.id} className="border border-gray-200 rounded-lg p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
-                                <User className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <h4 className="font-semibold text-gray-900">{review.clientName}</h4>
-                                <p className="text-sm text-gray-500">{review.service}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        className={`h-4 w-4 ${
-                                            i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                                        }`}
-                                    />
-                                ))}
-                              </div>
-                              <span className="text-sm text-gray-500">
-                                {new Date(review.date).toLocaleDateString()}
-                              </span>
-                            </div>
-                          </div>
-                          <p className="text-gray-700">{review.comment}</p>
-                        </div>
-                    ))}
+                  <div className="text-center py-12">
+                    <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">Reviews Feature Coming Soon</p>
+                    <p className="text-gray-400 text-sm mt-2">
+                      This feature will be available in future updates
+                    </p>
                   </div>
               )}
             </div>
