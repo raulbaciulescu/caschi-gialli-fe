@@ -157,25 +157,11 @@ const Profile: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Profile Header */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
-            {/* Cover Image */}
-            <div className="h-48 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 relative">
-              <div className="absolute inset-0 bg-pattern opacity-10"></div>
-              {isOwnProfile && user?.type === 'cg' && (
-                  <button
-                      onClick={() => navigate('/edit-profile')}
-                      className="absolute top-4 right-4 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-700 px-4 py-2 rounded-lg transition-all duration-200 flex items-center shadow-lg"
-                  >
-                    <Edit3 className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </button>
-              )}
-            </div>
-
             {/* Profile Info */}
-            <div className="relative px-6 pb-6">
+            <div className="px-6 py-6">
               <div className="flex flex-col md:flex-row md:items-end md:space-x-6">
                 {/* Profile Image */}
-                <div className="relative -mt-16 mb-4 md:mb-0">
+                <div className="relative mb-4 md:mb-0">
                   <div className="w-32 h-32 rounded-full overflow-hidden bg-white border-4 border-white shadow-xl">
                     {displayProfileImage ? (
                         <img
@@ -221,10 +207,15 @@ const Profile: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-3 mt-4 md:mt-0">
-                      <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                        <Share2 className="h-4 w-4 mr-2" />
-                        Share
-                      </button>
+                      {isOwnProfile && user?.type === 'cg' && (
+                          <button
+                              onClick={() => navigate('/edit-profile')}
+                              className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                          >
+                            <Edit3 className="h-4 w-4 mr-2" />
+                            Edit Profile
+                          </button>
+                      )}
                       {(user?.type === 'cg' || cgProfile) && !isOwnProfile && (
                           <button className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
                             <MessageSquare className="h-4 w-4 mr-2" />
