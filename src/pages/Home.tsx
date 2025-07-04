@@ -22,11 +22,6 @@ const Home: React.FC = () => {
       description: 'Chat directly with service providers to discuss your needs'
     },
     {
-      icon: Star,
-      title: 'Verified Reviews',
-      description: 'Read reviews from real customers to make informed decisions'
-    },
-    {
       icon: Shield,
       title: 'Secure Platform',
       description: 'Safe and secure platform for all your service needs'
@@ -150,26 +145,6 @@ const Home: React.FC = () => {
                     <span className="text-sm font-medium text-gray-900">{category.name}</span>
                   </Link>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="py-20 bg-gray-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div className="transform hover:scale-105 transition-all duration-300">
-                <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent">1,000+</div>
-                <div className="text-xl text-gray-300">Active Caschi Gialli</div>
-              </div>
-              <div className="transform hover:scale-105 transition-all duration-300">
-                <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent">5,000+</div>
-                <div className="text-xl text-gray-300">Completed Projects</div>
-              </div>
-              <div className="transform hover:scale-105 transition-all duration-300">
-                <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent">4.8★</div>
-                <div className="text-xl text-gray-300">Average Rating</div>
-              </div>
             </div>
           </div>
         </section>
