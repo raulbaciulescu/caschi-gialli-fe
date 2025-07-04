@@ -96,8 +96,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           >
                             <LogOut className="h-4 w-4 mr-2" />
                             Logout
-                          </button>
-                        </div>
+                      <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
+                        {(user.profileImageUrl || user.profileImage) ? (
+                          <img
+                            src={user.profileImageUrl || user.profileImage}
+                            alt={user.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <User className="h-4 w-4 text-white" />
+                        )}
                       </div>
                     </div>
                 ) : (
