@@ -234,7 +234,7 @@ const EditProfile: React.FC = () => {
                         maxFiles={1}
                         maxSizeMB={5}
                         loading={updateProfileApi.loading}
-                        className="h-32"
+                        className="h-32 min-h-32"
                     >
                       <div className="flex flex-col items-center justify-center h-full">
                         <Camera className="h-8 w-8 text-yellow-600 mb-2" />

@@ -20,9 +20,11 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
   const [cgProfile, setCgProfile] = useState<CGProfileResponse | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // API hooks
   const getCGProfileApi = useApi(profileService.getCGPublicProfile);
+  const getOwnCGProfileApi = useApi(profileService.getCGProfileForViewing);
 
   // Determine if viewing own profile or another CG's profile
   useEffect(() => {
@@ -30,9 +32,10 @@ const Profile: React.FC = () => {
       // Viewing another CG's profile
       setIsOwnProfile(cgId === user.id);
       loadCGProfile(cgId);
-    } else if (user) {
+    } else if (user && user.type === 'cg') {
       // Viewing own profile
       setIsOwnProfile(true);
+      loadOwnCGProfile();
     }
   }, [cgId, user]);
 
@@ -47,6 +50,19 @@ const Profile: React.FC = () => {
     }
   };
 
+  const loadOwnCGProfile = async () => {
+    try {
+      setLoading(true);
+      console.log('Loading own CG profile...');
+      const profile = await getOwnCGProfileApi.execute();
+      console.log('Own CG profile loaded:', profile);
+      setCgProfile(profile);
+    } catch (error) {
+      console.error('Failed to load own CG profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   if (!user && !cgProfile) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -65,15 +81,14 @@ const Profile: React.FC = () => {
   }
 
   // Use CG profile data if viewing another CG, otherwise use current user data
-  const displayProfile = cgProfile || user;
-  const displayName = cgProfile ? cgProfile.fullName : user?.name;
+  const displayName = cgProfile ? cgProfile.name || cgProfile.fullName : user?.name;
   const displayPhone = cgProfile ? cgProfile.phoneNumber : (user?.phone || user?.phoneNumber);
   const displayAddress = cgProfile ? cgProfile.address : user?.address;
   const displayServices = cgProfile ? cgProfile.services : user?.services;
   const displayRadius = cgProfile ? cgProfile.serviceRadius : user?.radius;
-  const displayGallery = cgProfile ? cgProfile.galleryImageUrls : (user?.galleryImages || []);
+  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || []);
   const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : user?.profileImage;
-  const displayDescription = user?.description || 'Professional service provider with years of experience.';
+  const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
 
   const mockReviews = [
     {
@@ -110,7 +125,7 @@ const Profile: React.FC = () => {
     { id: 'reviews', label: 'Reviews', count: mockReviews.length }
   ];
 
-  if (getCGProfileApi.loading) {
+  if (getCGProfileApi.loading || getOwnCGProfileApi.loading || loading) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
@@ -121,13 +136,13 @@ const Profile: React.FC = () => {
     );
   }
 
-  if (getCGProfileApi.error) {
+  if (getCGProfileApi.error || getOwnCGProfileApi.error) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
             <p className="text-gray-600 text-lg mb-4">Failed to load profile</p>
-            <p className="text-red-600 mb-4">{getCGProfileApi.error}</p>
+            <p className="text-red-600 mb-4">{getCGProfileApi.error || getOwnCGProfileApi.error}</p>
             <button
                 onClick={() => navigate('/services')}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"

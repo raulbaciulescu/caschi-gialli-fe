@@ -183,7 +183,7 @@ class ProfileService {
   }
 
   /**
-   * Get current user's CG profile data (for editing own profile)
+   * Get current user's CG profile data (for editing own profile) 
    */
   public async getMyCGProfile(): Promise<User> {
     // Get current user data to extract CG ID
@@ -198,6 +198,25 @@ class ProfileService {
     console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
     const response = await httpService.get<User>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
     console.log('Own CG profile response:', response);
+    return response;
+  }
+
+  /**
+   * Get CG profile data for viewing (returns backend format)
+   */
+  public async getCGProfileForViewing(): Promise<CGProfileResponse> {
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+
+    // Include CG ID as query parameter for GET request
+    console.log('Making GET request for profile viewing to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    console.log('CG profile for viewing response:', response);
     return response;
   }
 }

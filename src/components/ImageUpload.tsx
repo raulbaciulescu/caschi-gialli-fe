@@ -173,8 +173,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         )}
       </div>
 
-      {/* Preview Grid */}
-      {previews.length > 0 && (
+      {/* Preview Grid - Only show for multiple file uploads */}
+      {previews.length > 0 && multiple && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {previews.map((preview, index) => (
             <div key={index} className="relative group">
