@@ -28,27 +28,18 @@ const Profile: React.FC = () => {
 
   // Determine if viewing own profile or another CG's profile
   useEffect(() => {
-    console.log('Profile useEffect - cgId:', cgId, 'user:', user);
-    
     if (cgId && user) {
       // Viewing another CG's profile
       setIsOwnProfile(cgId === user.id);
-      console.log('Loading other CG profile for ID:', cgId);
       loadCGProfile(cgId);
     } else if (user && user.type === 'cg') {
       // Viewing own profile
       setIsOwnProfile(true);
-      console.log('Loading own CG profile for user ID:', user.id);
       loadOwnCGProfile();
     }
   }, [cgId, user]);
 
   const loadCGProfile = async (targetCgId: string) => {
-    if (!targetCgId || targetCgId === 'undefined') {
-      console.error('Invalid CG ID provided:', targetCgId);
-      return;
-    }
-    
     try {
       console.log('Loading CG profile for ID:', targetCgId);
       const profile = await getCGProfileApi.execute(targetCgId);
@@ -60,16 +51,9 @@ const Profile: React.FC = () => {
   };
 
   const loadOwnCGProfile = async () => {
-    if (!user || !user.id) {
-      console.error('No user or user ID available');
-      return;
-    }
-    
     try {
       setLoading(true);
-      console.log('Loading own CG profile for user ID:', user.id);
       const profile = await getOwnCGProfileApi.execute();
-      console.log('Own CG profile loaded:', profile);
       setCgProfile(profile);
     } catch (error) {
       console.error('Failed to load own CG profile:', error);

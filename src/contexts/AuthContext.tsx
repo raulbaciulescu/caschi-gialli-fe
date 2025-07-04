@@ -52,16 +52,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (userData) {
           setUser(normalizeUser(userData));
           setIsAuthenticated(true);
-          console.log('Auth initialized with user:', userData);
         } else {
           // Token exists but no user data - clear everything
-          console.warn('Token exists but no user data found - clearing auth');
           await authService.logout();
           setUser(null);
           setIsAuthenticated(false);
         }
       } else {
-        console.log('No valid authentication found');
         setUser(null);
         setIsAuthenticated(false);
       }

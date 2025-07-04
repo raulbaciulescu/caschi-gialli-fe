@@ -25,8 +25,6 @@ class HttpService {
       (config) => {
         if (this.token) {
           config.headers.Authorization = this.token; // Token already includes "Bearer "
-        } else {
-          console.warn('No token available for request to:', config.url);
         }
         return config;
       },
@@ -39,7 +37,6 @@ class HttpService {
       async (error) => {
         // Handle 401 errors (unauthorized)
         if (error.response?.status === 401) {
-          console.warn('401 Unauthorized - clearing token and redirecting');
           this.clearToken();
           // Don't redirect automatically, let the app handle it
         }
@@ -82,7 +79,6 @@ class HttpService {
     this.token = null;
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_data');
-    console.log('Token and user data cleared');
   }
 
   // HTTP Methods

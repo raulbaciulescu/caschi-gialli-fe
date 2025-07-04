@@ -134,33 +134,7 @@ class AuthService {
   public isAuthenticated(): boolean {
     const token = localStorage.getItem('auth_token');
     const userData = localStorage.getItem('user_data');
-    const isValid = !!(token && userData);
-    
-    if (!isValid) {
-      console.warn('Authentication check failed:', { 
-        hasToken: !!token, 
-        hasUserData: !!userData 
-      });
-    }
-    
-    return isValid;
-  }
-
-  /**
-   * Get current user ID safely
-   */
-  public getCurrentUserId(): string | null {
-    try {
-      const userData = this.getUserFromStorage();
-      if (userData && userData.id) {
-        return userData.id.toString();
-      }
-      console.warn('No user ID found in storage');
-      return null;
-    } catch (error) {
-      console.error('Failed to get current user ID:', error);
-      return null;
-    }
+    return !!(token && userData);
   }
 }
 
