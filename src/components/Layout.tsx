@@ -77,8 +77,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       </button>
                       <div className="relative group">
                         <button className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 transition-colors">
-                          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <User className="h-4 w-4 text-white" />
+                          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
+                            {(user.profileImageUrl || user.profileImage) ? (
+                              <img
+                                src={user.profileImageUrl || user.profileImage}
+                                alt={user.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <User className="h-4 w-4 text-white" />
+                            )}
                           </div>
                           <span className="hidden md:block">{user?.name}</span>
                         </button>
@@ -98,17 +106,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             Logout
                           </button>
                         </div>
-                      </div>
-                      <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
-                        {(user.profileImageUrl || user.profileImage) ? (
-                          <img
-                            src={user.profileImageUrl || user.profileImage}
-                            alt={user.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <User className="h-4 w-4 text-white" />
-                        )}
                       </div>
                     </div>
                 ) : (
