@@ -211,7 +211,7 @@ const CGDashboard: React.FC = () => {
                                         <div className="flex items-start justify-between mb-3">
                                           <div className="flex-1">
                                             <div className="flex items-center space-x-3 mb-2">
-                                              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                                              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
                                                 <User className="h-5 w-5 text-white" />
                                               </div>
                                               <div>
@@ -281,7 +281,7 @@ const CGDashboard: React.FC = () => {
                                     <div key={request.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all duration-200 hover:shadow-md">
                                       <div className="flex items-start justify-between mb-3">
                                         <div className="flex items-center space-x-3">
-                                          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                                          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
                                             <User className="h-5 w-5 text-white" />
                                           </div>
                                           <div>
@@ -328,7 +328,7 @@ const CGDashboard: React.FC = () => {
                                     <div key={request.id} className="border border-gray-200 rounded-lg p-4 bg-green-50">
                                       <div className="flex items-start justify-between mb-3">
                                         <div className="flex items-center space-x-3">
-                                          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                                          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center overflow-hidden">
                                             <CheckCircle className="h-5 w-5 text-white" />
                                           </div>
                                           <div>

@@ -260,7 +260,8 @@ const Services: React.FC = () => {
                                 <div className="p-6">
                                   <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center space-x-4">
-                                      <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
+                                      <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                                        {/* Profile image would come from offer data if available */}
                                         <HardHat className="h-8 w-8 text-white" />
                                       </div>
                                       <div>

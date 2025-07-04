@@ -116,6 +116,7 @@ export interface User {
   phoneNumber?: string; // API response field for phone number
   avatar?: string;
   profileImage?: string; // New field for profile image
+  profileImageUrl?: string; // Backend response field for profile image
   galleryImages?: string[]; // New field for gallery images
   services?: string[];
   radius?: number;
