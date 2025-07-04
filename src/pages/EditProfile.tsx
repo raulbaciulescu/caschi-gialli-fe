@@ -28,7 +28,8 @@ const EditProfile: React.FC = () => {
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
-  const [existingGallery, setExistingGallery] = useState<string[]>([]);
+  const [currentGallery, setCurrentGallery] = useState<string[]>([]);
+  const [currentProfileImage, setCurrentProfileImage] = useState<string>('');
   const [profileImagePreview, setProfileImagePreview] = useState<string>('');
 
   const updateProfileApi = useApi(profileService.updateCGProfile);
@@ -67,8 +68,9 @@ const EditProfile: React.FC = () => {
         radius: cgProfile.radius || 10
       });
 
-      setExistingGallery(cgProfile.galleryImages || []);
-      setProfileImagePreview(cgProfile.profileImage || '');
+      setCurrentGallery(cgProfile.galleryImageUrls || []);
+      setCurrentProfileImage(cgProfile.profileImageUrl || '');
+      setProfileImagePreview(cgProfile.profileImageUrl || '');
 
       console.log('CG profile loaded:', cgProfile);
     } catch (error) {
@@ -82,7 +84,8 @@ const EditProfile: React.FC = () => {
         services: user.services || [],
         radius: user.radius || 10
       });
-      setExistingGallery(user.galleryImages || []);
+      setCurrentGallery(user.galleryImages || []);
+      setCurrentProfileImage(user.profileImage || '');
       setProfileImagePreview(user.profileImage || '');
     }
   };
@@ -125,7 +128,7 @@ const EditProfile: React.FC = () => {
   const handleDeleteExistingImage = async (imageUrl: string) => {
     try {
       await deleteImageApi.execute(imageUrl);
-      setExistingGallery(prev => prev.filter(url => url !== imageUrl));
+      setCurrentGallery(prev => prev.filter(url => url !== imageUrl));
     } catch (error) {
       console.error('Failed to delete image:', error);
     }
@@ -212,9 +215,9 @@ const EditProfile: React.FC = () => {
                   {/* Current Profile Image */}
                   <div className="flex-shrink-0">
                     <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg">
-                      {profileImagePreview ? (
+                      {(profileImagePreview || currentProfileImage) ? (
                           <img
-                              src={profileImagePreview}
+                              src={profileImagePreview || currentProfileImage}
                               alt="Profile"
                               className="w-full h-full object-cover"
                           />
@@ -399,12 +402,12 @@ const EditProfile: React.FC = () => {
               </div>
 
               <div className="p-6 space-y-6">
-                {/* Existing Images */}
-                {existingGallery.length > 0 && (
+                {/* Current Gallery Images */}
+                {currentGallery.length > 0 && (
                     <div>
                       <h3 className="text-sm font-medium text-gray-700 mb-3">Current Gallery</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {existingGallery.map((imageUrl, index) => (
+                        {currentGallery.map((imageUrl, index) => (
                             <div key={index} className="relative group">
                               <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
                                 <img
@@ -429,7 +432,9 @@ const EditProfile: React.FC = () => {
 
                 {/* Upload New Images */}
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">Add New Images</h3>
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">
+                    {currentGallery.length > 0 ? 'Add More Images' : 'Upload Work Photos'}
+                  </h3>
                   <ImageUpload
                       onImageSelect={handleGalleryImagesSelect}
                       multiple={true}
@@ -439,7 +444,9 @@ const EditProfile: React.FC = () => {
                   >
                     <div className="flex flex-col items-center">
                       <ImageIcon className="h-8 w-8 text-yellow-600 mb-2" />
-                      <p className="text-sm font-medium text-gray-900">Upload Work Photos</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {currentGallery.length > 0 ? 'Add More Photos' : 'Upload Work Photos'}
+                      </p>
                       <p className="text-xs text-gray-500">Show your best projects and craftsmanship</p>
                     </div>
                   </ImageUpload>

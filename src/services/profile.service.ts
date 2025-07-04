@@ -29,6 +29,10 @@ class ProfileService {
    * Get CG public profile data (for viewing other CG profiles)
    */
   public async getCGPublicProfile(cgId: string): Promise<CGProfileResponse> {
+    if (!cgId || cgId === 'undefined') {
+      throw new Error('Invalid CG ID provided');
+    }
+    
     try {
       console.log('Making GET request to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${cgId}`);
       const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${cgId}`);
@@ -44,8 +48,6 @@ class ProfileService {
    * Update CG profile with form data including images and CG ID
    */
   public async updateCGProfile(updates: ProfileUpdateRequest): Promise<User> {
-    updates.services
-
     // Get current user data to extract CG ID
     const userData = localStorage.getItem('user_data');
     if (!userData) {
@@ -53,6 +55,10 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
+    
+    if (!user.id) {
+      throw new Error('User ID not found');
+    }
 
     const formData = new FormData();
 
@@ -173,6 +179,10 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
+    
+    if (!user.id) {
+      throw new Error('User ID not found');
+    }
 
     await httpService.delete(`${API_ENDPOINTS.CG.PROFILE}/gallery-image`, {
       data: {
@@ -193,6 +203,10 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
+    
+    if (!user.id) {
+      throw new Error('User ID not found');
+    }
 
     // Include CG ID as query parameter for GET request
     console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
@@ -212,6 +226,10 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
+    
+    if (!user.id) {
+      throw new Error('User ID not found');
+    }
 
     // Include CG ID as query parameter for GET request
     console.log('Making GET request for profile viewing to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
