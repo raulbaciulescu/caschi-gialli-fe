@@ -30,6 +30,7 @@ function App() {
                   <Route path="/services" element={<Services />} />
                   <Route path="/chat" element={<Chat />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/profile/:cgId" element={<Profile />} />
                   <Route path="/edit-profile" element={<EditProfile />} />
                 </Routes>
               </Layout>
