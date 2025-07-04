@@ -117,7 +117,9 @@ export interface User {
   avatar?: string;
   profileImage?: string; // New field for profile image
   profileImageUrl?: string; // Backend response field for profile image
+  profileImageUrl?: string; // Backend response field for profile image
   galleryImages?: string[]; // New field for gallery images
+  galleryImageUrls?: string[]; // Backend response field for gallery images
   services?: string[];
   radius?: number;
   description?: string;

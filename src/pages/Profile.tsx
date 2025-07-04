@@ -41,22 +41,42 @@ const Profile: React.FC = () => {
 
   const loadCGProfile = async (targetCgId: string) => {
     try {
+      setLoading(true);
       console.log('Loading CG profile for ID:', targetCgId);
       const profile = await getCGProfileApi.execute(targetCgId);
       console.log('CG profile loaded:', profile);
       setCgProfile(profile);
     } catch (error) {
       console.error('Failed to load CG profile:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadOwnCGProfile = async () => {
     try {
       setLoading(true);
-      const profile = await getOwnCGProfileApi.execute();
+      // For own profile, we can use the viewing endpoint too
+      const profile = await getCGProfileApi.execute(user!.id);
       setCgProfile(profile);
     } catch (error) {
       console.error('Failed to load own CG profile:', error);
+      // Fallback to user data if backend call fails
+      if (user) {
+        const fallbackProfile: CGProfileResponse = {
+          id: parseInt(user.id) || 0,
+          fullName: user.name,
+          name: user.name,
+          phoneNumber: user.phone || user.phoneNumber || '',
+          address: user.address || '',
+          serviceRadius: user.radius || 10,
+          services: user.services || [],
+          profileImageUrl: user.profileImage || user.profileImageUrl || '',
+          galleryImageUrls: user.galleryImages || [],
+          description: user.description || 'Professional service provider with years of experience.'
+        };
+        setCgProfile(fallbackProfile);
+      }
     } finally {
       setLoading(false);
     }
@@ -88,6 +108,10 @@ const Profile: React.FC = () => {
   const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : user?.profileImage;
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
 
+  // Get location data - prioritize CG profile data, then user data
+  const displayLocation = cgProfile ? 
+    (user?.location || { lat: 41.9028, lng: 12.4964 }) : // For now, use user location as backend doesn't return coordinates
+    user?.location;
   const mockReviews = [
     {
       id: 1,
@@ -266,12 +290,19 @@ const Profile: React.FC = () => {
                         <div className="space-y-3">
                           <div className="flex items-center">
                             <Mail className="h-4 w-4 text-gray-400 mr-3" />
-                            <span className="text-gray-700">{user?.email || 'Email not available'}</span>
+                            <span className="text-gray-700">
+                              {cgProfile ? 'Contact via platform' : (user?.email || 'Email not available')}
+                            </span>
                           </div>
                           {displayPhone && (
                               <div className="flex items-center">
                                 <Phone className="h-4 w-4 text-gray-400 mr-3" />
-                                <span className="text-gray-700">{displayPhone}</span>
+                                <a 
+                                  href={`tel:${displayPhone}`}
+                                  className="text-yellow-600 hover:text-yellow-700 transition-colors"
+                                >
+                                  {displayPhone}
+                                </a>
                               </div>
                           )}
                           {displayAddress && (
@@ -318,7 +349,7 @@ const Profile: React.FC = () => {
                     {/* Sidebar */}
                     <div className="space-y-6">
                       {/* Service Area Map */}
-                      {(user?.type === 'cg' || cgProfile) && user?.location && (
+                      {(user?.type === 'cg' || cgProfile) && displayLocation && (
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                               <MapPin className="h-5 w-5 mr-2 text-yellow-600" />
@@ -326,10 +357,10 @@ const Profile: React.FC = () => {
                             </h3>
                             <div className="border border-gray-200 rounded-lg overflow-hidden">
                               <Map
-                                  center={[user.location.lat, user.location.lng]}
+                                  center={[displayLocation.lat, displayLocation.lng]}
                                   zoom={11}
                                   markers={[{
-                                    position: [user.location.lat, user.location.lng],
+                                    position: [displayLocation.lat, displayLocation.lng],
                                     type: 'cg',
                                     popup: 'Service Location',
                                     radius: displayRadius || 10

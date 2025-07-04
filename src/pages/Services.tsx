@@ -122,6 +122,7 @@ const Services: React.FC = () => {
   };
 
   const handleViewProfile = (cgId: string) => {
+    // Navigate to profile page with CG ID
     navigate(`/profile/${cgId}`);
   };
 

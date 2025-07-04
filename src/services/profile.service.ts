@@ -22,6 +22,8 @@ export interface CGProfileResponse {
   services: string[];
   profileImageUrl: string;
   galleryImageUrls: string[];
+  description?: string;
+  name?: string; // Alias for fullName
 }
 
 class ProfileService {
@@ -33,6 +35,15 @@ class ProfileService {
       console.log('Making GET request to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${cgId}`);
       const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${cgId}`);
       console.log('CG public profile response:', response);
+      
+      // Normalize the response to ensure we have all needed fields
+      const normalizedResponse = {
+        ...response,
+        name: response.fullName || response.name,
+        description: response.description || `Professional ${response.services?.join(', ').toLowerCase() || ''} services.`
+      };
+      
+      return normalizedResponse;
       return response;
     } catch (error) {
       console.error('Failed to get CG public profile:', error);
