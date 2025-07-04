@@ -373,10 +373,6 @@ const Profile: React.FC = () => {
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
-                                <span className="text-gray-600">Response Time</span>
-                                <span className="font-semibold">{"< 2 hours"}</span>
-                              </div>
-                              <div className="flex justify-between items-center">
                                 <span className="text-gray-600">Service Radius</span>
                                 <span className="font-semibold">{displayRadius || 10} km</span>
                               </div>
