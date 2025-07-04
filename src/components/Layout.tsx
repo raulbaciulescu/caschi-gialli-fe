@@ -99,6 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           </button>
                         </div>
                       </div>
+                    </div>
                 ) : (
                     <div className="flex items-center space-x-2">
                       <Link
@@ -116,8 +117,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </div>
                 )}
               </div>
-                )
-                }
             </div>
           </div>
         </header>
