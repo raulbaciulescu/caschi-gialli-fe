@@ -44,6 +44,8 @@ class ProfileService {
    * Update CG profile with form data including images and CG ID
    */
   public async updateCGProfile(updates: ProfileUpdateRequest): Promise<User> {
+    updates.services
+
     // Get current user data to extract CG ID
     const userData = localStorage.getItem('user_data');
     if (!userData) {
@@ -51,9 +53,6 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
-    if (user.type !== 'cg') {
-      throw new Error('User is not a CG');
-    }
 
     const formData = new FormData();
 
@@ -64,7 +63,9 @@ class ProfileService {
     Object.entries(updates).forEach(([key, value]) => {
       if (key === 'profileImage' || key === 'galleryImages') return;
 
-      if (Array.isArray(value)) {
+      if (key === 'services') {
+        formData.append(key, value);
+      } else if (Array.isArray(value)) {
         value.forEach(item => formData.append(`${key}[]`, item));
       } else if (value !== undefined) {
         formData.append(key, value.toString());
@@ -86,7 +87,7 @@ class ProfileService {
     console.log('Updating CG profile with FormData containing cgId:', user.id);
 
     const response = await httpService.put<User>(
-        API_ENDPOINTS.CG.UPDATE_PROFILE,
+        API_ENDPOINTS.CG.PROFILE,
         formData,
         {
           headers: {
@@ -112,9 +113,6 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
-    if (user.type !== 'cg') {
-      throw new Error('User is not a CG');
-    }
 
     const formData = new FormData();
     formData.append('cgId', user.id.toString()); // Include CG ID
@@ -144,9 +142,6 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
-    if (user.type !== 'cg') {
-      throw new Error('User is not a CG');
-    }
 
     const formData = new FormData();
     formData.append('cgId', user.id.toString()); // Include CG ID
@@ -178,9 +173,6 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
-    if (user.type !== 'cg') {
-      throw new Error('User is not a CG');
-    }
 
     await httpService.delete(`${API_ENDPOINTS.CG.PROFILE}/gallery-image`, {
       data: {
@@ -201,9 +193,6 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
-    if (user.type !== 'cg') {
-      throw new Error('User is not a CG');
-    }
 
     // Include CG ID as query parameter for GET request
     console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);

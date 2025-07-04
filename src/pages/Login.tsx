@@ -6,7 +6,7 @@ import { Mail, Lock, HardHat, AlertCircle, Users, UserCheck } from 'lucide-react
 import { LoginRequest } from '../types/api';
 
 const Login: React.FC = () => {
-  const { loginClient, loginCG, useMockData } = useAuth();
+  const { loginClient, loginCG } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<LoginRequest>({
@@ -67,21 +67,6 @@ const Login: React.FC = () => {
     return activeApi.errors?.[field]?.[0];
   };
 
-  // Mock user suggestions
-  const mockUsers = useMockData ? [
-    { email: 'client1@gmail.com', type: 'client', name: 'Client 1' },
-    { email: 'giulia.bianchi@email.com', type: 'client', name: 'Giulia Bianchi' },
-    { email: 'cg@gmail.com', type: 'cg', name: 'CG Professional' },
-    { email: 'anna.verdi@email.com', type: 'cg', name: 'Anna Verdi (Pulizie)' },
-    { email: 'marco.neri@email.com', type: 'cg', name: 'Marco Neri (Falegname)' },
-    { email: 'sofia.russo@email.com', type: 'cg', name: 'Sofia Russo (IT Support)' }
-  ] : [];
-
-  const fillMockUser = (email: string, type: 'client' | 'cg') => {
-    setFormData({ email, password: 'password123' });
-    setUserType(type);
-  };
-
   return (
       <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
         <div className="absolute inset-0 bg-pattern opacity-10"></div>
@@ -105,35 +90,6 @@ const Login: React.FC = () => {
           </div>
 
           <div className="glass-effect py-8 px-6 shadow-2xl rounded-2xl">
-            {/* Mock Users Quick Login */}
-            {useMockData && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Login (Test Users):</h3>
-                  <div className="space-y-2">
-                    {mockUsers.map((user, index) => (
-                        <button
-                            key={index}
-                            onClick={() => fillMockUser(user.email, user.type as 'client' | 'cg')}
-                            className="w-full text-left px-3 py-2 text-xs bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{user.name}</span>
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                                user.type === 'client' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                        {user.type === 'client' ? 'Client' : 'CG'}
-                      </span>
-                          </div>
-                          <div className="text-gray-500">{user.email}</div>
-                        </button>
-                    ))}
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <p className="text-xs text-gray-500">All test users use password: <code className="bg-gray-100 px-1 rounded">password123</code></p>
-                  </div>
-                </div>
-            )}
-
             {/* User Type Selection */}
             <div className="mb-6">
               <div className="flex rounded-lg bg-gray-100 p-1">

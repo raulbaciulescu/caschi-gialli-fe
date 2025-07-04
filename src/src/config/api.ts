@@ -15,8 +15,8 @@ export const API_ENDPOINTS = {
   },
   CG: {
     IN_RANGE: '/cg/inRange',
-    PROFILE: '/cg/profile', // CG specific profile endpoint
-    UPDATE_PROFILE: '/cg/profile', // CG specific profile update endpoint
+    PROFILE: '/cg/profile',
+    UPDATE_PROFILE: '/cg/profile',
   },
   REQUESTS: {
     CREATE: '/requests',

@@ -7,30 +7,20 @@ class UserService {
    * Update user profile
    */
   public async updateProfile(updates: Partial<User>): Promise<User> {
-    const response = await httpService.retryRequest(
-      () => httpService.put<User>(API_ENDPOINTS.USERS.UPDATE_PROFILE, updates)
-    );
+    const response = await httpService.put<User>(API_ENDPOINTS.USERS.UPDATE_PROFILE, updates);
 
-    if (response.success && response.data) {
-      return response.data;
-    }
+    // Update local storage with new user data
+    localStorage.setItem('user_data', JSON.stringify(response));
 
-    throw new Error(response.message || 'Failed to update profile');
+    return response;
   }
 
   /**
    * Get user profile
    */
   public async getProfile(): Promise<User> {
-    const response = await httpService.retryRequest(
-      () => httpService.get<User>(API_ENDPOINTS.USERS.PROFILE)
-    );
-
-    if (response.success && response.data) {
-      return response.data;
-    }
-
-    throw new Error(response.message || 'Failed to get profile');
+    const response = await httpService.get<User>(API_ENDPOINTS.USERS.PROFILE);
+    return response;
   }
 }
 
