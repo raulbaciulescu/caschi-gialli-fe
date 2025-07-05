@@ -152,6 +152,8 @@ const EditProfile: React.FC = () => {
       // Update local storage with new user data
       localStorage.setItem('user_data', JSON.stringify(updatedUser));
 
+      // Refresh the profile data after successful update
+      await loadCGProfile();
       navigate('/profile');
     } catch (error) {
       console.error('Failed to update profile:', error);

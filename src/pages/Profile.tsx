@@ -61,10 +61,15 @@ const Profile: React.FC = () => {
       setIsOwnProfile(isOwn);
       console.log('Loading CG profile for cgId:', cgId, 'isOwn:', isOwn);
       loadCGProfile(cgId);
+    } else if (user && user.type === 'cg') {
+      // Viewing own CG profile - load from backend
+      setIsOwnProfile(true);
+      console.log('Loading own CG profile from backend for user:', user.id);
+      loadCGProfile(user.id.toString());
     } else if (user) {
       // Viewing own profile
       setIsOwnProfile(true);
-      console.log('Viewing own profile for user type:', user.type);
+      console.log('Viewing own client profile for user type:', user.type);
       // For own profile, we don't need to load from backend, use user data
       setCgProfile(null); // Clear any existing CG profile data
     }
@@ -132,7 +137,7 @@ const Profile: React.FC = () => {
   }
 
   // Use CG profile data if viewing another CG, otherwise use current user data
-  const displayName = cgProfile ? cgProfile.name || cgProfile.fullName : user?.name;
+  const displayName = cgProfile ? (cgProfile.name || cgProfile.fullName) : user?.name;
   const displayPhone = cgProfile ? cgProfile.phoneNumber : (user?.phone || user?.phoneNumber);
   const displayAddress = cgProfile ? cgProfile.address : user?.address;
   const displayServices = cgProfile ? cgProfile.services : user?.services;
@@ -140,7 +145,7 @@ const Profile: React.FC = () => {
   const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || []);
   const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : (user?.profileImage || user?.profileImageUrl);
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
-  const displayEmail = cgProfile ? 'Contact via platform' : user?.email;
+  const displayEmail = !isOwnProfile ? 'Contact via platform' : user?.email;
 
   // Get location data - prioritize CG profile data, then user data
   const displayLocation = cgProfile ? 

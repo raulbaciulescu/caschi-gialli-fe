@@ -204,9 +204,31 @@ class ProfileService {
 
     // Include CG ID as query parameter for GET request
     console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    const response = await httpService.get<User>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
     console.log('Own CG profile response:', response);
-    return response;
+    
+    // Transform backend response to User format
+    const transformedUser: User = {
+      id: user.id, // Keep original user ID
+      email: user.email, // Keep original email
+      name: response.fullName || response.name || user.name,
+      type: user.type,
+      location: user.location, // Keep original location
+      address: response.address || user.address,
+      phone: response.phoneNumber || user.phone,
+      phoneNumber: response.phoneNumber || user.phoneNumber,
+      profileImage: response.profileImageUrl || user.profileImage,
+      profileImageUrl: response.profileImageUrl || user.profileImageUrl,
+      galleryImages: response.galleryImageUrls || user.galleryImages,
+      galleryImageUrls: response.galleryImageUrls || user.galleryImageUrls,
+      services: response.services || user.services,
+      radius: response.serviceRadius || user.radius,
+      description: response.description || user.description,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
+    
+    return transformedUser;
   }
 
   /**
