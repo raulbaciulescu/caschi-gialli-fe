@@ -193,7 +193,7 @@ class ProfileService {
   /**
    * Get current user's CG profile data (for editing own profile) 
    */
-  public async getMyCGProfile(): Promise<User> {
+  public async getMyCGProfile(cgId?: string): Promise<User> {
     // Get current user data to extract CG ID
     const userData = localStorage.getItem('user_data');
     if (!userData) {
@@ -201,10 +201,11 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
+    const targetCgId = cgId || user.id;
 
     // Include CG ID as query parameter for GET request
-    console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${targetCgId}`);
+    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${targetCgId}`);
     console.log('Own CG profile response:', response);
     
     // Transform backend response to User format

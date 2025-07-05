@@ -153,7 +153,9 @@ const EditProfile: React.FC = () => {
       localStorage.setItem('user_data', JSON.stringify(updatedUser));
 
       // Refresh the profile data after successful update
-      await loadCGProfile();
+      if (user?.id) {
+        await loadCGProfile();
+      }
       navigate('/profile');
     } catch (error) {
       console.error('Failed to update profile:', error);
