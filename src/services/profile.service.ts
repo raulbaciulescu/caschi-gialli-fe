@@ -20,8 +20,8 @@ export interface CGProfileResponse {
   address: string;
   serviceRadius: number;
   services: string[];
-  profileImageUrl: string;
-  galleryImageUrls: string[];
+  profileImageUrl?: string;
+  galleryImageUrls?: string[];
   description?: string;
   name?: string; // Alias for fullName
 }

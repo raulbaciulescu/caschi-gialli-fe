@@ -365,41 +365,18 @@ const Services: React.FC = () => {
                                     </div>
                                   </div>
 
-                                  {/* Gallery Images from Backend */}
-                                  {offer.fullGalleryImageUrls && offer.fullGalleryImageUrls.length > 0 && (
+                                  {offer.photos && offer.photos.length > 0 && (
                                       <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <p className="text-sm font-medium text-gray-600 mb-2">Work Gallery</p>
-                                        <div className={`grid gap-2 ${offer.fullGalleryImageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                                          {offer.fullGalleryImageUrls.slice(0, 2).map((imageUrl, index) => (
-                                              <button
+                                        <div className="grid grid-cols-3 gap-2">
+                                          {offer.photos.slice(0, 3).map((photo, index) => (
+                                              <img
                                                   key={index}
-                                                  onClick={() => openGallery(offer.fullGalleryImageUrls!, `${offer.name}'s Work Gallery`, index)}
-                                                  className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                                              >
-                                                <img
-                                                    src={imageUrl}
-                                                    alt={`Work by ${offer.name}`}
-                                                    className="w-full h-24 object-cover"
-                                                    onError={(e) => {
-                                                      e.currentTarget.style.display = 'none';
-                                                    }}
-                                                />
-                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
-                                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white text-xs font-medium">
-                                                    View Gallery
-                                                  </div>
-                                                </div>
-                                              </button>
+                                                  src={photo}
+                                                  alt={`Work by ${offer.name}`}
+                                                  className="w-full h-20 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+                                              />
                                           ))}
                                         </div>
-                                        {offer.fullGalleryImageUrls.length > 2 && (
-                                            <button
-                                                onClick={() => openGallery(offer.fullGalleryImageUrls!, `${offer.name}'s Work Gallery`, 0)}
-                                                className="mt-2 text-sm text-yellow-600 hover:text-yellow-700 font-medium transition-colors"
-                                            >
-                                              View all {offer.fullGalleryImageUrls.length} images
-                                            </button>
-                                        )}
                                       </div>
                                   )}
                                 </div>
@@ -453,14 +430,6 @@ const Services: React.FC = () => {
           </div>
         </div>
 
-        {/* Gallery Modal */}
-        <ImageGalleryModal
-            images={galleryModal.images}
-            isOpen={galleryModal.isOpen}
-            onClose={closeGallery}
-            initialIndex={galleryModal.initialIndex}
-            title={galleryModal.title}
-        />
       </div>
   );
 };

@@ -5,6 +5,9 @@ import { useChat } from '../contexts/ChatContext';
 import { useService } from '../contexts/ServiceContext';
 import { profileService } from '../services/profile.service';
 import { useApi } from '../hooks/useApi';
+import ImageGalleryModal from '../components/ImageGalleryModal';
+import { profileService } from '../services/profile.service';
+import { useApi } from '../hooks/useApi';
 import Map from '../components/Map';
 import {
   User, Mail, Phone, MapPin, HardHat, Ruler, Edit3,
@@ -35,6 +38,17 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
   const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(true);
+  const [galleryModal, setGalleryModal] = useState<{
+    isOpen: boolean;
+    images: string[];
+    title: string;
+    initialIndex: number;
+  }>({
+    isOpen: false,
+    images: [],
+    title: '',
+    initialIndex: 0
+  });
 
   // API hooks
   const getCGProfileApi = useApi(profileService.getCGPublicProfile);
@@ -81,6 +95,24 @@ const Profile: React.FC = () => {
     }
   };
 
+  const openGallery = (images: string[], title: string, initialIndex: number = 0) => {
+    setGalleryModal({
+      isOpen: true,
+      images,
+      title,
+      initialIndex
+    });
+  };
+
+  const closeGallery = () => {
+    setGalleryModal({
+      isOpen: false,
+      images: [],
+      title: '',
+      initialIndex: 0
+    });
+  };
+
   // Show loading only when we're fetching CG profile data
   const isLoading = getCGProfileApi.loading;
   
@@ -108,7 +140,7 @@ const Profile: React.FC = () => {
   const displayServices = cgProfile ? cgProfile.services : user?.services;
   const displayRadius = cgProfile ? cgProfile.serviceRadius : user?.radius;
   const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || []);
-  const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : user?.profileImage;
+  const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : (user?.profileImage || user?.profileImageUrl);
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
   const displayEmail = cgProfile ? 'Contact via platform' : user?.email;
 
@@ -389,13 +421,25 @@ const Profile: React.FC = () => {
                     {displayGallery.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {displayGallery.map((image, index) => (
-                              <div key={index} className="aspect-square rounded-lg overflow-hidden bg-gray-100 hover:shadow-lg transition-shadow duration-200">
+                              <button
+                                  key={index}
+                                  onClick={() => openGallery(displayGallery, `${displayName}'s Work Gallery`, index)}
+                                  className="aspect-square rounded-lg overflow-hidden bg-gray-100 hover:shadow-lg transition-all duration-200 transform hover:scale-105 group relative"
+                              >
                                 <img
                                     src={image}
                                     alt={`Work ${index + 1}`}
-                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
                                 />
-                              </div>
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white text-sm font-medium">
+                                    View Image
+                                  </div>
+                                </div>
+                              </button>
                           ))}
                         </div>
                     ) : (
@@ -428,6 +472,15 @@ const Profile: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Gallery Modal */}
+        <ImageGalleryModal
+            images={galleryModal.images}
+            isOpen={galleryModal.isOpen}
+            onClose={closeGallery}
+            initialIndex={galleryModal.initialIndex}
+            title={galleryModal.title}
+        />
       </div>
   );
 };
