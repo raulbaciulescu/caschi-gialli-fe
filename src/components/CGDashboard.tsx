@@ -343,9 +343,9 @@ const CGDashboard: React.FC = () => {
 
                                       <p className="text-gray-700 text-sm mb-3">{request.description}</p>
 
-                                      <div className="text-sm text-gray-500">
-                                        Completed: {new Date(request.updatedAt).toLocaleDateString()}
-                                      </div>
+                                      {/*<div className="text-sm text-gray-500">*/}
+                                      {/*  Completed: {new Date(request.updatedAt).toLocaleDateString()}*/}
+                                      {/*</div>*/}
                                     </div>
                                 ))
                             )}

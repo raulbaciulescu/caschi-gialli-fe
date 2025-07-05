@@ -28,6 +28,7 @@ const ClientDashboard: React.FC = () => {
   const createRequestApi = useApi(requestsService.createServiceRequest);
   const getUserRequestsApi = useApi(requestsService.getUserRequests);
   const deleteRequestApi = useApi(requestsService.deleteRequest);
+  const completeRequestApi = useApi(requestsService.completeRequest);
 
   // Load user requests on component mount
   useEffect(() => {
@@ -73,6 +74,21 @@ const ClientDashboard: React.FC = () => {
       setUserRequests(prev => prev.filter(req => req.id !== requestId));
     } catch (error) {
       console.error('Failed to delete request:', error);
+    }
+  };
+
+  const handleCompleteRequest = async (requestId: string) => {
+    if (!confirm('Are you sure you want to mark this request as completed?')) return;
+
+    try {
+      await completeRequestApi.execute(requestId);
+      setUserRequests(prev => prev.map(req => 
+        req.id === requestId 
+          ? { ...req, status: 'completed' as const }
+          : req
+      ));
+    } catch (error) {
+      console.error('Failed to complete request:', error);
     }
   };
 
@@ -258,6 +274,25 @@ const ClientDashboard: React.FC = () => {
                                   </button>
                                 </div>
                                 <div className="flex space-x-2">
+                                  {request.status === 'in_progress' && (
+                                      <button
+                                          onClick={() => handleCompleteRequest(request.id)}
+                                          disabled={completeRequestApi.loading}
+                                          className="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded text-sm hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 flex items-center"
+                                      >
+                                        {completeRequestApi.loading ? (
+                                            <>
+                                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                                              Completing...
+                                            </>
+                                        ) : (
+                                            <>
+                                              <CheckCircle className="h-3 w-3 mr-1" />
+                                              Mark Complete
+                                            </>
+                                        )}
+                                      </button>
+                                  )}
                                   {request.status === 'pending' && (
                                       <button
                                           onClick={() => handleDeleteRequest(request.id)}

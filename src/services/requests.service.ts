@@ -66,6 +66,23 @@ class RequestsService {
   }
 
   /**
+   * Complete service request (mark as completed)
+   */
+  public async completeRequest(requestId: string): Promise<ServiceRequestResponse> {
+    try {
+      const response = await httpService.put<ServiceRequestResponse>(
+        `${API_ENDPOINTS.REQUESTS.UPDATE_STATUS}/${requestId}`,
+        { status: 'completed' }
+      );
+      
+      return response;
+    } catch (error) {
+      console.error('Failed to complete service request:', error);
+      throw new Error('Failed to complete service request');
+    }
+  }
+
+  /**
    * Assign CG to a request (admin/system function)
    */
   public async assignCGToRequest(requestId: string, cgId: string): Promise<AssignCGResponse> {
