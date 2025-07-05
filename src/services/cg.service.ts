@@ -22,6 +22,7 @@ export interface CGInRangeResponse {
   serviceRadius: number;
   services: string[];
   profileImageUrl?: string | null;
+  galleryImageUrls?: string[] | null;
 }
 
 // Extended interface for frontend display (with calculated fields)
@@ -36,6 +37,7 @@ export interface CGDisplayData extends CGInRangeResponse {
   photos: string[]; // mock data
   distance: number; // calculated distance
   fullProfileImageUrl?: string; // Full URL for profile image
+  fullGalleryImageUrls?: string[]; // Full URLs for gallery images
 }
 
 class CGService {
@@ -133,6 +135,11 @@ class CGService {
     const fullProfileImageUrl = cg.profileImageUrl 
       ? `${cg.profileImageUrl}`
       : undefined;
+
+    // Construct full gallery image URLs if available
+    const fullGalleryImageUrls = cg.galleryImageUrls && cg.galleryImageUrls.length > 0
+      ? cg.galleryImageUrls.map(url => `${API_CONFIG.BASE_URL}/${url}`)
+      : [];
     return {
       ...cg,
       name: cg.fullName || cg.email, // Use email as fallback if fullName is null
@@ -148,6 +155,8 @@ class CGService {
       ],
       distance: Math.round(distance * 10) / 10, // Round to 1 decimal
       fullProfileImageUrl // Full URL for profile image
+      fullProfileImageUrl, // Full URL for profile image
+      fullGalleryImageUrls // Full URLs for gallery images
     };
   }
 
