@@ -221,14 +221,14 @@ const Profile: React.FC = () => {
                         {(user?.type === 'cg' || cgProfile) ? 'Professional Service Provider' : 'Client'}
                       </p>
 
-                      {user.type === 'cg' && (
-                          <div className="flex items-center mt-2">
-                            <Calendar className="h-4 w-4 mr-1 text-gray-500" />
-                            <span className="text-sm text-gray-500">
-                              Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}
-                            </span>
-                          </div>
-                      )}
+                      {/*{user.type === 'cg' && (*/}
+                      {/*    <div className="flex items-center mt-2">*/}
+                      {/*      <Calendar className="h-4 w-4 mr-1 text-gray-500" />*/}
+                      {/*      <span className="text-sm text-gray-500">*/}
+                      {/*        Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}*/}
+                      {/*      </span>*/}
+                      {/*    </div>*/}
+                      {/*)}*/}
                     </div>
 
                     <div className="flex items-center space-x-3 mt-4 md:mt-0">

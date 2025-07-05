@@ -1,12 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useService } from '../contexts/ServiceContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useChat } from '../contexts/ChatContext';
-import { useCGInRange } from '../hooks/useCGInRange';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useService} from '../contexts/ServiceContext';
+import {useAuth} from '../contexts/AuthContext';
+import {useChat} from '../contexts/ChatContext';
+import {useCGInRange} from '../hooks/useCGInRange';
 import Map from '../components/Map';
-import ImageGalleryModal from '../components/ImageGalleryModal';
-import { Search, MapPin, Star, MessageSquare, HardHat, Wrench, Zap, Hammer, Paintbrush, Flower, Sparkles, Truck, Monitor, Settings, Wind, Home, Grid3X3, ToyBrick as Brick, Bug, Loader2, AlertCircle, User } from 'lucide-react';
+import {
+  AlertCircle,
+  Bug,
+  Flower,
+  Grid3X3,
+  Hammer,
+  HardHat,
+  Home,
+  Loader2,
+  MapPin,
+  MessageSquare,
+  Monitor,
+  Paintbrush,
+  Search,
+  Settings,
+  Sparkles,
+  ToyBrick as Brick,
+  Truck,
+  User,
+  Wind,
+  Wrench,
+  Zap
+} from 'lucide-react';
 
 const Services: React.FC = () => {
   const { serviceCategories } = useService();
@@ -19,17 +40,6 @@ const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMap, setShowMap] = useState(false);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [galleryModal, setGalleryModal] = useState<{
-    isOpen: boolean;
-    images: string[];
-    title: string;
-    initialIndex: number;
-  }>({
-    isOpen: false,
-    images: [],
-    title: '',
-    initialIndex: 0
-  });
 
   // Service category icons mapping
   const categoryIcons: Record<string, React.ComponentType<any>> = {
@@ -313,11 +323,11 @@ const Services: React.FC = () => {
                                       </div>
                                     </div>
 
-                                    {offer.price && (
-                                        <div className="text-right">
-                                          <p className="text-lg font-semibold text-gray-900">{offer.price}</p>
-                                        </div>
-                                    )}
+                                    {/*{offer.price && (*/}
+                                    {/*    <div className="text-right">*/}
+                                    {/*      <p className="text-lg font-semibold text-gray-900">{offer.price}</p>*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
                                   </div>
 
                                   <p className="text-gray-700 mb-4">{offer.description}</p>
@@ -365,20 +375,20 @@ const Services: React.FC = () => {
                                     </div>
                                   </div>
 
-                                  {offer.photos && offer.photos.length > 0 && (
-                                      <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <div className="grid grid-cols-3 gap-2">
-                                          {offer.photos.slice(0, 3).map((photo, index) => (
-                                              <img
-                                                  key={index}
-                                                  src={photo}
-                                                  alt={`Work by ${offer.name}`}
-                                                  className="w-full h-20 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
-                                              />
-                                          ))}
-                                        </div>
-                                      </div>
-                                  )}
+                                  {/*{offer.photos && offer.photos.length > 0 && (*/}
+                                  {/*    <div className="mt-4 pt-4 border-t border-gray-200">*/}
+                                  {/*      <div className="grid grid-cols-3 gap-2">*/}
+                                  {/*        {offer.photos.slice(0, 3).map((photo, index) => (*/}
+                                  {/*            <img*/}
+                                  {/*                key={index}*/}
+                                  {/*                src={photo}*/}
+                                  {/*                alt={`Work by ${offer.name}`}*/}
+                                  {/*                className="w-full h-20 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"*/}
+                                  {/*            />*/}
+                                  {/*        ))}*/}
+                                  {/*      </div>*/}
+                                  {/*    </div>*/}
+                                  {/*)}*/}
                                 </div>
                               </div>
                           ))}

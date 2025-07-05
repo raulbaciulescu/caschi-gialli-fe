@@ -299,9 +299,9 @@ const CGDashboard: React.FC = () => {
                                       <p className="text-gray-700 text-sm mb-3">{request.description}</p>
 
                                       <div className="flex items-center justify-between">
-                                        <div className="text-sm text-gray-500">
-                                          Started: {new Date(request.updatedAt).toLocaleDateString()}
-                                        </div>
+                                        {/*<div className="text-sm text-gray-500">*/}
+                                        {/*  Started: {new Date(request.updatedAt).toLocaleDateString()}*/}
+                                        {/*</div>*/}
                                         <button
                                             onClick={() => handleContactClient(request.clientId, request.clientName)}
                                             className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
