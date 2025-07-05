@@ -6,8 +6,6 @@ import { useService } from '../contexts/ServiceContext';
 import { profileService } from '../services/profile.service';
 import { useApi } from '../hooks/useApi';
 import ImageGalleryModal from '../components/ImageGalleryModal';
-import { profileService } from '../services/profile.service';
-import { useApi } from '../hooks/useApi';
 import Map from '../components/Map';
 import {
   User, Mail, Phone, MapPin, HardHat, Ruler, Edit3,
