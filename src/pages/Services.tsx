@@ -336,15 +336,19 @@ const Services: React.FC = () => {
                                     </div>
                                   </div>
 
-                                  {offer.photos && offer.photos.length > 0 && (
+                                  {/* Gallery Images from Backend */}
+                                  {offer.fullGalleryImageUrls && offer.fullGalleryImageUrls.length > 0 && (
                                       <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <div className="grid grid-cols-3 gap-2">
-                                          {offer.photos.slice(0, 3).map((photo, index) => (
+                                        <div className={`grid gap-2 ${offer.fullGalleryImageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                                          {offer.fullGalleryImageUrls.slice(0, 2).map((imageUrl, index) => (
                                               <img
                                                   key={index}
-                                                  src={photo}
+                                                  src={imageUrl}
                                                   alt={`Work by ${offer.name}`}
-                                                  className="w-full h-20 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+                                                  className="w-full h-24 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+                                                  onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                  }}
                                               />
                                           ))}
                                         </div>
