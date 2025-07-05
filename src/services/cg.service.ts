@@ -154,7 +154,6 @@ class CGService {
         'https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg'
       ],
       distance: Math.round(distance * 10) / 10, // Round to 1 decimal
-      fullProfileImageUrl // Full URL for profile image
       fullProfileImageUrl, // Full URL for profile image
       fullGalleryImageUrls // Full URLs for gallery images
     };
