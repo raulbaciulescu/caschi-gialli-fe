@@ -137,9 +137,11 @@ class CGService {
       : undefined;
 
     // Construct full gallery image URLs if available
-    const fullGalleryImageUrls = cg.galleryImageUrls && cg.galleryImageUrls.length > 0
-      ? cg.galleryImageUrls.map(url => `${API_CONFIG.BASE_URL}/${url}`)
-      : [];
+    // const fullGalleryImageUrls = cg.galleryImageUrls && cg.galleryImageUrls.length > 0
+    //   ? cg.galleryImageUrls.map(url => `${url}`)
+    //   : [];
+    const fullGalleryImageUrls =[];
+
     return {
       ...cg,
       name: cg.fullName || cg.email, // Use email as fallback if fullName is null

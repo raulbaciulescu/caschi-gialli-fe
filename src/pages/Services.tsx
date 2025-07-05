@@ -393,12 +393,12 @@ const Services: React.FC = () => {
                                           ))}
                                         </div>
                                         {offer.fullGalleryImageUrls.length > 2 && (
-                                          <button
-                                            onClick={() => openGallery(offer.fullGalleryImageUrls!, `${offer.name}'s Work Gallery`, 0)}
-                                            className="mt-2 text-sm text-yellow-600 hover:text-yellow-700 font-medium transition-colors"
-                                          >
-                                            View all {offer.fullGalleryImageUrls.length} images
-                                          </button>
+                                            <button
+                                                onClick={() => openGallery(offer.fullGalleryImageUrls!, `${offer.name}'s Work Gallery`, 0)}
+                                                className="mt-2 text-sm text-yellow-600 hover:text-yellow-700 font-medium transition-colors"
+                                            >
+                                              View all {offer.fullGalleryImageUrls.length} images
+                                            </button>
                                         )}
                                       </div>
                                   )}
@@ -455,11 +455,11 @@ const Services: React.FC = () => {
 
         {/* Gallery Modal */}
         <ImageGalleryModal
-          images={galleryModal.images}
-          isOpen={galleryModal.isOpen}
-          onClose={closeGallery}
-          initialIndex={galleryModal.initialIndex}
-          title={galleryModal.title}
+            images={galleryModal.images}
+            isOpen={galleryModal.isOpen}
+            onClose={closeGallery}
+            initialIndex={galleryModal.initialIndex}
+            title={galleryModal.title}
         />
       </div>
   );
