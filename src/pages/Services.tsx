@@ -376,7 +376,7 @@ const Services: React.FC = () => {
                               return {
                                 position: [offer.location.lat, offer.location.lng] as [number, number],
                                 type: 'cg' as const,
-                                popup: `${offer.name} - ${offer.distance}km away - Service radius: ${offer.serviceRadius}km`,
+                                popup: `${offer.name} - ${offer.distance}km away`,
                                 // CRITICAL: Pass serviceRadius directly from backend data
                                 radius: offer.serviceRadius
                               };

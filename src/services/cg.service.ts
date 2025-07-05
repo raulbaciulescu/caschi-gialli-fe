@@ -139,7 +139,8 @@ class CGService {
         'https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg',
         'https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg'
       ],
-      distance: Math.round(distance * 10) / 10 // Round to 1 decimal
+      distance: Math.round(distance * 10) / 10, // Round to 1 decimal
+      profileImageUrl: cg.profileImageUrl // Pass through profile image URL
     };
   }
 
