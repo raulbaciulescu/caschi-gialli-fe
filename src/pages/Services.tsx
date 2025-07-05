@@ -339,8 +339,19 @@ const Services: React.FC = () => {
                                           ))}
                                         </div>
                                       </div>
-                                  )}
-                                </div>
+                                {offer.fullProfileImageUrl ? (
+                                  <img
+                                    src={offer.fullProfileImageUrl}
+                                    alt={offer.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      // Fallback to icon if image fails to load
+                                      e.currentTarget.style.display = 'none';
+                                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                    }}
+                                  />
+                                ) : null}
+                                <HardHat className={`h-8 w-8 text-white ${offer.fullProfileImageUrl ? 'hidden' : ''}`} />
                               </div>
                           ))}
                         </>

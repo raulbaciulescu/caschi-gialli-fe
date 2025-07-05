@@ -1,3 +1,4 @@
+import { API_CONFIG } from '../config/api';
 import {httpService} from './http.service';
 import {API_ENDPOINTS} from '../config/api';
 import {AssignCGResponse, ServiceRequestResponse} from '../types/api';
@@ -20,6 +21,7 @@ export interface CGInRangeResponse {
   longitude: number;
   serviceRadius: number;
   services: string[];
+  profileImageUrl?: string | null;
 }
 
 // Extended interface for frontend display (with calculated fields)
@@ -33,6 +35,7 @@ export interface CGDisplayData extends CGInRangeResponse {
   price?: string; // mock data
   photos: string[]; // mock data
   distance: number; // calculated distance
+  fullProfileImageUrl?: string; // Full URL for profile image
 }
 
 class CGService {
@@ -126,6 +129,10 @@ class CGService {
     // Calculate distance from search location
     const distance = this.calculateDistance(searchLat, searchLng, cg.latitude, cg.longitude);
 
+    // Construct full profile image URL if available
+    const fullProfileImageUrl = cg.profileImageUrl 
+      ? `${API_CONFIG.BASE_URL}/${cg.profileImageUrl}`
+      : undefined;
     return {
       ...cg,
       name: cg.fullName || cg.email, // Use email as fallback if fullName is null
@@ -140,7 +147,7 @@ class CGService {
         'https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg'
       ],
       distance: Math.round(distance * 10) / 10, // Round to 1 decimal
-      profileImageUrl: cg.profileImageUrl // Pass through profile image URL
+      fullProfileImageUrl // Full URL for profile image
     };
   }
 
