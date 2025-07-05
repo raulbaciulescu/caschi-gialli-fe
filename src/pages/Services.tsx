@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { useCGInRange } from '../hooks/useCGInRange';
 import Map from '../components/Map';
+import ImageGalleryModal from '../components/ImageGalleryModal';
 import { Search, MapPin, Star, MessageSquare, HardHat, Wrench, Zap, Hammer, Paintbrush, Flower, Sparkles, Truck, Monitor, Settings, Wind, Home, Grid3X3, ToyBrick as Brick, Bug, Loader2, AlertCircle, User } from 'lucide-react';
 
 const Services: React.FC = () => {
@@ -18,6 +19,17 @@ const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMap, setShowMap] = useState(false);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [galleryModal, setGalleryModal] = useState<{
+    isOpen: boolean;
+    images: string[];
+    title: string;
+    initialIndex: number;
+  }>({
+    isOpen: false,
+    images: [],
+    title: '',
+    initialIndex: 0
+  });
 
   // Service category icons mapping
   const categoryIcons: Record<string, React.ComponentType<any>> = {
@@ -127,6 +139,23 @@ const Services: React.FC = () => {
     navigate(`/profile/${cgId}`);
   };
 
+  const openGallery = (images: string[], title: string, initialIndex: number = 0) => {
+    setGalleryModal({
+      isOpen: true,
+      images,
+      title,
+      initialIndex
+    });
+  };
+
+  const closeGallery = () => {
+    setGalleryModal({
+      isOpen: false,
+      images: [],
+      title: '',
+      initialIndex: 0
+    });
+  };
   return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -339,19 +368,38 @@ const Services: React.FC = () => {
                                   {/* Gallery Images from Backend */}
                                   {offer.fullGalleryImageUrls && offer.fullGalleryImageUrls.length > 0 && (
                                       <div className="mt-4 pt-4 border-t border-gray-200">
+                                        <p className="text-sm font-medium text-gray-600 mb-2">Work Gallery</p>
                                         <div className={`grid gap-2 ${offer.fullGalleryImageUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
                                           {offer.fullGalleryImageUrls.slice(0, 2).map((imageUrl, index) => (
-                                              <img
+                                              <button
                                                   key={index}
-                                                  src={imageUrl}
-                                                  alt={`Work by ${offer.name}`}
-                                                  className="w-full h-24 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
-                                                  onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                  }}
-                                              />
+                                                  onClick={() => openGallery(offer.fullGalleryImageUrls!, `${offer.name}'s Work Gallery`, index)}
+                                                  className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                                              >
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`Work by ${offer.name}`}
+                                                    className="w-full h-24 object-cover"
+                                                    onError={(e) => {
+                                                      e.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white text-xs font-medium">
+                                                    View Gallery
+                                                  </div>
+                                                </div>
+                                              </button>
                                           ))}
                                         </div>
+                                        {offer.fullGalleryImageUrls.length > 2 && (
+                                          <button
+                                            onClick={() => openGallery(offer.fullGalleryImageUrls!, `${offer.name}'s Work Gallery`, 0)}
+                                            className="mt-2 text-sm text-yellow-600 hover:text-yellow-700 font-medium transition-colors"
+                                          >
+                                            View all {offer.fullGalleryImageUrls.length} images
+                                          </button>
+                                        )}
                                       </div>
                                   )}
                                 </div>
@@ -404,6 +452,15 @@ const Services: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Gallery Modal */}
+        <ImageGalleryModal
+          images={galleryModal.images}
+          isOpen={galleryModal.isOpen}
+          onClose={closeGallery}
+          initialIndex={galleryModal.initialIndex}
+          title={galleryModal.title}
+        />
       </div>
   );
 };
