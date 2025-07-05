@@ -131,7 +131,7 @@ class CGService {
 
     // Construct full profile image URL if available
     const fullProfileImageUrl = cg.profileImageUrl 
-      ? `${API_CONFIG.BASE_URL}/${cg.profileImageUrl}`
+      ? `${cg.profileImageUrl}`
       : undefined;
     return {
       ...cg,

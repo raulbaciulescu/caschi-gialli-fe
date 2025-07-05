@@ -263,8 +263,18 @@ const Services: React.FC = () => {
                                   <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center space-x-4">
                                       <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
-                                        {/* Profile image would come from offer data if available */}
-                                        <HardHat className="h-8 w-8 text-white" />
+                                        {offer.fullProfileImageUrl ? (
+                                            <img
+                                                src={offer.fullProfileImageUrl}
+                                                alt={offer.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                  e.currentTarget.style.display = 'none';
+                                                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                                }}
+                                            />
+                                        ) : null}
+                                        <HardHat className={`h-8 w-8 text-white ${offer.fullProfileImageUrl ? 'hidden' : ''}`} />
                                       </div>
                                       <div>
                                         <h3 className="text-xl font-semibold text-gray-900">{offer.name}</h3>
@@ -293,9 +303,9 @@ const Services: React.FC = () => {
                                                 key={service}
                                                 className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full flex items-center space-x-1 transition-all duration-200 hover:bg-yellow-200"
                                             >
-                                    <IconComponent className="h-3 w-3" />
-                                    <span>{service}</span>
-                                  </span>
+                                              <IconComponent className="h-3 w-3" />
+                                              <span>{service}</span>
+                                            </span>
                                         );
                                       })}
                                     </div>
@@ -339,19 +349,8 @@ const Services: React.FC = () => {
                                           ))}
                                         </div>
                                       </div>
-                                {offer.fullProfileImageUrl ? (
-                                  <img
-                                    src={offer.fullProfileImageUrl}
-                                    alt={offer.name}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                      // Fallback to icon if image fails to load
-                                      e.currentTarget.style.display = 'none';
-                                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                                    }}
-                                  />
-                                ) : null}
-                                <HardHat className={`h-8 w-8 text-white ${offer.fullProfileImageUrl ? 'hidden' : ''}`} />
+                                  )}
+                                </div>
                               </div>
                           ))}
                         </>
@@ -388,12 +387,11 @@ const Services: React.FC = () => {
                                 position: [offer.location.lat, offer.location.lng] as [number, number],
                                 type: 'cg' as const,
                                 popup: `${offer.name} - ${offer.distance}km away`,
-                                // CRITICAL: Pass serviceRadius directly from backend data
                                 radius: offer.serviceRadius
                               };
                             })
                           ]}
-                          showRadius={false} // No global search radius
+                          showRadius={false}
                           className="h-96 w-full rounded-lg"
                       />
                     </div>
