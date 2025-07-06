@@ -1,313 +1,175 @@
-{
-  "common": {
-    "loading": "Caricamento...",
-    "error": "Errore",
-    "success": "Successo",
-    "cancel": "Annulla",
-    "save": "Salva",
-    "edit": "Modifica",
-    "delete": "Elimina",
-    "confirm": "Conferma",
-    "back": "Indietro",
-    "next": "Avanti",
-    "submit": "Invia",
-    "search": "Cerca",
-    "filter": "Filtra",
-    "close": "Chiudi",
-    "yes": "Sì",
-    "no": "No",
-    "email": "Email",
-    "password": "Password",
-    "name": "Nome",
-    "phone": "Telefono",
-    "address": "Indirizzo",
-    "location": "Posizione",
-    "description": "Descrizione",
-    "services": "Servizi",
-    "contact": "Contatta",
-    "profile": "Profilo",
-    "dashboard": "Dashboard",
-    "messages": "Messaggi",
-    "home": "Home",
-    "logout": "Esci",
-    "login": "Accedi",
-    "register": "Registrati"
-  },
-  "navigation": {
-    "home": "Home",
-    "services": "Servizi",
-    "dashboard": "Dashboard",
-    "messages": "Messaggi",
-    "profile": "Profilo",
-    "getStarted": "Inizia"
-  },
-  "auth": {
-    "signIn": "Accedi a Caschi Gialli",
-    "signInAs": "Accedi come {{type}}",
-    "createAccount": "crea un nuovo account",
-    "dontHaveAccount": "Non hai un account?",
-    "registerAsClient": "Registrati come Cliente",
-    "becomeACascoGiallo": "Diventa un Casco Giallo",
-    "emailAddress": "Indirizzo Email",
-    "enterEmail": "Inserisci la tua email",
-    "enterPassword": "Inserisci la tua password",
-    "confirmPassword": "Conferma Password",
-    "confirmPasswordPlaceholder": "Conferma la tua password",
-    "fullName": "Nome Completo",
-    "enterFullName": "Inserisci il tuo nome completo",
-    "phoneNumber": "Numero di Telefono",
-    "enterPhone": "Inserisci il tuo numero di telefono",
-    "addressOptional": "Indirizzo (Opzionale)",
-    "enterAddress": "Inserisci il tuo indirizzo",
-    "selectLocation": "Seleziona la Tua Posizione",
-    "clickMapToSetLocation": "Clicca sulla mappa per impostare la tua posizione",
-    "locationConfirm": "Posizione: {{lat}}, {{lng}}",
-    "client": "Cliente",
-    "cascoGiallo": "Casco Giallo",
-    "signingIn": "Accesso in corso...",
-    "creatingAccount": "Creazione account...",
-    "joinCaschiGialli": "Unisciti ai Caschi Gialli",
-    "invalidCredentials": "Email o password non validi",
-    "emailRequired": "Email è richiesta",
-    "emailInvalid": "Email non valida",
-    "passwordRequired": "Password è richiesta",
-    "passwordMinLength": "La password deve essere di almeno 6 caratteri",
-    "passwordsDontMatch": "Le password non corrispondono",
-    "nameRequired": "Nome è richiesto",
-    "phoneRequired": "Telefono è richiesto",
-    "locationRequired": "Seleziona la tua posizione sulla mappa"
-  },
-  "home": {
-    "title": "Caschi Gialli",
-    "subtitle": "Connettiti con professionisti qualificati nella tua zona",
-    "description": "Fai completare i tuoi progetti da Caschi Gialli di fiducia",
-    "needService": "Ho Bisogno di un Servizio",
-    "becomeProvider": "Diventa un Casco Giallo",
-    "goToDashboard": "Vai alla Dashboard",
-    "howItWorks": "Come Funziona",
-    "howItWorksSubtitle": "Modo semplice, sicuro ed efficiente per connettere fornitori di servizi con clienti",
-    "locationBasedMatching": "Abbinamento Basato sulla Posizione",
-    "locationBasedMatchingDesc": "Trova professionisti qualificati nel tuo raggio specificato",
-    "directCommunication": "Comunicazione Diretta",
-    "directCommunicationDesc": "Chatta direttamente con i fornitori di servizi per discutere le tue esigenze",
-    "securePlatform": "Piattaforma Sicura",
-    "securePlatformDesc": "Piattaforma sicura e protetta per tutte le tue esigenze di servizio",
-    "popularCategories": "Categorie di Servizi Popolari",
-    "popularCategoriesSubtitle": "Trova professionisti per tutte le tue esigenze",
-    "whyChoose": "Perché Scegliere Caschi Gialli?",
-    "whyChooseSubtitle": "Sperimenta la differenza con il nostro marketplace professionale di servizi",
-    "trustedProfessionals": "Professionisti di Fiducia",
-    "trustedProfessionalsDesc": "Tutti i fornitori di servizi sono verificati ed esperti",
-    "quickResponse": "Risposta Rapida",
-    "quickResponseDesc": "Ricevi risposte dai professionisti entro ore",
-    "qualityGuaranteed": "Qualità Garantita",
-    "qualityGuaranteedDesc": "Lavoro di alta qualità supportato dalla garanzia della nostra piattaforma",
-    "readyToStart": "Pronto per Iniziare?",
-    "readyToStartSubtitle": "Unisciti a migliaia di clienti soddisfatti e fornitori di servizi professionali",
-    "findServices": "Trova Servizi",
-    "offerServices": "Offri Servizi",
-    "activeProfessionals": "Caschi Gialli Attivi",
-    "completedProjects": "Progetti Completati",
-    "averageRating": "Valutazione Media"
-  },
-  "dashboard": {
-    "welcomeBack": "Bentornato, {{name}}!",
-    "clientSubtitle": "Gestisci le tue richieste di servizio e trova professionisti",
-    "cgSubtitle": "Gestisci i tuoi lavori e trova nuove opportunità",
-    "pleaseLogin": "Effettua l'accesso per accedere alla tua dashboard.",
-    "goToLogin": "Vai al Login",
-    "pending": "In Attesa",
-    "inProgress": "In Corso",
-    "completed": "Completato",
-    "totalRequests": "Richieste Totali",
-    "availableJobs": "Lavori Disponibili",
-    "activeJobs": "I Miei Lavori Attivi",
-    "totalJobs": "Lavori Totali",
-    "rating": "Valutazione",
-    "serviceRequests": "Richieste di Servizio",
-    "newRequest": "Nuova Richiesta",
-    "noRequestsYet": "Nessuna richiesta di servizio ancora",
-    "createFirstRequest": "Crea la tua prima richiesta",
-    "yourLocation": "La Tua Posizione",
-    "serviceArea": "Area di Servizio",
-    "quickStats": "Statistiche Rapide",
-    "serviceRadius": "Raggio di servizio",
-    "opportunities": "Opportunità",
-    "active": "Attivo",
-    "newOpportunities": "Nuove Opportunità",
-    "thisMonth": "Questo Mese",
-    "noNewOpportunities": "Nessuna nuova opportunità nella tua zona",
-    "checkBackLater": "Controlla più tardi per nuove opportunità",
-    "noActiveJobs": "Nessun lavoro attivo",
-    "takeOnJobs": "Prendi alcuni lavori disponibili per iniziare",
-    "noCompletedJobs": "Nessun lavoro completato ancora",
-    "buildReputation": "Completa alcuni lavori per costruire la tua reputazione",
-    "kmAway": "{{distance}} km di distanza",
-    "posted": "Pubblicato {{date}}",
-    "contactClient": "Contatta Cliente",
-    "takeJob": "Prendi Lavoro",
-    "taking": "Prendendo...",
-    "accepted": "Accettato",
-    "viewDetails": "Vedi Dettagli"
-  },
-  "services": {
-    "title": "Trova Caschi Gialli",
-    "subtitle": "Sfoglia i fornitori di servizi professionali nella tua zona",
-    "searchPlaceholder": "Cerca per nome, servizio o descrizione...",
-    "allCategories": "Tutte le Categorie",
-    "searchNear": "Ricerca vicino a: {{lat}}, {{lng}}",
-    "clickMapToSetLocation": "Clicca sulla mappa per impostare la posizione di ricerca",
-    "hideMap": "Nascondi Mappa",
-    "showMap": "Mostra Mappa",
-    "searchingProviders": "Ricerca fornitori di servizi...",
-    "noProvidersFound": "Nessun fornitore di servizi trovato in questa zona",
-    "noProvidersMatch": "Nessun fornitore corrisponde alla tua ricerca",
-    "tryExpandingSearch": "Prova a cambiare posizione o espandere la tua ricerca",
-    "tryAdjustingCriteria": "Prova ad aggiustare i tuoi criteri di ricerca",
-    "foundProviders": "Trovato {{count}} fornitore di servizi",
-    "foundProvidersPlural": "Trovati {{count}} fornitori di servizi",
-    "withinRadius": "entro {{radius}}km",
-    "reviews": "recensioni",
-    "servicesOffered": "Servizi:",
-    "serviceRadiusLabel": "Raggio di servizio: {{radius}} km",
-    "loginToContact": "Accedi per Contattare",
-    "viewProfile": "Vedi Profilo",
-    "searchArea": "Area di Ricerca",
-    "clickToChangeLocation": "Clicca per cambiare posizione di ricerca",
-    "yellowCirclesNote": "I cerchi gialli mostrano il raggio di servizio di ogni fornitore"
-  },
-  "profile": {
-    "pleaseLogin": "Effettua l'accesso per accedere al tuo profilo.",
-    "goToLogin": "Vai al Login",
-    "editProfile": "Modifica Profilo",
-    "share": "Condividi",
-    "contact": "Contatta",
-    "memberSince": "Membro dal {{year}}",
-    "overview": "Panoramica",
-    "gallery": "Galleria",
-    "reviews": "Recensioni",
-    "contactInformation": "Informazioni di Contatto",
-    "aboutMe": "Chi Sono",
-    "servicesOffered": "Servizi Offerti",
-    "serviceArea": "Area di Servizio",
-    "serviceRadius": "Raggio di servizio: {{radius}} km",
-    "quickStats": "Statistiche Rapide",
-    "totalReviews": "Recensioni Totali",
-    "averageRating": "Valutazione Media",
-    "responseTime": "Tempo di Risposta",
-    "lessThan2Hours": "< 2 ore",
-    "noGalleryImages": "Nessuna immagine in galleria ancora",
-    "addFirstImages": "Aggiungi le tue prime immagini",
-    "reviewsComingSoon": "Funzione Recensioni in Arrivo",
-    "reviewsFeatureNote": "Questa funzione sarà disponibile nei prossimi aggiornamenti",
-    "professionalServiceProvider": "Fornitore di Servizi Professionale",
-    "client": "Cliente"
-  },
-  "editProfile": {
-    "title": "Modifica Profilo",
-    "subtitle": "Aggiorna le tue informazioni professionali e mostra il tuo lavoro",
-    "backToProfile": "Torna al Profilo",
-    "profileImage": "Immagine Profilo",
-    "profileImageSubtitle": "Carica una foto professionale che ti rappresenti",
-    "updateProfilePhoto": "Aggiorna Foto Profilo",
-    "jpgPngUpTo5MB": "JPG, PNG fino a 5MB",
-    "basicInformation": "Informazioni di Base",
-    "fullNameRequired": "Nome Completo *",
-    "phoneNumberRequired": "Numero di Telefono *",
-    "addressOptional": "Indirizzo",
-    "serviceRadiusRequired": "Raggio di Servizio (km) *",
-    "maxDistanceNote": "Distanza massima che sei disposto a percorrere per i lavori",
-    "professionalDescription": "Descrizione Professionale",
-    "professionalDescriptionSubtitle": "Descrivi la tua esperienza, qualifiche e cosa ti rende speciale",
-    "descriptionPlaceholder": "Racconta ai potenziali clienti della tua esperienza, qualifiche e cosa ti rende la scelta giusta per i loro progetti...",
-    "serviceCategories": "Categorie di Servizio",
-    "serviceCategoriesSubtitle": "Seleziona tutti i servizi che puoi fornire",
-    "serviceCategoriesRequired": "Categorie di Servizio *",
-    "selectAtLeastOne": "Seleziona almeno una categoria di servizio",
-    "selectedServices": "Servizi selezionati: {{services}}",
-    "selectedServicesNone": "Servizi selezionati: Nessuno",
-    "workGallery": "Galleria Lavori",
-    "workGallerySubtitle": "Mostra i tuoi migliori lavori con immagini di alta qualità",
-    "currentGallery": "Galleria Attuale",
-    "addMoreImages": "Aggiungi Più Immagini",
-    "uploadWorkPhotos": "Carica Foto Lavori",
-    "addMorePhotos": "Aggiungi Più Foto",
-    "showBestProjects": "Mostra i tuoi migliori progetti e artigianato",
-    "cancel": "Annulla",
-    "saveChanges": "Salva Modifiche",
-    "updating": "Aggiornamento...",
-    "profileUpdated": "Profilo aggiornato con successo!",
-    "loadingProfile": "Caricamento dati profilo...",
-    "charactersCount": "{{count}}/500 caratteri"
-  },
-  "chat": {
-    "title": "Messaggi",
-    "refresh": "Aggiorna",
-    "conversations": "Conversazioni",
-    "conversationCount": "{{count}} conversazione",
-    "conversationCountPlural": "{{count}} conversazioni",
-    "loadingConversations": "Caricamento conversazioni...",
-    "noConversationsYet": "Nessuna conversazione ancora",
-    "startByContacting": "Inizia contattando un fornitore di servizi o cliente",
-    "selectConversation": "Seleziona una conversazione per iniziare a messaggiare",
-    "chooseFromExisting": "Scegli dalle tue conversazioni esistenti o iniziane una nuova",
-    "pleaseLoginToAccess": "Effettua l'accesso per accedere ai messaggi.",
-    "typeMessage": "Scrivi un messaggio...",
-    "noMessagesYet": "Nessun messaggio ancora",
-    "startConversation": "Inizia la conversazione!",
-    "today": "Oggi",
-    "yesterday": "Ieri",
-    "you": "Tu: {{message}}"
-  },
-  "serviceRequest": {
-    "newServiceRequest": "Nuova Richiesta di Servizio",
-    "categoryRequired": "Categoria *",
-    "selectCategory": "Seleziona una categoria",
-    "serviceNeeded": "Servizio Necessario *",
-    "serviceNeededPlaceholder": "es., Riparare rubinetto che perde",
-    "descriptionRequired": "Descrizione *",
-    "descriptionPlaceholder": "Descrivi cosa ti serve...",
-    "submitRequest": "Invia Richiesta",
-    "creating": "Creazione...",
-    "findProviders": "Trova Fornitori",
-    "markComplete": "Segna Completato",
-    "completing": "Completamento...",
-    "budget": "Budget: {{currency}} {{min}}-{{max}}",
-    "locationLabel": "Posizione: {{lat}}, {{lng}}",
-    "areYouSureDelete": "Sei sicuro di voler eliminare questa richiesta?",
-    "areYouSureComplete": "Sei sicuro di voler segnare questa richiesta come completata?",
-    "areYouSureTakeJob": "Sei sicuro di voler prendere questo lavoro?",
-    "successfullyAssigned": "Assegnato con successo alla richiesta: {{message}}",
-    "failedToCreateChat": "Impossibile avviare la conversazione. Riprova.",
-    "failedToAssign": "Impossibile assegnare alla richiesta"
-  },
-  "map": {
-    "yourLocation": "La Tua Posizione",
-    "searchLocation": "Posizione di Ricerca",
-    "serviceLocation": "Posizione del Servizio"
-  },
-  "errors": {
-    "networkError": "Errore di rete - controlla la tua connessione",
-    "unknownError": "Errore sconosciuto",
-    "failedToLoad": "Impossibile caricare",
-    "tryAgain": "Riprova",
-    "somethingWentWrong": "Qualcosa è andato storto"
-  },
-  "categories": {
-    "Plumbing": "Idraulica",
-    "Electrical": "Elettricista",
-    "Carpentry": "Falegnameria",
-    "Painting": "Imbiancatura",
-    "Gardening": "Giardinaggio",
-    "Cleaning": "Pulizie",
-    "Moving": "Traslochi",
-    "IT Support": "Supporto IT",
-    "Appliance Repair": "Riparazione Elettrodomestici",
-    "HVAC": "Climatizzazione",
-    "Roofing": "Coperture",
-    "Flooring": "Pavimentazione",
-    "Tiling": "Piastrellatura",
-    "Masonry": "Muratura",
-    "Pest Control": "Disinfestazione"
-  }
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authService } from '../services/auth.service';
+import { User, LoginRequest, RegisterClientRequest, RegisterCGRequest } from '../types/api';
+
+interface AuthContextType {
+  user: User | null;
+  loginClient: (credentials: LoginRequest) => Promise<void>;
+  loginCG: (credentials: LoginRequest) => Promise<void>;
+  logout: () => Promise<void>;
+  registerClient: (userData: RegisterClientRequest) => Promise<void>;
+  registerCG: (userData: RegisterCGRequest) => Promise<void>;
+  isAuthenticated: boolean;
+  loading: boolean;
+  updateUserData: (userData: User) => void; // New method to update user data
 }
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Normalize user data to handle both backend formats
+  const normalizeUser = (userData: any): User => {
+    return {
+      ...userData,
+      // Ensure we have location object
+      location: userData.location || (userData.lat && userData.lng ? { lat: userData.lat, lng: userData.lng } : undefined),
+      // Normalize type field (backend returns 'customer', frontend expects 'client')
+      type: userData.type === 'customer' ? 'client' : userData.type,
+      // Ensure profile image is available
+      profileImage: userData.profileImageUrl || userData.profileImage
+    };
+  };
+
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
+  const initializeAuth = async () => {
+    setLoading(true);
+    try {
+      // Check if we have a valid token and user data
+      if (authService.isAuthenticated()) {
+        const userData = authService.getUserFromStorage();
+        if (userData) {
+          setUser(normalizeUser(userData));
+          setIsAuthenticated(true);
+        } else {
+          // Token exists but no user data - clear everything
+          await authService.logout();
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error('Failed to initialize auth:', error);
+      // Clear invalid data
+      await authService.logout();
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // New method to update user data without API calls
+  const updateUserData = (userData: User) => {
+    console.log('Updating user data in context:', userData);
+    console.log('Current user data before update:', user);
+    console.log('Current user data before update:', user);
+    
+    // CRITICAL: Merge new data with existing user data to preserve everything
+    const mergedUserData = {
+      ...user, // Keep all existing data
+      ...userData, // Override with new data from update
+      updatedAt: userData.updatedAt || new Date().toISOString()
+    };
+    
+    console.log('Merged user data:', mergedUserData);
+    // CRITICAL: Merge new data with existing user data to preserve everything
+    const mergedUserData = {
+      ...user, // Keep all existing data
+      ...userData, // Override with new data from update
+    };
+    
+    const normalizedUser = normalizeUser(mergedUserData);
+    setUser(normalizedUser);
+    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
+    console.log('User data updated successfully in context and localStorage:', normalizedUser);
+  };
+
+  const loginClient = async (credentials: LoginRequest): Promise<void> => {
+    try {
+      const response = await authService.loginClient(credentials);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Client login failed:', error);
+      throw error;
+    }
+  };
+
+  const loginCG = async (credentials: LoginRequest): Promise<void> => {
+    try {
+      const response = await authService.loginCG(credentials);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('CG login failed:', error);
+      throw error;
+    }
+  };
+
+  const registerClient = async (userData: RegisterClientRequest): Promise<void> => {
+    try {
+      const response = await authService.registerClient(userData);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Client registration failed:', error);
+      throw error;
+    }
+  };
+
+  const registerCG = async (userData: RegisterCGRequest): Promise<void> => {
+    try {
+      const response = await authService.registerCG(userData);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('CG registration failed:', error);
+      throw error;
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  };
+
+  return (
+      <AuthContext.Provider value={{
+        user,
+        loginClient,
+        loginCG,
+        logout,
+        registerClient,
+        registerCG,
+        isAuthenticated,
+        loading,
+        updateUserData, // Expose the new method
+      }}>
+        {children}
+      </AuthContext.Provider>
+  );
+};
