@@ -1,141 +1,166 @@
-import { httpService } from './http.service';
-import { API_ENDPOINTS } from '../config/api';
-import {
-  LoginRequest,
-  RegisterClientRequest,
-  RegisterCGRequest,
-  User,
-} from '../types/api';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authService } from '../services/auth.service';
+import { User, LoginRequest, RegisterClientRequest, RegisterCGRequest } from '../types/api';
 
-interface AuthResponse {
-  token: string;
-  expiresIn: string;
-  user: User;
+interface AuthContextType {
+  user: User | null;
+  loginClient: (credentials: LoginRequest) => Promise<void>;
+  loginCG: (credentials: LoginRequest) => Promise<void>;
+  logout: () => Promise<void>;
+  registerClient: (userData: RegisterClientRequest) => Promise<void>;
+  registerCG: (userData: RegisterCGRequest) => Promise<void>;
+  isAuthenticated: boolean;
+  loading: boolean;
+  updateUserData: (userData: User) => void; // New method to update user data
 }
 
-class AuthService {
-  /**
-   * Login client
-   */
-  public async loginClient(credentials: LoginRequest): Promise<AuthResponse> {
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Normalize user data to handle both backend formats
+  const normalizeUser = (userData: any): User => {
+    return {
+      ...userData,
+      // Ensure we have location object
+      location: userData.location || (userData.lat && userData.lng ? { lat: userData.lat, lng: userData.lng } : undefined),
+      // Normalize type field (backend returns 'customer', frontend expects 'client')
+      type: userData.type === 'customer' ? 'client' : userData.type,
+      // Ensure profile image is available
+      profileImage: userData.profileImageUrl || userData.profileImage
+    };
+  };
+
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
+  const initializeAuth = async () => {
+    setLoading(true);
     try {
-      const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-          API_ENDPOINTS.AUTH.LOGIN_CLIENT,
-          credentials
-      );
+      // Check if we have a valid token and user data
+      if (authService.isAuthenticated()) {
+        const userData = authService.getUserFromStorage();
+        if (userData) {
+          setUser(normalizeUser(userData));
+          setIsAuthenticated(true);
+        } else {
+          // Token exists but no user data - clear everything
+          await authService.logout();
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error('Failed to initialize auth:', error);
+      // Clear invalid data
+      await authService.logout();
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      // Store token
-      httpService.setToken(response.token);
+  // New method to update user data without API calls
+  const updateUserData = (userData: User) => {
+    console.log('Updating user data in context:', userData);
+    console.log('Current user data before update:', user);
+    
+    // CRITICAL: Merge new data with existing user data to preserve everything
+    const mergedUserData = {
+      ...user, // Keep all existing data
+      ...userData, // Override with new data from update
+    };
+    
+    const normalizedUser = normalizeUser(mergedUserData);
+    setUser(normalizedUser);
+    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
+    console.log('User data updated successfully in context and localStorage:', normalizedUser);
+  };
 
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
-
-      return response;
+  const loginClient = async (credentials: LoginRequest): Promise<void> => {
+    try {
+      const response = await authService.loginClient(credentials);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Client login failed:', error);
-      throw new Error('Client login failed');
+      throw error;
     }
-  }
+  };
 
-  /**
-   * Login CG
-   */
-  public async loginCG(credentials: LoginRequest): Promise<AuthResponse> {
+  const loginCG = async (credentials: LoginRequest): Promise<void> => {
     try {
-      const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-          API_ENDPOINTS.AUTH.LOGIN_CG,
-          credentials
-      );
-
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
-
-      return response;
+      const response = await authService.loginCG(credentials);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('CG login failed:', error);
-      throw new Error('CG login failed');
+      throw error;
     }
-  }
+  };
 
-  /**
-   * Register client
-   */
-  public async registerClient(userData: RegisterClientRequest): Promise<AuthResponse> {
+  const registerClient = async (userData: RegisterClientRequest): Promise<void> => {
     try {
-      const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-          API_ENDPOINTS.AUTH.REGISTER_CLIENT,
-          userData
-      );
-
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
-
-      return response;
+      const response = await authService.registerClient(userData);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Client registration failed:', error);
-      throw new Error('Client registration failed');
+      throw error;
     }
-  }
+  };
 
-  /**
-   * Register CG
-   */
-  public async registerCG(userData: RegisterCGRequest): Promise<AuthResponse> {
+  const registerCG = async (userData: RegisterCGRequest): Promise<void> => {
     try {
-      const response = await httpService.post<{ token: string; expiresIn: string; user: User }>(
-          API_ENDPOINTS.AUTH.REGISTER_CG,
-          userData
-      );
-
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
-
-      return response;
+      const response = await authService.registerCG(userData);
+      setUser(normalizeUser(response.user));
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('CG registration failed:', error);
-      throw new Error('CG registration failed');
+      throw error;
     }
-  }
+  };
 
-  /**
-   * Get user from localStorage (no API call)
-   */
-  public getUserFromStorage(): User | null {
+  const logout = async (): Promise<void> => {
     try {
-      const userData = localStorage.getItem('user_data');
-      return userData ? JSON.parse(userData) : null;
+      await authService.logout();
     } catch (error) {
-      console.error('Failed to parse user data from storage:', error);
-      return null;
+      console.error('Logout failed:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
     }
-  }
+  };
 
-  /**
-   * Logout user - only clear localStorage, no API call
-   */
-  public async logout(): Promise<void> {
-    // Clear token and user data from localStorage
-    httpService.clearToken();
-    localStorage.removeItem('user_data');
-  }
-
-  /**
-   * Check if user is authenticated
-   */
-  public isAuthenticated(): boolean {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user_data');
-    return !!(token && userData);
-  }
-}
-
-export const authService = new AuthService();
+  return (
+      <AuthContext.Provider value={{
+        user,
+        loginClient,
+        loginCG,
+        logout,
+        registerClient,
+        registerCG,
+        isAuthenticated,
+        loading,
+        updateUserData, // Expose the new method
+      }}>
+        {children}
+      </AuthContext.Provider>
+  );
+};
