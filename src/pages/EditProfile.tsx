@@ -34,7 +34,6 @@ const EditProfile: React.FC = () => {
 
   const updateProfileApi = useApi(profileService.updateCGProfile);
   const deleteImageApi = useApi(profileService.deleteGalleryImage);
-  const getCGProfileApi = useApi(profileService.getMyCGProfile);
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -47,47 +46,26 @@ const EditProfile: React.FC = () => {
       return;
     }
 
-    // Load current CG profile data from backend
-    loadCGProfile();
+    // Use existing user data - NO API CALL NEEDED
+    console.log('Using existing user data for edit profile');
+    populateFormWithUserData(user);
   }, [isAuthenticated, user, navigate]);
 
-  const loadCGProfile = async () => {
-    if (!user) return;
+  const populateFormWithUserData = (userData: any) => {
+    setFormData({
+      name: userData.name || '',
+      phone: userData.phone || userData.phoneNumber || '',
+      address: userData.address || '',
+      description: userData.description || '',
+      services: userData.services || [],
+      radius: userData.radius || 10
+    });
 
-    try {
-      console.log('Loading CG profile from backend...');
-      const cgProfile = await getCGProfileApi.execute();
+    setCurrentGallery(userData.galleryImageUrls || userData.galleryImages || []);
+    setCurrentProfileImage(userData.profileImageUrl || userData.profileImage || '');
+    setProfileImagePreview(userData.profileImageUrl || userData.profileImage || '');
 
-      // Populate form with backend data
-      setFormData({
-        name: cgProfile.name || '',
-        phone: cgProfile.phone || cgProfile.phoneNumber || '',
-        address: cgProfile.address || '',
-        description: cgProfile.description || '', // Description from backend
-        services: cgProfile.services || [], // Services already selected
-        radius: cgProfile.radius || 10
-      });
-
-      setCurrentGallery(cgProfile.galleryImageUrls || []);
-      setCurrentProfileImage(cgProfile.profileImageUrl || '');
-      setProfileImagePreview(cgProfile.profileImageUrl || '');
-
-      console.log('CG profile loaded:', cgProfile);
-    } catch (error) {
-      console.error('Failed to load CG profile:', error);
-      // Fallback to user data if backend call fails
-      setFormData({
-        name: user.name || '',
-        phone: user.phone || user.phoneNumber || '',
-        address: user.address || '',
-        description: user.description || '',
-        services: user.services || [],
-        radius: user.radius || 10
-      });
-      setCurrentGallery(user.galleryImages || []);
-      setCurrentProfileImage(user.profileImage || '');
-      setProfileImagePreview(user.profileImage || '');
-    }
+    console.log('Form populated with user data:', userData);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -149,13 +127,10 @@ const EditProfile: React.FC = () => {
       console.log('Updating profile with data:', updateData);
       const updatedUser = await updateProfileApi.execute(updateData);
 
-      // Update local storage with new user data
+      // Update local storage with new user data - NO ADDITIONAL API CALL NEEDED
       localStorage.setItem('user_data', JSON.stringify(updatedUser));
 
-      // Refresh the profile data after successful update
-      if (user?.id) {
-        await loadCGProfile();
-      }
+      // Navigate back to profile - the Profile component will use the updated user data
       navigate('/profile');
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -164,17 +139,6 @@ const EditProfile: React.FC = () => {
 
   if (!user || user.type !== 'cg') {
     return null;
-  }
-
-  if (getCGProfileApi.loading) {
-    return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 text-yellow-600 mx-auto mb-4 animate-spin" />
-            <p className="text-gray-600">Loading profile data...</p>
-          </div>
-        </div>
-    );
   }
 
   return (
@@ -275,7 +239,7 @@ const EditProfile: React.FC = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                         required
                     />
                   </div>
@@ -292,7 +256,7 @@ const EditProfile: React.FC = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                         required
                     />
                   </div>
@@ -309,7 +273,7 @@ const EditProfile: React.FC = () => {
                         name="address"
                         value={formData.address}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -327,7 +291,7 @@ const EditProfile: React.FC = () => {
                         onChange={handleInputChange}
                         min="1"
                         max="50"
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                         required
                     />
                   </div>
@@ -351,7 +315,7 @@ const EditProfile: React.FC = () => {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                   placeholder="Tell potential clients about your experience, qualifications, and what makes you the right choice for their projects..."
                   required
               />

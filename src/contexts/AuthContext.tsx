@@ -11,6 +11,7 @@ interface AuthContextType {
   registerCG: (userData: RegisterCGRequest) => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
+  updateUserData: (userData: User) => void; // New method to update user data
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,6 +74,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } finally {
       setLoading(false);
     }
+  };
+
+  // New method to update user data without API calls
+  const updateUserData = (userData: User) => {
+    console.log('Updating user data in context:', userData);
+    const normalizedUser = normalizeUser(userData);
+    setUser(normalizedUser);
+    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
   };
 
   const loginClient = async (credentials: LoginRequest): Promise<void> => {
@@ -140,6 +149,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         registerCG,
         isAuthenticated,
         loading,
+        updateUserData, // Expose the new method
       }}>
         {children}
       </AuthContext.Provider>

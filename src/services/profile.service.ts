@@ -29,6 +29,7 @@ export interface CGProfileResponse {
 class ProfileService {
   /**
    * Get CG public profile data (for viewing other CG profiles)
+   * ONLY called when viewing someone else's profile
    */
   public async getCGPublicProfile(cgId: string): Promise<CGProfileResponse> {
     try {
@@ -52,6 +53,7 @@ class ProfileService {
 
   /**
    * Update CG profile with form data including images and CG ID
+   * Returns updated user data - NO ADDITIONAL GET CALL NEEDED
    */
   public async updateCGProfile(updates: ProfileUpdateRequest): Promise<User> {
     // Get current user data to extract CG ID
@@ -188,67 +190,6 @@ class ProfileService {
         imageUrl
       }
     });
-  }
-
-  /**
-   * Get current user's CG profile data (for editing own profile) 
-   */
-  public async getMyCGProfile(cgId?: string): Promise<User> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
-    const targetCgId = cgId || user.id;
-
-    // Include CG ID as query parameter for GET request
-    console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${targetCgId}`);
-    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${targetCgId}`);
-    console.log('Own CG profile response:', response);
-    
-    // Transform backend response to User format
-    const transformedUser: User = {
-      id: user.id, // Keep original user ID
-      email: user.email, // Keep original email
-      name: response.fullName || response.name || user.name,
-      type: user.type,
-      location: user.location, // Keep original location
-      address: response.address || user.address,
-      phone: response.phoneNumber || user.phone,
-      phoneNumber: response.phoneNumber || user.phoneNumber,
-      profileImage: response.profileImageUrl || user.profileImage,
-      profileImageUrl: response.profileImageUrl || user.profileImageUrl,
-      galleryImages: response.galleryImageUrls || user.galleryImages,
-      galleryImageUrls: response.galleryImageUrls || user.galleryImageUrls,
-      services: response.services || user.services,
-      radius: response.serviceRadius || user.radius,
-      description: response.description || user.description,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    };
-    
-    return transformedUser;
-  }
-
-  /**
-   * Get CG profile data for viewing (returns backend format)
-   */
-  public async getCGProfileForViewing(): Promise<CGProfileResponse> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
-
-    // Include CG ID as query parameter for GET request
-    console.log('Making GET request for profile viewing to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    console.log('CG profile for viewing response:', response);
-    return response;
   }
 }
 

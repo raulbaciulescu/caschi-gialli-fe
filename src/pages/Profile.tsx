@@ -59,21 +59,44 @@ const Profile: React.FC = () => {
       // Viewing another CG's profile
       const isOwn = cgId === user.id.toString();
       setIsOwnProfile(isOwn);
-      console.log('Loading CG profile for cgId:', cgId, 'isOwn:', isOwn);
-      loadCGProfile(cgId);
+      
+      if (!isOwn) {
+        // Only load from backend if viewing someone else's profile
+        console.log('Loading other CG profile for cgId:', cgId);
+        loadCGProfile(cgId);
+      } else {
+        // Viewing own CG profile - use user data, no API call needed
+        console.log('Viewing own CG profile, using user data');
+        setCgProfile(transformUserToCGProfile(user));
+      }
     } else if (user && user.type === 'cg') {
-      // Viewing own CG profile - load from backend
-      setIsOwnProfile(true);
-      console.log('Loading own CG profile from backend for user:', user.id);
-      loadCGProfile(user.id.toString());
-    } else if (user) {
-      // Viewing own profile
+      // Viewing own CG profile from navbar - use user data, no API call needed
       setIsOwnProfile(true);
       console.log('Viewing own client profile for user type:', user.type);
-      // For own profile, we don't need to load from backend, use user data
+      setCgProfile(transformUserToCGProfile(user));
+    } else if (user) {
+      // Viewing own client profile
+      setIsOwnProfile(true);
+      console.log('Viewing own client profile for user type:', user.type);
       setCgProfile(null); // Clear any existing CG profile data
     }
   }, [cgId, user]);
+
+  // Transform user data to CG profile format
+  const transformUserToCGProfile = (userData: any): CGProfileData => {
+    return {
+      id: parseInt(userData.id) || 0,
+      fullName: userData.name,
+      name: userData.name,
+      phoneNumber: userData.phone || userData.phoneNumber || '',
+      address: userData.address || '',
+      serviceRadius: userData.radius || 10,
+      services: userData.services || [],
+      profileImageUrl: userData.profileImageUrl || userData.profileImage,
+      galleryImageUrls: userData.galleryImageUrls || userData.galleryImages || [],
+      description: userData.description || ''
+    };
+  };
 
   const loadCGProfile = async (targetCgId: string) => {
     try {
@@ -85,6 +108,14 @@ const Profile: React.FC = () => {
       console.error('Failed to load CG profile:', error);
     }
   };
+
+  // Update profile data when user data changes (after successful update)
+  useEffect(() => {
+    if (user && isOwnProfile && user.type === 'cg') {
+      console.log('User data updated, refreshing profile display');
+      setCgProfile(transformUserToCGProfile(user));
+    }
+  }, [user, isOwnProfile]);
 
   const handleContactCG = async () => {
     if (!user || !cgProfile) return;
@@ -116,7 +147,7 @@ const Profile: React.FC = () => {
     });
   };
 
-  // Show loading only when we're fetching CG profile data
+  // Show loading only when we're fetching CG profile data from API
   const isLoading = getCGProfileApi.loading;
   
   if (!user && !cgProfile) {
@@ -142,15 +173,13 @@ const Profile: React.FC = () => {
   const displayAddress = cgProfile ? cgProfile.address : user?.address;
   const displayServices = cgProfile ? cgProfile.services : user?.services;
   const displayRadius = cgProfile ? cgProfile.serviceRadius : user?.radius;
-  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || []);
+  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || user?.galleryImageUrls || []);
   const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : (user?.profileImage || user?.profileImageUrl);
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
   const displayEmail = !isOwnProfile ? 'Contact via platform' : user?.email;
 
-  // Get location data - prioritize CG profile data, then user data
-  const displayLocation = cgProfile ? 
-    (user?.location || { lat: 41.9028, lng: 12.4964 }) : // For now, use user location as backend doesn't return coordinates
-    user?.location;
+  // Get location data - prioritize user location since backend doesn't return coordinates
+  const displayLocation = user?.location || { lat: 41.9028, lng: 12.4964 };
 
   const tabs = [
     { id: 'overview', label: 'Overview', count: null },
@@ -225,15 +254,6 @@ const Profile: React.FC = () => {
                       <p className="text-lg text-gray-600 mt-1">
                         {(user?.type === 'cg' || cgProfile) ? 'Professional Service Provider' : 'Client'}
                       </p>
-
-                      {/*{user.type === 'cg' && (*/}
-                      {/*    <div className="flex items-center mt-2">*/}
-                      {/*      <Calendar className="h-4 w-4 mr-1 text-gray-500" />*/}
-                      {/*      <span className="text-sm text-gray-500">*/}
-                      {/*        Member since {new Date(user?.createdAt || '2024-01-01').getFullYear()}*/}
-                      {/*      </span>*/}
-                      {/*    </div>*/}
-                      {/*)}*/}
                     </div>
 
                     <div className="flex items-center space-x-3 mt-4 md:mt-0">
@@ -388,8 +408,7 @@ const Profile: React.FC = () => {
                                   markers={[{
                                     position: [displayLocation.lat, displayLocation.lng],
                                     type: 'cg',
-                                    popup: 'Service Location',
-                                    radius: displayRadius || 10
+                                    popup: 'Service Location'
                                   }]}
                                   showRadius={false}
                                   className="h-48 w-full"
