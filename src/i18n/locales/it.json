@@ -1,175 +1,112 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService } from '../services/auth.service';
-import { User, LoginRequest, RegisterClientRequest, RegisterCGRequest } from '../types/api';
-
-interface AuthContextType {
-  user: User | null;
-  loginClient: (credentials: LoginRequest) => Promise<void>;
-  loginCG: (credentials: LoginRequest) => Promise<void>;
-  logout: () => Promise<void>;
-  registerClient: (userData: RegisterClientRequest) => Promise<void>;
-  registerCG: (userData: RegisterCGRequest) => Promise<void>;
-  isAuthenticated: boolean;
-  loading: boolean;
-  updateUserData: (userData: User) => void; // New method to update user data
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+{
+  "common": {
+    "cancel": "Annulla",
+    "login": "Accedi",
+    "logout": "Esci",
+    "or": "o",
+    "password": "Password"
+  },
+  "navigation": {
+    "home": "Home",
+    "services": "Servizi",
+    "dashboard": "Dashboard",
+    "messages": "Messaggi",
+    "profile": "Profilo",
+    "getStarted": "Inizia"
+  },
+  "auth": {
+    "signIn": "Accedi",
+    "dontHaveAccount": "Non hai un account?",
+    "createAccount": "Crea un account",
+    "client": "Cliente",
+    "cascoGiallo": "Casco Giallo",
+    "emailAddress": "Indirizzo Email",
+    "enterEmail": "Inserisci la tua email",
+    "enterPassword": "Inserisci la tua password",
+    "signingIn": "Accesso in corso...",
+    "signInAs": "Accedi come {{type}}",
+    "registerAsClient": "Registrati come Cliente",
+    "becomeACascoGiallo": "Diventa un Casco Giallo",
+    "nameRequired": "Il nome è obbligatorio",
+    "emailRequired": "L'email è obbligatoria",
+    "emailInvalid": "L'email non è valida",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "passwordRequired": "La password è obbligatoria",
+    "passwordMinLength": "La password deve contenere almeno 6 caratteri",
+    "passwordsDontMatch": "Le password non corrispondono",
+    "locationRequired": "Seleziona la tua posizione sulla mappa",
+    "fullName": "Nome completo",
+    "enterFullName": "Inserisci il tuo nome completo",
+    "phoneNumber": "Numero di telefono",
+    "enterPhone": "Inserisci il tuo numero di telefono",
+    "addressOptional": "Indirizzo (Opzionale)",
+    "enterAddress": "Inserisci il tuo indirizzo",
+    "confirmPassword": "Conferma Password",
+    "confirmPasswordPlaceholder": "Conferma la tua password",
+    "selectLocation": "Seleziona la tua posizione",
+    "clickMapToSetLocation": "Clicca sulla mappa per impostare la tua posizione",
+    "locationConfirm": "Posizione: {{lat}}, {{lng}}",
+    "creatingAccount": "Creazione account...",
+    "joinCaschiGialli": "Unisciti a Caschi Gialli"
+  },
+  "home": {
+    "title": "Caschi Gialli",
+    "subtitle": "Connettiti con professionisti qualificati nella tua zona.",
+    "description": "Fai realizzare i tuoi progetti da Caschi Gialli di fiducia.",
+    "needService": "Ho bisogno di un servizio",
+    "becomeProvider": "Diventa un Casco Giallo",
+    "goToDashboard": "Vai alla Dashboard",
+    "howItWorks": "Come funziona",
+    "howItWorksSubtitle": "Un modo semplice, sicuro ed efficiente per connettere fornitori di servizi e clienti.",
+    "locationBasedMatching": "Corrispondenza basata sulla posizione",
+    "locationBasedMatchingDesc": "Trova professionisti qualificati nel tuo raggio d'azione.",
+    "directCommunication": "Comunicazione diretta",
+    "directCommunicationDesc": "Chatta direttamente con i fornitori di servizi per discutere le tue esigenze.",
+    "securePlatform": "Piattaforma sicura",
+    "securePlatformDesc": "Piattaforma sicura per tutte le tue esigenze di servizio.",
+    "popularCategories": "Categorie di servizi popolari",
+    "popularCategoriesSubtitle": "Trova professionisti per tutte le tue esigenze.",
+    "trustedProfessionals": "Professionisti di fiducia",
+    "trustedProfessionalsDesc": "Accedi a una rete di professionisti verificati e affidabili.",
+    "quickResponse": "Risposta rapida",
+    "quickResponseDesc": "Ottieni risposte e preventivi rapidamente per i tuoi progetti.",
+    "qualityGuaranteed": "Qualità garantita",
+    "qualityGuaranteedDesc": "Lavori di alta qualità garantiti da professionisti esperti.",
+    "whyChoose": "Perché scegliere noi",
+    "whyChooseSubtitle": "La tua soluzione di riferimento per servizi professionali.",
+    "readyToStart": "Pronto per iniziare?",
+    "readyToStartSubtitle": "Unisciti a migliaia di clienti soddisfatti e fornitori di servizi professionali.",
+    "findServices": "Trova servizi",
+    "offerServices": "Offri servizi"
+  },
+  "categories": {
+    "Plumbing": "Idraulica",
+    "Electrical": "Elettricità",
+    "Carpentry": "Falegnameria",
+    "Painting": "Pittura",
+    "Gardening": "Giardinaggio",
+    "Cleaning": "Pulizie",
+    "Moving": "Traslochi",
+    "IT Support": "Supporto IT",
+    "Appliance Repair": "Riparazione Elettrodomestici",
+    "HVAC": "Climatizzazione",
+    "Roofing": "Coperture",
+    "Flooring": "Pavimentazione",
+    "Tiling": "Piastrellatura",
+    "Masonry": "Muratura",
+    "Pest Control": "Disinfestazione"
+  },
+  "editProfile": {
+    "basicInformation": "Informazioni di base",
+    "selectAtLeastOne": "Seleziona almeno una categoria di servizio",
+    "serviceRadiusRequired": "Raggio di servizio (km) *",
+    "maxDistanceNote": "Distanza massima che sei disposto a percorrere per i lavori",
+    "professionalDescription": "Descrizione professionale",
+    "serviceCategoriesRequired": "Categorie di servizi *",
+    "serviceCategoriesSubtitle": "Seleziona tutti i servizi che puoi fornire",
+    "descriptionPlaceholder": "Descrivi la tua esperienza, qualifiche e ciò che ti distingue..."
+  },
+  "map": {
+    "yourLocation": "La tua posizione"
   }
-  return context;
-};
-
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // Normalize user data to handle both backend formats
-  const normalizeUser = (userData: any): User => {
-    return {
-      ...userData,
-      // Ensure we have location object
-      location: userData.location || (userData.lat && userData.lng ? { lat: userData.lat, lng: userData.lng } : undefined),
-      // Normalize type field (backend returns 'customer', frontend expects 'client')
-      type: userData.type === 'customer' ? 'client' : userData.type,
-      // Ensure profile image is available
-      profileImage: userData.profileImageUrl || userData.profileImage
-    };
-  };
-
-  useEffect(() => {
-    initializeAuth();
-  }, []);
-
-  const initializeAuth = async () => {
-    setLoading(true);
-    try {
-      // Check if we have a valid token and user data
-      if (authService.isAuthenticated()) {
-        const userData = authService.getUserFromStorage();
-        if (userData) {
-          setUser(normalizeUser(userData));
-          setIsAuthenticated(true);
-        } else {
-          // Token exists but no user data - clear everything
-          await authService.logout();
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    } catch (error) {
-      console.error('Failed to initialize auth:', error);
-      // Clear invalid data
-      await authService.logout();
-      setUser(null);
-      setIsAuthenticated(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // New method to update user data without API calls
-  const updateUserData = (userData: User) => {
-    console.log('Updating user data in context:', userData);
-    console.log('Current user data before update:', user);
-    console.log('Current user data before update:', user);
-    
-    // CRITICAL: Merge new data with existing user data to preserve everything
-    const mergedUserData = {
-      ...user, // Keep all existing data
-      ...userData, // Override with new data from update
-      updatedAt: userData.updatedAt || new Date().toISOString()
-    };
-    
-    console.log('Merged user data:', mergedUserData);
-    // CRITICAL: Merge new data with existing user data to preserve everything
-    const mergedUserData = {
-      ...user, // Keep all existing data
-      ...userData, // Override with new data from update
-    };
-    
-    const normalizedUser = normalizeUser(mergedUserData);
-    setUser(normalizedUser);
-    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
-    console.log('User data updated successfully in context and localStorage:', normalizedUser);
-  };
-
-  const loginClient = async (credentials: LoginRequest): Promise<void> => {
-    try {
-      const response = await authService.loginClient(credentials);
-      setUser(normalizeUser(response.user));
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Client login failed:', error);
-      throw error;
-    }
-  };
-
-  const loginCG = async (credentials: LoginRequest): Promise<void> => {
-    try {
-      const response = await authService.loginCG(credentials);
-      setUser(normalizeUser(response.user));
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('CG login failed:', error);
-      throw error;
-    }
-  };
-
-  const registerClient = async (userData: RegisterClientRequest): Promise<void> => {
-    try {
-      const response = await authService.registerClient(userData);
-      setUser(normalizeUser(response.user));
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Client registration failed:', error);
-      throw error;
-    }
-  };
-
-  const registerCG = async (userData: RegisterCGRequest): Promise<void> => {
-    try {
-      const response = await authService.registerCG(userData);
-      setUser(normalizeUser(response.user));
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('CG registration failed:', error);
-      throw error;
-    }
-  };
-
-  const logout = async (): Promise<void> => {
-    try {
-      await authService.logout();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-  };
-
-  return (
-      <AuthContext.Provider value={{
-        user,
-        loginClient,
-        loginCG,
-        logout,
-        registerClient,
-        registerCG,
-        isAuthenticated,
-        loading,
-        updateUserData, // Expose the new method
-      }}>
-        {children}
-      </AuthContext.Provider>
-  );
-};
+}
