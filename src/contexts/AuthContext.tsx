@@ -85,17 +85,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const mergedUserData = {
       ...user, // Keep all existing data
       ...userData, // Override with new data from update
-    };
-    
-    const normalizedUser = normalizeUser(mergedUserData);
-    setUser(normalizedUser);
-    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
-    console.log('User data updated successfully in context and localStorage:', normalizedUser);
-      updatedAt: userData.updatedAt || new Date().toISOString(),
+      updatedAt: userData.updatedAt || new Date().toISOString()
     };
     
     console.log('Merged user data:', mergedUserData);
     const normalizedUser = normalizeUser(mergedUserData);
+    setUser(normalizedUser);
+    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
+    console.log('User data updated successfully in context and localStorage:', normalizedUser);
   };
 
   const loginClient = async (credentials: LoginRequest): Promise<void> => {
