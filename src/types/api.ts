@@ -50,3 +50,15 @@ export interface ApiError {
   code?: string;
   status?: number;
 }
+
+export class ApiException extends Error {
+  public status: number;
+  public code?: string;
+
+  constructor(message: string, status: number = 500, code?: string) {
+    super(message);
+    this.name = 'ApiException';
+    this.status = status;
+    this.code = code;
+  }
+}
