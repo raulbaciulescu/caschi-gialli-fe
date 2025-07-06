@@ -13,9 +13,8 @@ import {
 } from 'lucide-react';
 
 const EditProfile: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, updateUserData } = useAuth();
   const { serviceCategories } = useService();
-  const { updateUserData } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -35,7 +34,6 @@ const EditProfile: React.FC = () => {
 
   const updateProfileApi = useApi(profileService.updateCGProfile);
   const deleteImageApi = useApi(profileService.deleteGalleryImage);
-  const getFreshDataApi = useApi(profileService.getCGProfileForViewing);
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -48,7 +46,7 @@ const EditProfile: React.FC = () => {
       return;
     }
 
-    // Use existing user data - NO API CALL NEEDED
+    // Use existing user data from localStorage - NO API CALL NEEDED
     console.log('Using existing user data for edit profile');
     populateFormWithUserData(user);
   }, [isAuthenticated, user, navigate]);
@@ -119,16 +117,6 @@ const EditProfile: React.FC = () => {
 
     if (!user) return;
     
-    // Debug logging to check user data
-    console.log('Current user data before update:', user);
-    console.log('User ID:', user.id);
-    
-    // Validate user ID before proceeding
-    if (!user.id || user.id === 'undefined' || user.id === undefined) {
-      console.error('Invalid user ID:', user.id);
-      alert('User ID is missing. Please log in again.');
-      return;
-    }
 
     try {
       const updateData = {
@@ -140,39 +128,11 @@ const EditProfile: React.FC = () => {
       console.log('Updating profile with data:', updateData);
       const updatedUser = await updateProfileApi.execute(updateData);
 
-      // After successful update, get fresh data from backend
-      console.log('Update successful, fetching fresh data from backend...');
-      console.log('User ID for fresh data call:', user.id);
+      // Update successful - update user data in context and localStorage
+      console.log('Update successful, updating user data in context');
+      updateUserData(updatedUser);
       
-      try {
-        const freshData = await getFreshDataApi.execute();
-        
-        // Transform fresh backend data to user format and update context
-        const freshUserData = {
-          ...user,
-          id: user.id, // Ensure ID is preserved
-          name: freshData.fullName || freshData.name,
-          phone: freshData.phoneNumber,
-          phoneNumber: freshData.phoneNumber,
-          address: freshData.address,
-          description: freshData.description,
-          services: freshData.services,
-          radius: freshData.serviceRadius,
-          profileImage: freshData.profileImageUrl,
-          profileImageUrl: freshData.profileImageUrl,
-          galleryImages: freshData.galleryImageUrls,
-          galleryImageUrls: freshData.galleryImageUrls
-        };
-        
-        // Update user data in context and localStorage
-        updateUserData(freshUserData);
-        console.log('Fresh data loaded and user context updated');
-      } catch (freshDataError) {
-        console.error('Failed to fetch fresh data, but update was successful:', freshDataError);
-        // Continue with navigation even if fresh data fetch fails
-      }
-      
-      // Navigate back to profile with fresh data
+      // Navigate back to profile
       navigate('/profile');
     } catch (error) {
       console.error('Failed to update profile:', error);

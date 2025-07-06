@@ -67,13 +67,13 @@ const Profile: React.FC = () => {
       } else {
         // Viewing own CG profile - use user data, no API call needed
         console.log('Viewing own CG profile, using user data');
-        setCgProfile(transformUserToCGProfile(user));
+        setCgProfile(null); // Use user data directly
       }
     } else if (user && user.type === 'cg') {
       // Viewing own CG profile from navbar - use user data, no API call needed
       setIsOwnProfile(true);
-      console.log('Viewing own client profile for user type:', user.type);
-      setCgProfile(transformUserToCGProfile(user));
+      console.log('Viewing own CG profile from navbar');
+      setCgProfile(null); // Use user data directly
     } else if (user) {
       // Viewing own client profile
       setIsOwnProfile(true);
@@ -81,22 +81,6 @@ const Profile: React.FC = () => {
       setCgProfile(null); // Clear any existing CG profile data
     }
   }, [cgId, user]);
-
-  // Transform user data to CG profile format
-  const transformUserToCGProfile = (userData: any): CGProfileData => {
-    return {
-      id: parseInt(userData.id) || 0,
-      fullName: userData.name,
-      name: userData.name,
-      phoneNumber: userData.phone || userData.phoneNumber || '',
-      address: userData.address || '',
-      serviceRadius: userData.radius || 10,
-      services: userData.services || [],
-      profileImageUrl: userData.profileImageUrl || userData.profileImage,
-      galleryImageUrls: userData.galleryImageUrls || userData.galleryImages || [],
-      description: userData.description || ''
-    };
-  };
 
   const loadCGProfile = async (targetCgId: string) => {
     try {
@@ -108,14 +92,6 @@ const Profile: React.FC = () => {
       console.error('Failed to load CG profile:', error);
     }
   };
-
-  // Update profile data when user data changes (after successful update)
-  useEffect(() => {
-    if (user && isOwnProfile && user.type === 'cg') {
-      console.log('User data updated, refreshing profile display');
-      setCgProfile(transformUserToCGProfile(user));
-    }
-  }, [user, isOwnProfile]);
 
   const handleContactCG = async () => {
     if (!user || !cgProfile) return;
@@ -147,7 +123,7 @@ const Profile: React.FC = () => {
     });
   };
 
-  // Show loading only when we're fetching CG profile data from API
+  // Show loading only when we're fetching OTHER CG profile data from API
   const isLoading = getCGProfileApi.loading;
   
   if (!user && !cgProfile) {
@@ -167,18 +143,18 @@ const Profile: React.FC = () => {
     );
   }
 
-  // Use CG profile data if viewing another CG, otherwise use current user data
+  // Use CG profile data if viewing another CG, otherwise use current user data directly
   const displayName = cgProfile ? (cgProfile.name || cgProfile.fullName) : user?.name;
   const displayPhone = cgProfile ? cgProfile.phoneNumber : (user?.phone || user?.phoneNumber);
   const displayAddress = cgProfile ? cgProfile.address : user?.address;
   const displayServices = cgProfile ? cgProfile.services : user?.services;
   const displayRadius = cgProfile ? cgProfile.serviceRadius : user?.radius;
-  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || user?.galleryImageUrls || []);
-  const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : (user?.profileImage || user?.profileImageUrl);
+  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImageUrls || user?.galleryImages || []);
+  const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : (user?.profileImageUrl || user?.profileImage);
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
   const displayEmail = !isOwnProfile ? 'Contact via platform' : user?.email;
 
-  // Get location data - prioritize user location since backend doesn't return coordinates
+  // Get location data - use user location (backend doesn't return coordinates)
   const displayLocation = user?.location || { lat: 41.9028, lng: 12.4964 };
 
   const tabs = [

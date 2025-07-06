@@ -79,18 +79,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // New method to update user data without API calls
   const updateUserData = (userData: User) => {
     console.log('Updating user data in context:', userData);
-    console.log('User ID being updated:', userData.id);
-    
-    // Validate user data before updating
-    if (!userData.id || userData.id === 'undefined' || userData.id === undefined) {
-      console.error('Cannot update user data with invalid ID:', userData.id);
-      return;
-    }
     
     const normalizedUser = normalizeUser(userData);
-    console.log('Normalized user:', normalizedUser);
     setUser(normalizedUser);
     localStorage.setItem('user_data', JSON.stringify(normalizedUser));
+    console.log('User data updated successfully in context and localStorage');
   };
 
   const loginClient = async (credentials: LoginRequest): Promise<void> => {

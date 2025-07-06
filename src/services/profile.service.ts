@@ -29,7 +29,7 @@ export interface CGProfileResponse {
 class ProfileService {
   /**
    * Get CG public profile data (for viewing other CG profiles)
-   * ONLY called when viewing someone else's profile
+   * ONLY called when viewing someone else's profile - NOT for own profile
    */
   public async getCGPublicProfile(cgId: string): Promise<CGProfileResponse> {
     try {
@@ -53,7 +53,7 @@ class ProfileService {
 
   /**
    * Update CG profile with form data including images and CG ID
-   * Returns updated user data - NO ADDITIONAL GET CALL NEEDED
+   * Returns updated user data directly from backend - NO ADDITIONAL API CALLS NEEDED
    */
   public async updateCGProfile(updates: ProfileUpdateRequest): Promise<User> {
     // Get current user data to extract CG ID
@@ -106,8 +106,8 @@ class ProfileService {
         }
     );
 
-    // Update local storage with new user data
-    localStorage.setItem('user_data', JSON.stringify(response));
+    // Return updated user data - will be handled by context
+    console.log('Profile update response:', response);
 
     return response;
   }
@@ -170,33 +170,6 @@ class ProfileService {
     );
 
     return response.galleryImageUrls;
-  }
-
-  /**
-   * Get current user's CG profile data (for getting fresh data after update)
-   */
-  public async getCGProfileForViewing(): Promise<CGProfileResponse> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
-    
-    // Debug logging to see what we have
-    console.log('User data for CG profile request:', user);
-    console.log('User ID:', user.id);
-    
-    if (!user.id || user.id === 'undefined' || user.id === undefined) {
-      throw new Error('User ID not found in user data');
-    }
-
-    // Include CG ID as query parameter for GET request
-    console.log('Making GET request for fresh profile data to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    console.log('Fresh CG profile response:', response);
-    return response;
   }
 
   /**
