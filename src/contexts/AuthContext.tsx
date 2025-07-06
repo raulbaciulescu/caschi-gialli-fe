@@ -82,7 +82,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const normalizedUser = normalizeUser(userData);
     setUser(normalizedUser);
     localStorage.setItem('user_data', JSON.stringify(normalizedUser));
-    console.log('User data updated successfully in context and localStorage');
   };
 
   const loginClient = async (credentials: LoginRequest): Promise<void> => {

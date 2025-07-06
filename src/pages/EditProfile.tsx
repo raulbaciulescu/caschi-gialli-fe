@@ -15,7 +15,6 @@ import {
 const EditProfile: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const { serviceCategories } = useService();
-  const { updateUserData } = useAuth(); // Add this to get the update function
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -128,8 +127,8 @@ const EditProfile: React.FC = () => {
       console.log('Updating profile with data:', updateData);
       const updatedUser = await updateProfileApi.execute(updateData);
 
-      // Update user data in context and localStorage - this will trigger re-renders
-      updateUserData(updatedUser);
+      // Update local storage with new user data - NO ADDITIONAL API CALL NEEDED
+      localStorage.setItem('user_data', JSON.stringify(updatedUser));
 
       // Navigate back to profile - the Profile component will use the updated user data
       navigate('/profile');
