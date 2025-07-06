@@ -173,6 +173,25 @@ class ProfileService {
   }
 
   /**
+   * Get current user's CG profile data (for getting fresh data after update)
+   */
+  public async getCGProfileForViewing(): Promise<CGProfileResponse> {
+    // Get current user data to extract CG ID
+    const userData = localStorage.getItem('user_data');
+    if (!userData) {
+      throw new Error('User not authenticated');
+    }
+
+    const user = JSON.parse(userData);
+
+    // Include CG ID as query parameter for GET request
+    console.log('Making GET request for fresh profile data to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    console.log('Fresh CG profile response:', response);
+    return response;
+  }
+
+  /**
    * Delete gallery image
    */
   public async deleteGalleryImage(imageUrl: string): Promise<void> {

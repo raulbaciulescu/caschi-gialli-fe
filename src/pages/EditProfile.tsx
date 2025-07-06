@@ -15,6 +15,7 @@ import {
 const EditProfile: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const { serviceCategories } = useService();
+  const { updateUserData } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ const EditProfile: React.FC = () => {
 
   const updateProfileApi = useApi(profileService.updateCGProfile);
   const deleteImageApi = useApi(profileService.deleteGalleryImage);
+  const getFreshDataApi = useApi(profileService.getCGProfileForViewing);
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -127,10 +129,31 @@ const EditProfile: React.FC = () => {
       console.log('Updating profile with data:', updateData);
       const updatedUser = await updateProfileApi.execute(updateData);
 
-      // Update local storage with new user data - NO ADDITIONAL API CALL NEEDED
-      localStorage.setItem('user_data', JSON.stringify(updatedUser));
+      // After successful update, get fresh data from backend
+      console.log('Update successful, fetching fresh data from backend...');
+      const freshData = await getFreshDataApi.execute();
+      
+      // Transform fresh backend data to user format and update context
+      const freshUserData = {
+        ...user,
+        name: freshData.fullName || freshData.name,
+        phone: freshData.phoneNumber,
+        phoneNumber: freshData.phoneNumber,
+        address: freshData.address,
+        description: freshData.description,
+        services: freshData.services,
+        radius: freshData.serviceRadius,
+        profileImage: freshData.profileImageUrl,
+        profileImageUrl: freshData.profileImageUrl,
+        galleryImages: freshData.galleryImageUrls,
+        galleryImageUrls: freshData.galleryImageUrls
+      };
+      
+      // Update user data in context and localStorage
+      updateUserData(freshUserData);
+      console.log('Fresh data loaded and user context updated');
 
-      // Navigate back to profile - the Profile component will use the updated user data
+      // Navigate back to profile with fresh data
       navigate('/profile');
     } catch (error) {
       console.error('Failed to update profile:', error);
