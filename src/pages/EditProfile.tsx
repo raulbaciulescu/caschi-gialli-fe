@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useService } from '../contexts/ServiceContext';
 import { profileService } from '../services/profile.service';
@@ -15,6 +16,7 @@ import {
 const EditProfile: React.FC = () => {
   const { user, isAuthenticated, updateUserData } = useAuth();
   const { serviceCategories } = useService();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -167,7 +169,7 @@ const EditProfile: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="h-12 w-12 text-yellow-600 mx-auto mb-4 animate-spin" />
-            <p className="text-gray-600">Loading profile data...</p>
+            <p className="text-gray-600">{t('editProfile.loadingProfileData')}</p>
           </div>
         </div>
     );
@@ -183,7 +185,7 @@ const EditProfile: React.FC = () => {
                 className="flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Profile
+              {t('editProfile.backToProfile')}
             </button>
 
             <div className="flex items-center space-x-4">
@@ -192,9 +194,9 @@ const EditProfile: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-                  Edit Profile
+                  {t('editProfile.title')}
                 </h1>
-                <p className="text-gray-600 mt-1">Update your professional information and showcase your work</p>
+                <p className="text-gray-600 mt-1">{t('editProfile.subtitle')}</p>
               </div>
             </div>
           </div>
@@ -205,9 +207,9 @@ const EditProfile: React.FC = () => {
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                   <Camera className="h-5 w-5 mr-2 text-yellow-600" />
-                  Profile Image
+                  {t('editProfile.profileImage')}
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">Upload a professional photo that represents you</p>
+                <p className="text-sm text-gray-600 mt-1">{t('editProfile.profileImageSubtitle')}</p>
               </div>
 
               <div className="p-6">
@@ -241,7 +243,7 @@ const EditProfile: React.FC = () => {
                     >
                       <div className="flex flex-col items-center justify-center h-full">
                         <Camera className="h-8 w-8 text-yellow-600 mb-2" />
-                        <p className="text-sm font-medium text-gray-900">Update Profile Photo</p>
+                        <p className="text-sm font-medium text-gray-900">{t('editProfile.updateProfilePhoto')}</p>
                         <p className="text-xs text-gray-500">JPG, PNG up to 5MB</p>
                       </div>
                     </ImageUpload>
@@ -255,14 +257,14 @@ const EditProfile: React.FC = () => {
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                   <User className="h-5 w-5 mr-2 text-yellow-600" />
-                  Basic Information
+                  {t('editProfile.basicInformation')}
                 </h2>
               </div>
 
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name *
+                    {t('editProfile.fullNameRequired')}
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -279,7 +281,7 @@ const EditProfile: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number *
+                    {t('editProfile.phoneNumberRequired')}
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -296,7 +298,7 @@ const EditProfile: React.FC = () => {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address
+                    {t('editProfile.address')}
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -312,7 +314,7 @@ const EditProfile: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Service Radius (km) *
+                    {t('editProfile.serviceRadiusRequired')}
                   </label>
                   <div className="relative">
                     <Ruler className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -336,9 +338,9 @@ const EditProfile: React.FC = () => {
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                   <Award className="h-5 w-5 mr-2 text-yellow-600" />
-                  Professional Description
+                  {t('editProfile.professionalDescription')}
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">Describe your experience, qualifications, and what makes you stand out</p>
+                <p className="text-sm text-gray-600 mt-1">{t('editProfile.professionalDescriptionSubtitle')}</p>
               </div>
 
               <div className="p-6">
@@ -348,11 +350,11 @@ const EditProfile: React.FC = () => {
                   onChange={handleInputChange}
                   rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
-                  placeholder="Tell potential clients about your experience, qualifications, and what makes you the right choice for their projects..."
+                  placeholder={t('editProfile.descriptionPlaceholder')}
                   required
               />
                 <div className="mt-2 text-sm text-gray-500">
-                  {formData.description.length}/500 characters
+                  {t('editProfile.charactersCount', { count: formData.description.length })}
                 </div>
               </div>
             </div>
@@ -362,9 +364,9 @@ const EditProfile: React.FC = () => {
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                   <HardHat className="h-5 w-5 mr-2 text-yellow-600" />
-                  Service Categories
+                  {t('editProfile.serviceCategoriesRequired')}
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">Select all services you can provide</p>
+                <p className="text-sm text-gray-600 mt-1">{t('editProfile.serviceCategoriesSubtitle')}</p>
               </div>
 
               <div className="p-6">
@@ -381,12 +383,14 @@ const EditProfile: React.FC = () => {
                           }`}
                       >
                         <HardHat className="h-4 w-4 mx-auto mb-1" />
-                        {category}
+                        {t(`categories.${category}`)}
                       </button>
                   ))}
                 </div>
                 <div className="mt-4 text-sm text-gray-600">
-                  Selected services: {formData.services.length > 0 ? formData.services.join(', ') : 'None'}
+                  {formData.services.length > 0 
+                    ? t('editProfile.selectedServices', { services: formData.services.map(s => t(`categories.${s}`)).join(', ') })
+                    : t('edit.selectedServicesNone')}
                 </div>
               </div>
             </div>
@@ -396,16 +400,16 @@ const EditProfile: React.FC = () => {
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                   <ImageIcon className="h-5 w-5 mr-2 text-yellow-600" />
-                  Work Gallery
+                  {t('editProfile.workGallery')}
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">Showcase your best work with high-quality images</p>
+                <p className="text-sm text-gray-600 mt-1">{t('editProfile.workGallerySubtitle')}</p>
               </div>
 
               <div className="p-6 space-y-6">
                 {/* Current Gallery Images */}
                 {currentGallery.length > 0 && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-3">Current Gallery</h3>
+                      <h3 className="text-sm font-medium text-gray-700 mb-3">{t('editProfile.currentGallery')}</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {currentGallery.map((imageUrl, index) => (
                             <div key={index} className="relative group">
@@ -433,7 +437,7 @@ const EditProfile: React.FC = () => {
                 {/* Upload New Images */}
                 <div>
                   <h3 className="text-sm font-medium text-gray-700 mb-3">
-                    {currentGallery.length > 0 ? 'Add More Images' : 'Upload Work Photos'}
+                    {currentGallery.length > 0 ? t('editProfile.addMoreImages') : t('editProfile.uploadWorkPhotos')}
                   </h3>
                   <ImageUpload
                       onImageSelect={handleGalleryImagesSelect}
@@ -445,9 +449,9 @@ const EditProfile: React.FC = () => {
                     <div className="flex flex-col items-center">
                       <ImageIcon className="h-8 w-8 text-yellow-600 mb-2" />
                       <p className="text-sm font-medium text-gray-900">
-                        {currentGallery.length > 0 ? 'Add More Photos' : 'Upload Work Photos'}
+                        {currentGallery.length > 0 ? t('editProfile.addMorePhotos') : t('editProfile.uploadWorkPhotos')}
                       </p>
-                      <p className="text-xs text-gray-500">Show your best projects and craftsmanship</p>
+                      <p className="text-xs text-gray-500">{t('editProfile.showBestProjects')}</p>
                     </div>
                   </ImageUpload>
                 </div>
@@ -469,7 +473,7 @@ const EditProfile: React.FC = () => {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center">
                     <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                    <p className="text-green-600">Profile updated successfully!</p>
+                    <p className="text-green-600">{t('editProfile.profileUpdatedSuccessfully')}</p>
                   </div>
                 </div>
             )}
@@ -482,7 +486,7 @@ const EditProfile: React.FC = () => {
                   className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium"
                   disabled={updateProfileApi.loading}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                   type="submit"
@@ -492,12 +496,12 @@ const EditProfile: React.FC = () => {
                 {updateProfileApi.loading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Updating...
+                      {t('editProfile.updating')}
                     </>
                 ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Save Changes
+                      {t('editProfile.saveChanges')}
                     </>
                 )}
               </button>

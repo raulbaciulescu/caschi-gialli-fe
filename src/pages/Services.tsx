@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 import {useService} from '../contexts/ServiceContext';
 import {useAuth} from '../contexts/AuthContext';
 import {useChat} from '../contexts/ChatContext';
@@ -34,6 +35,7 @@ const Services: React.FC = () => {
   const { user } = useAuth();
   const { createChat } = useChat();
   const { data: cgInRange, loading, error, searchCGInRange, reset } = useCGInRange();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -155,9 +157,9 @@ const Services: React.FC = () => {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-              Find Caschi Gialle
+              {t('services.title')}
             </h1>
-            <p className="text-gray-600 mt-2">Browse professional service providers in your area</p>
+            <p className="text-gray-600 mt-2">{t('services.subtitle')}</p>
           </div>
 
           {/* Search Controls */}
@@ -169,7 +171,7 @@ const Services: React.FC = () => {
                     <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Search by name, service, or description..."
+                        placeholder={t('services.searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
@@ -183,9 +185,9 @@ const Services: React.FC = () => {
                       onChange={(e) => handleCategoryChange(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
                   >
-                    <option value="">All Categories</option>
+                    <option value="">{t('services.allCategories')}</option>
                     {serviceCategories.map(category => (
-                        <option key={category} value={category}>{category}</option>
+                        <option key={category} value={category}>{t(`categories.${category}`)}</option>
                     ))}
                   </select>
                 </div>
@@ -196,12 +198,12 @@ const Services: React.FC = () => {
                   {searchLocation ? (
                       <div className="text-sm text-green-600 bg-green-50 p-2 rounded-lg flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
-                        Searching near: {searchLocation.lat.toFixed(4)}, {searchLocation.lng.toFixed(4)}
+                        {t('services.searchNear', { lat: searchLocation.lat.toFixed(4), lng: searchLocation.lng.toFixed(4) })}
                       </div>
                   ) : (
                       <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded-lg flex items-center">
                         <AlertCircle className="h-4 w-4 mr-2" />
-                        {user ? 'Loading your location...' : 'Click on map to set search location'}
+                        {user ? t('common.loading') : t('services.clickMapToSetLocation')}
                       </div>
                   )}
                 </div>
@@ -217,7 +219,7 @@ const Services: React.FC = () => {
                     ) : (
                         <Search className="h-4 w-4 mr-2" />
                     )}
-                    Search
+                    {t('common.search')}
                   </button>
 
                   <button
@@ -229,7 +231,7 @@ const Services: React.FC = () => {
                       }`}
                   >
                     <MapPin className="h-4 w-4 inline mr-2" />
-                    {showMap ? 'Hide Map' : 'Show Map'}
+                    {showMap ? t('services.hideMap') : t('services.showMap')}
                   </button>
                 </div>
               </div>
@@ -242,7 +244,7 @@ const Services: React.FC = () => {
               {loading && (
                   <div className="text-center py-12">
                     <Loader2 className="h-8 w-8 text-yellow-600 mx-auto mb-4 animate-spin" />
-                    <p className="text-gray-600">Searching for service providers...</p>
+                    <p className="text-gray-600">{t('services.searchingProviders')}</p>
                   </div>
               )}
 
@@ -267,16 +269,16 @@ const Services: React.FC = () => {
                         <div className="text-center py-12">
                           <HardHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                           <p className="text-gray-500 text-lg">
-                            {cgInRange.length === 0 ? 'No service providers found in this area' : 'No providers match your search'}
+                            {cgInRange.length === 0 ? t('services.noProvidersFound') : t('services.noProvidersMatch')}
                           </p>
                           <p className="text-gray-400">
-                            {cgInRange.length === 0 ? 'Try changing location or expanding your search' : 'Try adjusting your search criteria'}
+                            {cgInRange.length === 0 ? t('services.tryExpandingSearch') : t('services.tryAdjustingCriteria')}
                           </p>
                         </div>
                     ) : (
                         <>
                           <div className="text-sm text-gray-600 mb-4">
-                            Found {filteredOffers.length} service provider{filteredOffers.length !== 1 ? 's' : ''}
+                            {t('services.foundProviders', { count: filteredOffers.length })}
                           </div>
 
                           {filteredOffers.map(offer => (
@@ -301,7 +303,7 @@ const Services: React.FC = () => {
                                       <div>
                                         <h3 className="text-xl font-semibold text-gray-900">{offer.name}</h3>
                                         <div className="flex items-center space-x-2 mt-1">
-                                          <span className="text-sm text-blue-600 font-medium">{offer.distance}km away</span>
+                                          <span className="text-sm text-blue-600 font-medium">{t('services.kmAway', { distance: offer.distance })}</span>
                                         </div>
                                       </div>
                                     </div>
@@ -316,7 +318,7 @@ const Services: React.FC = () => {
                                   <p className="text-gray-700 mb-4">{offer.description}</p>
 
                                   <div className="mb-4">
-                                    <p className="text-sm font-medium text-gray-600 mb-2">Services:</p>
+                                    <p className="text-sm font-medium text-gray-600 mb-2">{t('navigation.services')}:</p>
                                     <div className="flex flex-wrap gap-2">
                                       {offer.services.map(service => {
                                         const IconComponent = categoryIcons[service] || HardHat;
@@ -326,7 +328,7 @@ const Services: React.FC = () => {
                                                 className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full flex items-center space-x-1 transition-all duration-200 hover:bg-yellow-200"
                                             >
                                               <IconComponent className="h-3 w-3" />
-                                              <span>{service}</span>
+                                              <span>{t(`categories.${service}`)}</span>
                                             </span>
                                         );
                                       })}
@@ -336,7 +338,7 @@ const Services: React.FC = () => {
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center text-sm text-gray-500">
                                       <MapPin className="h-4 w-4 mr-1" />
-                                      Service radius: {offer.serviceRadius} km
+                                      {t('services.serviceRadius', { radius: offer.serviceRadius })}
                                     </div>
 
                                     <div className="flex items-center space-x-2">
@@ -345,7 +347,7 @@ const Services: React.FC = () => {
                                           className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
                                       >
                                         <User className="h-4 w-4 mr-1" />
-                                        View Profile
+                                        {t('services.viewProfile')}
                                       </button>
 
                                       <button
@@ -353,7 +355,7 @@ const Services: React.FC = () => {
                                           className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
                                       >
                                         <MessageSquare className="h-4 w-4 mr-2" />
-                                        {user ? 'Contact' : 'Login to Contact'}
+                                        {user ? t('services.contact') : t('services.loginToContact')}
                                       </button>
                                     </div>
                                   </div>
@@ -386,10 +388,10 @@ const Services: React.FC = () => {
                 <div className="lg:col-span-1">
                   <div className="bg-white rounded-xl shadow-lg sticky top-8 border border-gray-100">
                     <div className="p-6 border-b border-gray-200">
-                      <h2 className="text-xl font-semibold text-gray-900">Service Providers Map</h2>
-                      <p className="text-sm text-gray-600 mt-1">Click to change search location</p>
+                      <h2 className="text-xl font-semibold text-gray-900">{t('services.searchAreaTitle')}</h2>
+                      <p className="text-sm text-gray-600 mt-1">{t('services.searchAreaSubtitle')}</p>
                       <p className="text-xs text-yellow-600 mt-1">
-                        Yellow circles show each provider's service radius
+                        {t('services.searchAreaNote')}
                       </p>
                     </div>
                     <div className="p-6">
@@ -401,14 +403,14 @@ const Services: React.FC = () => {
                             ...(searchLocation ? [{
                               position: [searchLocation.lat, searchLocation.lng] as [number, number],
                               type: 'client' as const,
-                              popup: 'Search Location'
+                              popup: t('map.searchLocation')
                             }] : []),
                             ...filteredOffers.map(offer => {
                               console.log(`Creating marker for ${offer.name} with serviceRadius: ${offer.serviceRadius}`);
                               return {
                                 position: [offer.location.lat, offer.location.lng] as [number, number],
                                 type: 'cg' as const,
-                                popup: `${offer.name} - ${offer.distance}km away`,
+                                popup: `${offer.name} - ${t('services.kmAway', { distance: offer.distance })}`,
                                 radius: offer.serviceRadius
                               };
                             })

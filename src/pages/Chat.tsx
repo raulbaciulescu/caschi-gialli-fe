@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { MessageSquare, Send, ArrowLeft, Users, Phone, RefreshCw } from 'lucide-react';
@@ -15,6 +16,7 @@ const Chat: React.FC = () => {
     loading,
     refreshChats
   } = useChat();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
@@ -103,9 +105,9 @@ const Chat: React.FC = () => {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return 'Today';
+      return t('chat.today');
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
+      return t('chat.yesterday');
     } else {
       return date.toLocaleDateString();
     }
@@ -113,7 +115,7 @@ const Chat: React.FC = () => {
 
   const getLastMessagePreview = (chat: any) => {
     if (!chat.lastMessage || !user) {
-      return 'No messages yet';
+      return t('chat.noMessagesYet');
     }
 
     const currentUserId = user.id.toString();
@@ -121,7 +123,7 @@ const Chat: React.FC = () => {
     const isOwnMessage = messageSenderId === currentUserId;
 
     if (isOwnMessage) {
-      return `You: ${chat.lastMessage.content}`;
+      return `${t('chat.you')}: ${chat.lastMessage.content}`;
     } else {
       return chat.lastMessage.content;
     }
@@ -132,12 +134,12 @@ const Chat: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg mb-4">Please log in to access messages.</p>
+            <p className="text-gray-600 text-lg mb-4">{t('chat.loginRequired')}</p>
             <button
                 onClick={() => navigate('/login')}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
-              Go to Login
+              {t('chat.goToLogin')}
             </button>
           </div>
         </div>
@@ -149,14 +151,14 @@ const Chat: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header with refresh button */}
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('chat.title')}</h1>
             <button
                 onClick={refreshChats}
                 disabled={loading}
                 className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              {t('chat.refresh')}
             </button>
           </div>
 
@@ -168,11 +170,11 @@ const Chat: React.FC = () => {
               }`}>
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">Conversations</h2>
+                    <h2 className="text-xl font-semibold text-gray-900">{t('chat.conversations')}</h2>
                     <div className="flex items-center space-x-2">
                       {chats.length > 0 && (
                           <span className="text-sm text-gray-500">
-                        {chats.length} conversation{chats.length !== 1 ? 's' : ''}
+                        {t('chat.conversations', { count: chats.length })}
                       </span>
                       )}
                     </div>
@@ -184,16 +186,16 @@ const Chat: React.FC = () => {
                       <div className="p-6">
                         <div className="text-center py-12">
                           <RefreshCw className="h-8 w-8 text-gray-400 mx-auto mb-4 animate-spin" />
-                          <p className="text-gray-500">Loading conversations...</p>
+                          <p className="text-gray-500">{t('common.loading')}</p>
                         </div>
                       </div>
                   ) : chats.length === 0 ? (
                       <div className="p-6">
                         <div className="text-center py-12">
                           <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500">No conversations yet</p>
+                          <p className="text-gray-500">{t('chat.noConversationsYet')}</p>
                           <p className="text-gray-400 text-sm mt-2">
-                            Start by contacting a service provider or client
+                            {t('chat.noConversationsSubtitle')}
                           </p>
                         </div>
                       </div>
@@ -288,8 +290,8 @@ const Chat: React.FC = () => {
                         {currentMessages.length === 0 ? (
                             <div className="text-center py-8">
                               <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <p className="text-gray-500">No messages yet</p>
-                              <p className="text-gray-400 text-sm">Start the conversation!</p>
+                              <p className="text-gray-500">{t('chat.noMessagesYet')}</p>
+                              <p className="text-gray-400 text-sm">{t('chat.startConversation')}</p>
                             </div>
                         ) : (
                             <>
@@ -340,7 +342,7 @@ const Chat: React.FC = () => {
                               type="text"
                               value={newMessage}
                               onChange={(e) => setNewMessage(e.target.value)}
-                              placeholder="Type a message..."
+                              placeholder={t('chat.typeMessage')}
                               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                           />
                           <button
@@ -357,9 +359,9 @@ const Chat: React.FC = () => {
                     <div className="flex-1 flex items-center justify-center">
                       <div className="text-center">
                         <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg">Select a conversation to start messaging</p>
+                        <p className="text-gray-500 text-lg">{t('chat.selectConversation')}</p>
                         <p className="text-gray-400 text-sm mt-2">
-                          Choose from your existing conversations or start a new one
+                          {t('chat.selectConversationSubtitle')}
                         </p>
                       </div>
                     </div>

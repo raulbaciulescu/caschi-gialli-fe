@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { useService } from '../contexts/ServiceContext';
@@ -30,6 +31,7 @@ const Profile: React.FC = () => {
   const { user } = useAuth();
   const { createChat } = useChat();
   const { serviceCategories } = useService();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { cgId } = useParams(); // For viewing other CG profiles
 
@@ -124,12 +126,12 @@ const Profile: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg mb-4">Please log in to access your profile.</p>
+            <p className="text-gray-600 text-lg mb-4">{t('profile.loginToViewProfile')}</p>
             <button
                 onClick={() => navigate('/login')}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
-              Go to Login
+              {t('chat.goToLogin')}
             </button>
           </div>
         </div>
@@ -153,9 +155,9 @@ const Profile: React.FC = () => {
     user?.location;
 
   const tabs = [
-    { id: 'overview', label: 'Overview', count: null },
-    { id: 'gallery', label: 'Gallery', count: displayGallery.length },
-    { id: 'reviews', label: 'Reviews', count: null, disabled: true }
+    { id: 'overview', label: t('profile.overview'), count: null },
+    { id: 'gallery', label: t('profile.gallery'), count: displayGallery.length },
+    { id: 'reviews', label: t('profile.reviews'), count: null, disabled: true }
   ];
 
   if (isLoading) {
@@ -163,7 +165,7 @@ const Profile: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="h-12 w-12 text-yellow-600 mx-auto mb-4 animate-spin" />
-            <p className="text-gray-600">Loading profile...</p>
+            <p className="text-gray-600">{t('common.loading')}</p>
           </div>
         </div>
     );
@@ -174,13 +176,13 @@ const Profile: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
             <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg mb-4">Failed to load profile</p>
+            <p className="text-gray-600 text-lg mb-4">{t('profile.failedToLoadProfile')}</p>
             <p className="text-red-600 mb-4">{getCGProfileApi.error}</p>
             <button
                 onClick={() => navigate('/services')}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
             >
-              Back to Services
+              {t('profile.backToServices')}
             </button>
           </div>
         </div>
@@ -223,7 +225,7 @@ const Profile: React.FC = () => {
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900">{displayName}</h1>
                       <p className="text-lg text-gray-600 mt-1">
-                        {(user?.type === 'cg' || cgProfile) ? 'Professional Service Provider' : 'Client'}
+                        {(user?.type === 'cg' || cgProfile) ? t('profile.professionalServiceProvider') : t('profile.client')}
                       </p>
 
                       {/*{user.type === 'cg' && (*/}
@@ -243,7 +245,7 @@ const Profile: React.FC = () => {
                               className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                           >
                             <Edit3 className="h-4 w-4 mr-2" />
-                            Edit Profile
+                            {t('profile.editProfile')}
                           </button>
                       )}
                       {(user?.type === 'cg' || cgProfile) && !isOwnProfile && (
@@ -252,7 +254,7 @@ const Profile: React.FC = () => {
                               className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                           >
                             <MessageSquare className="h-4 w-4 mr-2" />
-                            Contact
+                            {t('profile.contact')}
                           </button>
                       )}
                     </div>
@@ -294,7 +296,7 @@ const Profile: React.FC = () => {
                     </span>
                       )}
                       {tab.disabled && (
-                          <span className="ml-2 text-xs text-gray-400">(Coming Soon)</span>
+                          <span className="ml-2 text-xs text-gray-400">({t('profile.reviewsComingSoon')})</span>
                       )}
                     </button>
                 ))}
@@ -311,7 +313,7 @@ const Profile: React.FC = () => {
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                           <User className="h-5 w-5 mr-2 text-yellow-600" />
-                          Contact Information
+                          {t('profile.contactInformation')}
                         </h3>
                         <div className="space-y-3">
                           <div className="flex items-center">
@@ -345,7 +347,7 @@ const Profile: React.FC = () => {
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                               <Award className="h-5 w-5 mr-2 text-yellow-600" />
-                              About Me
+                              {t('profile.aboutMe')}
                             </h3>
                             <p className="text-gray-700 leading-relaxed">{displayDescription}</p>
                           </div>
@@ -356,7 +358,7 @@ const Profile: React.FC = () => {
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                               <HardHat className="h-5 w-5 mr-2 text-yellow-600" />
-                              Services Offered
+                              {t('profile.servicesOffered')}
                             </h3>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                               {displayServices.map(service => (
@@ -364,7 +366,7 @@ const Profile: React.FC = () => {
                                       key={service}
                                       className="px-3 py-2 bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-lg font-medium text-center"
                                   >
-                                    {service}
+                                    {t(`categories.${service}`)}
                                   </div>
                               ))}
                             </div>
@@ -379,7 +381,7 @@ const Profile: React.FC = () => {
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                               <MapPin className="h-5 w-5 mr-2 text-yellow-600" />
-                              Service Area
+                              {t('profile.serviceArea')}
                             </h3>
                             <div className="border border-gray-200 rounded-lg overflow-hidden">
                               <Map
@@ -388,7 +390,7 @@ const Profile: React.FC = () => {
                                   markers={[{
                                     position: [displayLocation.lat, displayLocation.lng],
                                     type: 'cg',
-                                    popup: 'Service Location',
+                                    popup: t('map.serviceLocation'),
                                     radius: displayRadius || 10
                                   }]}
                                   showRadius={false}
@@ -397,7 +399,7 @@ const Profile: React.FC = () => {
                             </div>
                             <div className="mt-2 text-sm text-gray-600 flex items-center">
                               <Ruler className="h-4 w-4 mr-1" />
-                              Service radius: {displayRadius || 10} km
+                              {t('services.serviceRadius', { radius: displayRadius || 10 })}
                             </div>
                           </div>
                       )}
@@ -405,10 +407,10 @@ const Profile: React.FC = () => {
                       {/* Quick Stats */}
                       {(user?.type === 'cg' || cgProfile) && (
                           <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('profile.quickStats')}</h3>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
-                                <span className="text-gray-600">Service Radius</span>
+                                <span className="text-gray-600">{t('services.serviceRadius')}</span>
                                 <span className="font-semibold">{displayRadius || 10} km</span>
                               </div>
                             </div>
@@ -448,13 +450,13 @@ const Profile: React.FC = () => {
                     ) : (
                         <div className="text-center py-12">
                           <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500">No gallery images yet</p>
+                          <p className="text-gray-500">{t('profile.noGalleryImages')}</p>
                           {isOwnProfile && user?.type === 'cg' && (
                               <button
                                   onClick={() => navigate('/edit-profile')}
                                   className="mt-4 text-yellow-600 hover:text-yellow-700 font-medium transition-colors"
                               >
-                                Add your first images
+                                {t('profile.addFirstImages')}
                               </button>
                           )}
                         </div>
@@ -466,9 +468,9 @@ const Profile: React.FC = () => {
               {activeTab === 'reviews' && (
                   <div className="text-center py-12">
                     <Star className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 text-lg">Reviews Feature Coming Soon</p>
+                    <p className="text-gray-500 text-lg">{t('profile.reviewsComingSoon')}</p>
                     <p className="text-gray-400 text-sm mt-2">
-                      This feature will be available in future updates
+                      {t('profile.reviewsComingSoonSubtitle')}
                     </p>
                   </div>
               )}
