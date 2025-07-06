@@ -188,7 +188,7 @@ class ProfileService {
     console.log('User data for CG profile request:', user);
     console.log('User ID:', user.id);
     
-    if (!user.id) {
+    if (!user.id || user.id === 'undefined' || user.id === undefined) {
       throw new Error('User ID not found in user data');
     }
 

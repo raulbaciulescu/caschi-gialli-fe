@@ -80,6 +80,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const updateUserData = (userData: User) => {
     console.log('Updating user data in context:', userData);
     console.log('User ID being updated:', userData.id);
+    
+    // Validate user data before updating
+    if (!userData.id || userData.id === 'undefined' || userData.id === undefined) {
+      console.error('Cannot update user data with invalid ID:', userData.id);
+      return;
+    }
+    
     const normalizedUser = normalizeUser(userData);
     console.log('Normalized user:', normalizedUser);
     setUser(normalizedUser);

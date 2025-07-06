@@ -122,6 +122,13 @@ const EditProfile: React.FC = () => {
     // Debug logging to check user data
     console.log('Current user data before update:', user);
     console.log('User ID:', user.id);
+    
+    // Validate user ID before proceeding
+    if (!user.id || user.id === 'undefined' || user.id === undefined) {
+      console.error('Invalid user ID:', user.id);
+      alert('User ID is missing. Please log in again.');
+      return;
+    }
 
     try {
       const updateData = {
@@ -136,29 +143,35 @@ const EditProfile: React.FC = () => {
       // After successful update, get fresh data from backend
       console.log('Update successful, fetching fresh data from backend...');
       console.log('User ID for fresh data call:', user.id);
-      const freshData = await getFreshDataApi.execute();
       
-      // Transform fresh backend data to user format and update context
-      const freshUserData = {
-        ...user,
-        id: user.id, // Ensure ID is preserved
-        name: freshData.fullName || freshData.name,
-        phone: freshData.phoneNumber,
-        phoneNumber: freshData.phoneNumber,
-        address: freshData.address,
-        description: freshData.description,
-        services: freshData.services,
-        radius: freshData.serviceRadius,
-        profileImage: freshData.profileImageUrl,
-        profileImageUrl: freshData.profileImageUrl,
-        galleryImages: freshData.galleryImageUrls,
-        galleryImageUrls: freshData.galleryImageUrls
-      };
+      try {
+        const freshData = await getFreshDataApi.execute();
+        
+        // Transform fresh backend data to user format and update context
+        const freshUserData = {
+          ...user,
+          id: user.id, // Ensure ID is preserved
+          name: freshData.fullName || freshData.name,
+          phone: freshData.phoneNumber,
+          phoneNumber: freshData.phoneNumber,
+          address: freshData.address,
+          description: freshData.description,
+          services: freshData.services,
+          radius: freshData.serviceRadius,
+          profileImage: freshData.profileImageUrl,
+          profileImageUrl: freshData.profileImageUrl,
+          galleryImages: freshData.galleryImageUrls,
+          galleryImageUrls: freshData.galleryImageUrls
+        };
+        
+        // Update user data in context and localStorage
+        updateUserData(freshUserData);
+        console.log('Fresh data loaded and user context updated');
+      } catch (freshDataError) {
+        console.error('Failed to fetch fresh data, but update was successful:', freshDataError);
+        // Continue with navigation even if fresh data fetch fails
+      }
       
-      // Update user data in context and localStorage
-      updateUserData(freshUserData);
-      console.log('Fresh data loaded and user context updated');
-
       // Navigate back to profile with fresh data
       navigate('/profile');
     } catch (error) {
