@@ -106,8 +106,8 @@ class ProfileService {
         }
     );
 
-    // Update local storage with new user data
-    localStorage.setItem('user_data', JSON.stringify(response));
+    // Return the updated user data - the component will handle updating context
+    console.log('Profile update response from backend:', response);
 
     return response;
   }
