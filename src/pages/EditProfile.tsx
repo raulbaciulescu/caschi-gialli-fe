@@ -118,6 +118,10 @@ const EditProfile: React.FC = () => {
     e.preventDefault();
 
     if (!user) return;
+    
+    // Debug logging to check user data
+    console.log('Current user data before update:', user);
+    console.log('User ID:', user.id);
 
     try {
       const updateData = {
@@ -131,11 +135,13 @@ const EditProfile: React.FC = () => {
 
       // After successful update, get fresh data from backend
       console.log('Update successful, fetching fresh data from backend...');
+      console.log('User ID for fresh data call:', user.id);
       const freshData = await getFreshDataApi.execute();
       
       // Transform fresh backend data to user format and update context
       const freshUserData = {
         ...user,
+        id: user.id, // Ensure ID is preserved
         name: freshData.fullName || freshData.name,
         phone: freshData.phoneNumber,
         phoneNumber: freshData.phoneNumber,

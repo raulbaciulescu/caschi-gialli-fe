@@ -183,6 +183,14 @@ class ProfileService {
     }
 
     const user = JSON.parse(userData);
+    
+    // Debug logging to see what we have
+    console.log('User data for CG profile request:', user);
+    console.log('User ID:', user.id);
+    
+    if (!user.id) {
+      throw new Error('User ID not found in user data');
+    }
 
     // Include CG ID as query parameter for GET request
     console.log('Making GET request for fresh profile data to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);

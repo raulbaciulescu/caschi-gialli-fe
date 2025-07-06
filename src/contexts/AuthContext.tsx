@@ -79,7 +79,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // New method to update user data without API calls
   const updateUserData = (userData: User) => {
     console.log('Updating user data in context:', userData);
+    console.log('User ID being updated:', userData.id);
     const normalizedUser = normalizeUser(userData);
+    console.log('Normalized user:', normalizedUser);
     setUser(normalizedUser);
     localStorage.setItem('user_data', JSON.stringify(normalizedUser));
   };
