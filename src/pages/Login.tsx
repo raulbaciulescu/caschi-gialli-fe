@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../services/auth.service';
 import { User, LoginRequest, RegisterClientRequest, RegisterCGRequest } from '../types/api';
 
@@ -28,6 +29,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   // Normalize user data to handle both backend formats
   const normalizeUser = (userData: any): User => {
@@ -80,7 +82,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const updateUserData = (userData: User) => {
     console.log('Updating user data in context:', userData);
     console.log('Current user data before update:', user);
-    console.log('Current user data before update:', user);
     
     // CRITICAL: Merge new data with existing user data to preserve everything
     const mergedUserData = {
@@ -90,12 +91,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
     
     console.log('Merged user data:', mergedUserData);
-    // CRITICAL: Merge new data with existing user data to preserve everything
-    const mergedUserData = {
-      ...user, // Keep all existing data
-      ...userData, // Override with new data from update
-    };
-    
     const normalizedUser = normalizeUser(mergedUserData);
     setUser(normalizedUser);
     localStorage.setItem('user_data', JSON.stringify(normalizedUser));
