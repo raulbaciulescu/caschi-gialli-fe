@@ -67,21 +67,7 @@ export const ServiceProvider: React.FC<{ children: ReactNode }> = ({ children })
   ];
 
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
-  const [serviceOffers, setServiceOffers] = useState<ServiceOffer[]>([
-    {
-      id: '1',
-      cgId: 'cg1',
-      cgName: 'Mario Rossi',
-      categories: ['Plumbing', 'Electrical'],
-      location: { lat: 41.9028, lng: 12.4964 },
-      radius: 15,
-      price: '€50-80/hour',
-      rating: 4.8,
-      reviews: 127,
-      description: 'Professional plumber and electrician with 15+ years experience.',
-      photos: ['https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg']
-    }
-  ]);
+  const [serviceOffers, setServiceOffers] = useState<ServiceOffer[]>([]);
 
   const addServiceRequest = (request: Omit<ServiceRequest, 'id' | 'createdAt' | 'matches'>) => {
     const newRequest: ServiceRequest = {

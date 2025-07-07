@@ -323,7 +323,7 @@ const CGDashboard: React.FC = () => {
                       }))
                     ]}
                     showRadius={true}
-                    radius={user.radius || 10}
+                    radius={user.radius}
                     className="h-64 w-full rounded-lg"
                   />
                 )}

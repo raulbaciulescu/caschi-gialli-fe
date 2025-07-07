@@ -274,13 +274,13 @@ const Profile: React.FC = () => {
                                     popup: 'Service Location'
                                   }]}
                                   showRadius={true}
-                                  radius={user.radius || 10}
+                                  radius={user.radius}
                                   className="h-48 w-full"
                               />
                             </div>
                             <div className="mt-2 text-sm text-gray-600 flex items-center">
                               <Ruler className="h-4 w-4 mr-1" />
-                              Service radius: {user.radius || 10} km
+                              Service radius: {user.radius} km
                             </div>
                           </div>
                       )}

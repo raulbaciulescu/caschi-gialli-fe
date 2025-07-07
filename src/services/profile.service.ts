@@ -190,7 +190,7 @@ class ProfileService {
   /**
    * Get current user's CG profile data (for editing own profile) 
    */
-  public async getMyCGProfile(cgId?: string): Promise<User> {
+  public async getMyCGProfile(cgId?: string): Promise<CGProfileResponse> {
     // Get current user data to extract CG ID
     const userData = localStorage.getItem('user_data');
     if (!userData) {

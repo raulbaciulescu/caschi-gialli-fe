@@ -25,7 +25,7 @@ const EditProfile: React.FC = () => {
     address: '',
     description: '',
     services: [] as string[],
-    radius: 10
+    radius: 0
   });
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -67,7 +67,7 @@ const EditProfile: React.FC = () => {
         address: cgProfile.address || '',
         description: cgProfile.description || '', // Description from backend
         services: cgProfile.services || [], // Services already selected
-        radius: cgProfile.radius || 10
+        radius: cgProfile.serviceRadius || 10
       });
 
       setCurrentGallery(cgProfile.galleryImageUrls || []);
