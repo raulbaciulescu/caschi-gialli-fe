@@ -278,7 +278,7 @@ const Services: React.FC = () => {
                     ) : (
                         <>
                           <div className="text-sm text-gray-600 mb-4">
-                            {offer.serviceRadius ? t('services.serviceRadius', { radius: offer.serviceRadius }) : ''}
+                            {t('services.foundProviders', { count: filteredOffers.length })}
                           </div>
 
                           {filteredOffers.map(offer => (
@@ -373,7 +373,7 @@ const Services: React.FC = () => {
                                   {/*        ))}*/}
                                   {/*      </div>*/}
                                   {/*    </div>*/}
-                                  {offer.serviceRadius ? t('services.serviceRadius', { radius: offer.serviceRadius }) : ''}
+                                  {/*)}*/}
                                 </div>
                               </div>
                           ))}

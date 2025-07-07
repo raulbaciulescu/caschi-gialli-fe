@@ -140,13 +140,13 @@ const Profile: React.FC = () => {
 
   // Use CG profile data if viewing another CG, otherwise use current user data
   const displayName = cgProfile ? (cgProfile.name || cgProfile.fullName) : user?.name;
-  const displayPhone = cgProfile ? cgProfile.phoneNumber : (user?.phone || user?.phoneNumber);
-  const displayAddress = cgProfile ? cgProfile.address : user?.address;
-  const displayServices = cgProfile ? cgProfile.services : user?.services;
-  const displayRadius = cgProfile ? cgProfile.serviceRadius : user?.radius;
-  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : (user?.galleryImages || []);
-  const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : (user?.profileImage || user?.profileImageUrl);
-  const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
+  const displayPhone = cgProfile ? cgProfile.phoneNumber : "";
+  const displayAddress = cgProfile ? cgProfile.address : "";
+  const displayServices = cgProfile ? cgProfile.services : "";
+  const displayRadius = cgProfile ? cgProfile.serviceRadius : "";
+  const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : [];
+  const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : "";
+  const displayDescription = cgProfile ? cgProfile.description : 'Professional service provider with years of experience.';
   const displayEmail = !isOwnProfile ? 'Contact via platform' : user?.email;
 
   // Get location data - prioritize CG profile data, then user data
@@ -399,7 +399,7 @@ const Profile: React.FC = () => {
                             </div>
                             <div className="mt-2 text-sm text-gray-600 flex items-center">
                               <Ruler className="h-4 w-4 mr-1" />
-                              {user.radius ? t('services.serviceRadius', { radius: user.radius }) : ''}
+                              {cgProfile?.serviceRadius ? t('services.serviceRadius', { radius: cgProfile.serviceRadius }) : ''}
                             </div>
                           </div>
                       )}
@@ -410,8 +410,7 @@ const Profile: React.FC = () => {
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('profile.quickStats')}</h3>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
-                                <span className="text-gray-600">{t('services.serviceRadius')}</span>
-                                <span className="font-semibold">{user.radius ? `${user.radius} km` : ''}</span>
+                                <span className="text-gray-600">{cgProfile?.serviceRadius ? t('services.serviceRadius', { radius: cgProfile.serviceRadius }) : ''}</span>
                               </div>
                             </div>
                           </div>
