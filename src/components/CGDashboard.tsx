@@ -355,7 +355,7 @@ const CGDashboard: React.FC = () => {
                   
                   <div>
                     <p className="text-sm font-medium text-gray-600">{t('services.serviceRadius')}</p>
-                    <p className="text-sm text-gray-900">{user.radius} km</p>
+                    <p className="text-sm text-gray-900">{user.radius ? `${user.radius} km` : ''}</p>
                   </div>
                   
                   <div>

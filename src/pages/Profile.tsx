@@ -399,7 +399,7 @@ const Profile: React.FC = () => {
                             </div>
                             <div className="mt-2 text-sm text-gray-600 flex items-center">
                               <Ruler className="h-4 w-4 mr-1" />
-                              {t('services.serviceRadius', { radius: displayRadius })}
+                              {user.radius ? t('services.serviceRadius', { radius: user.radius }) : ''}
                             </div>
                           </div>
                       )}
@@ -411,7 +411,7 @@ const Profile: React.FC = () => {
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
                                 <span className="text-gray-600">{t('services.serviceRadius')}</span>
-                                <span className="font-semibold">{displayRadius} km</span>
+                                <span className="font-semibold">{user.radius ? `${user.radius} km` : ''}</span>
                               </div>
                             </div>
                           </div>
