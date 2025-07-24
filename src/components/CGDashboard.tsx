@@ -119,17 +119,17 @@ const CGDashboard: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all duration-200 border border-gray-100">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Star className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Rating</p>
-                <p className="text-2xl font-bold text-gray-900">4.8</p>
-              </div>
-            </div>
-          </div>
+          {/*<div className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-all duration-200 border border-gray-100">*/}
+          {/*  <div className="flex items-center">*/}
+          {/*    <div className="p-2 bg-purple-100 rounded-lg">*/}
+          {/*      <Star className="h-6 w-6 text-purple-600" />*/}
+          {/*    </div>*/}
+          {/*    <div className="ml-4">*/}
+          {/*      <p className="text-sm font-medium text-gray-600">Rating</p>*/}
+          {/*      <p className="text-2xl font-bold text-gray-900">4.8</p>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -71,7 +71,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
             alt={`Gallery image ${currentIndex + 1}`}
             className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
             onError={(e) => {
-              e.currentTarget.src = 'https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg';
+              e.currentTarget.src = '';
             }}
           />
 
@@ -113,7 +113,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                     alt={`Thumbnail ${index + 1}`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = 'https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg';
+                      e.currentTarget.src = '';
                     }}
                   />
                 </button>

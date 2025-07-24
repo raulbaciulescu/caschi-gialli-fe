@@ -31,10 +31,6 @@ export interface CGDisplayData extends CGInRangeResponse {
   location: { lat: number; lng: number }; // formatted location
   radius: number; // alias for serviceRadius
   description: string; // generated or default
-  rating: number; // mock data
-  reviews: number; // mock data
-  price?: string; // mock data
-  photos: string[]; // mock data
   distance: number; // calculated distance
   fullProfileImageUrl?: string; // Full URL for profile image
   fullGalleryImageUrls?: string[]; // Full URLs for gallery images
@@ -148,13 +144,6 @@ class CGService {
       location: { lat: cg.latitude, lng: cg.longitude },
       radius: cg.serviceRadius, // Keep this for backward compatibility
       description: `Professional ${cg.services.join(', ').toLowerCase()} services. Contact for detailed consultation.`,
-      rating: 0, // Remove ratings
-      reviews: 0, // Remove reviews
-      price: `€${40 + Math.floor(Math.random() * 40)}-${60 + Math.floor(Math.random() * 40)}/hour`,
-      photos: [
-        'https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg',
-        'https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg'
-      ],
       distance: Math.round(distance * 10) / 10, // Round to 1 decimal
       fullProfileImageUrl, // Full URL for profile image
       fullGalleryImageUrls // Full URLs for gallery images
