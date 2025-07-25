@@ -265,5 +265,16 @@
     "yourLocation": "La Tua Posizione",
     "serviceLocation": "Posizione del Servizio",
     "searchLocation": "Posizione di Ricerca"
+  },
+  "footer": {
+    "description": "Connettiti con professionisti qualificati nella tua zona. Fai realizzare i tuoi progetti da Caschi Gialli di fiducia.",
+    "quickLinks": "Link Rapidi",
+    "services": "Servizi Popolari",
+    "viewAllServices": "Visualizza Tutti i Servizi",
+    "contact": "Contattaci",
+    "allRightsReserved": "Tutti i diritti riservati.",
+    "privacyPolicy": "Informativa sulla Privacy",
+    "termsOfService": "Termini di Servizio",
+    "cookiePolicy": "Politica sui Cookie"
   }
 }

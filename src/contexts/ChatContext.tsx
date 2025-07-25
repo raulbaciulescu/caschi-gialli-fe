@@ -243,7 +243,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         cgId = participantIds.find(id => id !== user.id) || participantIds[1];
       } else {
         cgId = user.id.toString();
-        customerId = participantIds.find(id => id !== user.id) || participantIds[0];
+        customerId = participantIds.find(id => id !== cgId) || participantIds[0];
       }
 
       // Use WebSocket to create chat with backend format

@@ -265,5 +265,16 @@
     "yourLocation": "Your Location",
     "serviceLocation": "Service Location",
     "searchLocation": "Search Location"
+  },
+  "footer": {
+    "description": "Connect with qualified professionals in your area. Get your projects done by trusted Caschi Gialli.",
+    "quickLinks": "Quick Links",
+    "services": "Popular Services",
+    "viewAllServices": "View All Services",
+    "contact": "Contact Us",
+    "allRightsReserved": "All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy"
   }
 }
