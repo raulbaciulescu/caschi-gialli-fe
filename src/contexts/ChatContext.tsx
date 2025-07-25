@@ -247,7 +247,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // Use WebSocket to create chat with backend format
-      websocketService.createChat(customerId, cgId);
+        websocketService.createChat(customerId, cgId);
 
       // Return a temporary ID - the real ID will come from the server
       const tempId = `temp-${Date.now()}`;

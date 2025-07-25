@@ -40,6 +40,21 @@ export interface RegisterCGRequest {
   services?: string[];
 }
 
+export interface ServiceRequestResponse {
+  id: string;
+  category: string;
+  service: string;
+  description: string;
+  location: {
+    lat: number;
+    lng: number;
+  }
+  customerEmail: string;
+  customerId: string;
+  createdAt: string,
+  status: string
+}
+
 export interface AuthResponse {
   user: User;
   token: string;
@@ -62,3 +77,4 @@ export class ApiException extends Error {
     this.code = code;
   }
 }
+

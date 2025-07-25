@@ -94,9 +94,12 @@ class CGService {
    */
   public async getMyCGRequests(): Promise<ServiceRequestResponse[]> {
     try {
-      return await httpService.get<ServiceRequestResponse[]>(
+      console.log('Making request to:', API_ENDPOINTS.REQUESTS.MY_CG_REQUESTS);
+      const response = await httpService.get<ServiceRequestResponse[]>(
           API_ENDPOINTS.REQUESTS.MY_CG_REQUESTS
       );
+      console.log('My CG requests response:', response);
+      return response;
     } catch (error) {
       console.error('Failed to get CG requests:', error);
       throw new Error('Failed to get CG requests');
@@ -128,9 +131,9 @@ class CGService {
     const distance = this.calculateDistance(searchLat, searchLng, cg.latitude, cg.longitude);
 
     // Construct full profile image URL if available
-    const fullProfileImageUrl = cg.profileImageUrl 
-      ? `${cg.profileImageUrl}`
-      : undefined;
+    const fullProfileImageUrl = cg.profileImageUrl
+        ? `${cg.profileImageUrl}`
+        : undefined;
 
     // Construct full gallery image URLs if available
     // const fullGalleryImageUrls = cg.galleryImageUrls && cg.galleryImageUrls.length > 0

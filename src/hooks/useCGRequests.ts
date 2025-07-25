@@ -56,6 +56,7 @@ export function useCGRequests(): UseCGRequestsReturn {
 
     try {
       const requests = await cgService.getMyCGRequests();
+      console.log('Loaded my CG requests:', requests);
 
       setState(prev => ({
         ...prev,
@@ -63,6 +64,7 @@ export function useCGRequests(): UseCGRequestsReturn {
         loading: false,
       }));
     } catch (error) {
+      console.error('Error loading my CG requests:', error);
       let errorMessage = 'Failed to load your requests';
       if (error instanceof Error) {
         errorMessage = error.message;
