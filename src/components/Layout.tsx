@@ -15,6 +15,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Prevent body scroll when on chat page
+  React.useEffect(() => {
+    if (location.pathname === '/chat') {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [location.pathname]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -282,7 +292,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         {/* Mobile Navigation */}
         {isAuthenticated && (
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
               <div className="flex justify-around items-center py-2">
                 <Link
                     to="/dashboard"

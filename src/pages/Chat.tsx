@@ -30,7 +30,12 @@ const Chat: React.FC = () => {
   }, [currentMessages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      const container = messagesEndRef.current.closest('.overflow-y-auto');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -147,7 +152,7 @@ const Chat: React.FC = () => {
   }
 
   return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="h-screen bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header with refresh button */}
           <div className="mb-4 flex items-center justify-between">
@@ -162,7 +167,7 @@ const Chat: React.FC = () => {
             </button>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-12rem)] overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-10rem)] overflow-hidden">
             <div className="flex h-full">
               {/* Chat List - Hidden on mobile when chat is active */}
               <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col ${
@@ -286,7 +291,7 @@ const Chat: React.FC = () => {
                       </div>
 
                       {/* Messages */}
-                      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
                         {currentMessages.length === 0 ? (
                             <div className="text-center py-8">
                               <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -330,13 +335,13 @@ const Chat: React.FC = () => {
                                     </div>
                                 );
                               })}
-                              <div ref={messagesEndRef} />
+                              <div ref={messagesEndRef} style={{ height: '1px' }} />
                             </>
                         )}
                       </div>
 
                       {/* Message Input */}
-                      <div className="p-4 border-t border-gray-200 bg-white">
+                      <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
                         <form onSubmit={handleSendMessage} className="flex space-x-2">
                           <input
                               type="text"
