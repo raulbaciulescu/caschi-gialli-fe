@@ -33,18 +33,7 @@ const Profile: React.FC = () => {
   const { serviceCategories } = useService();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { cgId } = useParams(); // For viewing other CG profiles
-
-  // Set page title for SEO
-  React.useEffect(() => {
-    if (cgProfile) {
-      document.title = `${cgProfile.fullName || cgProfile.name} - Profilo Casco Giallo | Caschi Gialli`;
-    }
-    if (user && !cgProfile) {
-      document.title = `${user.name} - Il Mio Profilo | Caschi Gialli`;
-    }
-  }, [cgProfile, user]);
-
+  const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
   const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
@@ -62,6 +51,16 @@ const Profile: React.FC = () => {
 
   // API hooks
   const getCGProfileApi = useApi(profileService.getCGPublicProfile);
+
+  // Set page title for SEO
+  React.useEffect(() => {
+    if (cgProfile) {
+      document.title = `${cgProfile.fullName || cgProfile.name} - Profilo Casco Giallo | Caschi Gialli`;
+    }
+    if (user && !cgProfile) {
+      document.title = `${user.name} - Il Mio Profilo | Caschi Gialli`;
+    }
+  }, [cgProfile, user]);
 
   // Determine if viewing own profile or another CG's profile
   useEffect(() => {
