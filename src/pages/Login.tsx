@@ -12,6 +12,11 @@ const Login: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // Set page title for SEO
+  React.useEffect(() => {
+    document.title = 'Accedi - Caschi Gialli | Login Clienti e Professionisti';
+  }, []);
+
   // Redirect if already authenticated
   useEffect(() => {
     if (!loading && isAuthenticated) {

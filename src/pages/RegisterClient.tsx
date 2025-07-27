@@ -13,6 +13,11 @@ const RegisterClient: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   
+  // Set page title for SEO
+  React.useEffect(() => {
+    document.title = 'Registrati come Cliente - Caschi Gialli | Trova Professionisti';
+  }, []);
+
   const [formData, setFormData] = useState<RegisterClientRequest>({
     name: '',
     email: '',

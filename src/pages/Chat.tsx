@@ -18,6 +18,12 @@ const Chat: React.FC = () => {
   } = useChat();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  // Set page title for SEO
+  React.useEffect(() => {
+    document.title = 'Messaggi - Chat con Professionisti | Caschi Gialli';
+  }, []);
+
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);

@@ -35,6 +35,15 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { cgId } = useParams(); // For viewing other CG profiles
 
+  // Set page title for SEO
+  React.useEffect(() => {
+    if (cgProfile) {
+      document.title = `${cgProfile.fullName || cgProfile.name} - Profilo Casco Giallo | Caschi Gialli`;
+    } else if (user) {
+      document.title = `${user.name} - Il Mio Profilo | Caschi Gialli`;
+    }
+  }, [cgProfile, user]);
+
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
   const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(true);

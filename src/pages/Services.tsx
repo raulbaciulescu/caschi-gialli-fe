@@ -38,6 +38,17 @@ const Services: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // Set page title and meta description for SEO
+  React.useEffect(() => {
+    document.title = 'Trova Caschi Gialli - Professionisti Qualificati nella Tua Zona | Caschi Gialli';
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Cerca e trova professionisti qualificati nella tua zona: idraulici, elettricisti, imbianchini, giardinieri. Servizi a domicilio affidabili in tutta Italia.');
+    }
+  }, []);
+
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showMap, setShowMap] = useState(false);

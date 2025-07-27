@@ -15,6 +15,11 @@ const RegisterCG: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   
+  // Set page title for SEO
+  React.useEffect(() => {
+    document.title = 'Diventa un Casco Giallo - Registrati come Professionista | Caschi Gialli';
+  }, []);
+
   const [formData, setFormData] = useState<RegisterCGRequest>({
     name: '',
     email: '',

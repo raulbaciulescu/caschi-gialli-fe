@@ -10,6 +10,14 @@ const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // Set page title for SEO
+  React.useEffect(() => {
+    if (user) {
+      const userType = user.type === 'cg' ? 'Professionista' : 'Cliente';
+      document.title = `Dashboard ${userType} - ${user.name} | Caschi Gialli`;
+    }
+  }, [user]);
+
   // Show loading state while checking authentication
   if (loading) {
     return (
