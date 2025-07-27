@@ -107,17 +107,40 @@ const Services: React.FC = () => {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    // Auto-search when category changes
+  };
+
+  // Auto-search when category or location changes
+  useEffect(() => {
     if (searchLocation) {
-      setTimeout(() => {
-        const searchParams = {
-          lat: searchLocation.lat,
-          lng: searchLocation.lng,
-          radius: 50, // Fixed large radius
-          services: category ? [category] : undefined
-        };
-        searchCGInRange(searchParams);
-      }, 100);
+      const searchParams = {
+        lat: searchLocation.lat,
+        lng: searchLocation.lng,
+        radius: 50, // Fixed large radius
+        services: selectedCategory ? [selectedCategory] : undefined
+      };
+      console.log('Auto-searching with params:', searchParams);
+      searchCGInRange(searchParams);
+    }
+  }, [selectedCategory, searchLocation]);
+
+  const handleSearch = async () => {
+    if (!searchLocation) {
+      console.warn('No search location available');
+      return;
+    }
+
+    try {
+      const searchParams = {
+        lat: searchLocation.lat,
+        lng: searchLocation.lng,
+        radius: 50, // Fixed large radius to get all CGs in reasonable area
+        services: selectedCategory ? [selectedCategory] : undefined
+      };
+
+      console.log('Manual search with params:', searchParams);
+      await searchCGInRange(searchParams);
+    } catch (error) {
+      console.error('Search failed:', error);
     }
   };
 

@@ -52,14 +52,10 @@ class CGService {
       }
 
       if (params.services && params.services.length > 0) {
-        // Try different formats for services parameter
-        // Option 1: Single services parameter with comma-separated values
-        queryParams.append('services', params.services.join(','));
-        
-        // Option 2: Multiple services parameters (uncomment if needed)
-        // params.services.forEach(service => {
-        //   queryParams.append('services', service);
-        // });
+        // Add each service as a separate parameter
+        params.services.forEach(service => {
+          queryParams.append('services', service);
+        });
       }
 
       // Construct the full URL
