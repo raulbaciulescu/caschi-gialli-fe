@@ -39,14 +39,15 @@ const Profile: React.FC = () => {
   React.useEffect(() => {
     if (cgProfile) {
       document.title = `${cgProfile.fullName || cgProfile.name} - Profilo Casco Giallo | Caschi Gialli`;
-    } else if (user) {
+    }
+    if (user && !cgProfile) {
       document.title = `${user.name} - Il Mio Profilo | Caschi Gialli`;
     }
   }, [cgProfile, user]);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
-  const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(true);
+  const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [galleryModal, setGalleryModal] = useState<{
     isOpen: boolean;
     images: string[];
