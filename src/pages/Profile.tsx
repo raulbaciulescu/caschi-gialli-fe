@@ -35,7 +35,6 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
-  const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [galleryModal, setGalleryModal] = useState<{
     isOpen: boolean;
