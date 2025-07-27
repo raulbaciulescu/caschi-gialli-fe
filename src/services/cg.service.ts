@@ -52,9 +52,14 @@ class CGService {
       }
 
       if (params.services && params.services.length > 0) {
-        params.services.forEach(service => {
-          queryParams.append('services[]', service);
-        });
+        // Try different formats for services parameter
+        // Option 1: Single services parameter with comma-separated values
+        queryParams.append('services', params.services.join(','));
+        
+        // Option 2: Multiple services parameters (uncomment if needed)
+        // params.services.forEach(service => {
+        //   queryParams.append('services', service);
+        // });
       }
 
       // Construct the full URL
@@ -62,8 +67,11 @@ class CGService {
       const url = `${endpoint}?${queryParams.toString()}`;
 
       console.log('Making CG search request to:', url);
+      console.log('Search params:', params);
 
       const response = await httpService.get<CGInRangeResponse[]>(url);
+
+      console.log('CG search response:', response);
 
       // Transform backend response to frontend format
       return response.map(cg => this.transformCGResponse(cg, params.lat, params.lng));
