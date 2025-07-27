@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   HardHat, MapPin, MessageSquare, Shield, ArrowRight, CheckCircle, Users,
   Wrench, Zap, Hammer, Paintbrush, Flower, Sparkles,
-  Truck, Monitor, Settings, Wind, Users, Clock, Award
+  Truck, Monitor, Settings, Wind, Clock, Award
 } from 'lucide-react';
 
 const Home: React.FC = () => {
