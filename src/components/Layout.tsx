@@ -15,16 +15,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Prevent body scroll when on chat page
-  React.useEffect(() => {
-    if (location.pathname === '/chat') {
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = 'unset';
-      };
-    }
-  }, [location.pathname]);
-
   const handleLogout = () => {
     logout();
     navigate('/');

@@ -341,14 +341,20 @@ const Chat: React.FC = () => {
                       </div>
 
                       {/* Message Input */}
-                      <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
+                      <div className="p-4 border-t border-gray-200 bg-white">
                         <form onSubmit={handleSendMessage} className="flex space-x-2">
                           <input
                               type="text"
                               value={newMessage}
                               onChange={(e) => setNewMessage(e.target.value)}
                               placeholder={t('chat.typeMessage')}
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleSendMessage(e);
+                                }
+                              }}
                           />
                           <button
                               type="submit"
