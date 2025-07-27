@@ -56,7 +56,7 @@ const Profile: React.FC = () => {
   // Determine if viewing own profile or another CG's profile
   useEffect(() => {
     console.log('Profile useEffect triggered:', { cgId, user });
-    
+
     if (cgId && user) {
       // Viewing another CG's profile
       const isOwn = cgId === user.id.toString();
@@ -120,7 +120,7 @@ const Profile: React.FC = () => {
 
   // Show loading only when we're fetching CG profile data
   const isLoading = getCGProfileApi.loading;
-  
+
   if (!user && !cgProfile) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -150,9 +150,9 @@ const Profile: React.FC = () => {
   const displayEmail = !isOwnProfile ? 'Contact via platform' : user?.email;
 
   // Get location data - prioritize CG profile data, then user data
-  const displayLocation = cgProfile ? 
-    (user?.location || { lat: 41.9028, lng: 12.4964 }) : // For now, use user location as backend doesn't return coordinates
-    user?.location;
+  const displayLocation = cgProfile ?
+      (user?.location || { lat: 41.9028, lng: 12.4964 }) : // For now, use user location as backend doesn't return coordinates
+      user?.location;
 
   const tabs = [
     { id: 'overview', label: t('profile.overview'), count: null },
@@ -248,8 +248,9 @@ const Profile: React.FC = () => {
                             {t('profile.editProfile')}
                           </button>
                       )}
-                      {(user?.type === 'cg' || cgProfile) && !isOwnProfile && (
-                          <button 
+                      {/* Only show contact button if viewing CG profile and current user is client/customer */}
+                      {(user?.type === 'cg' || cgProfile) && !isOwnProfile && user && (user.type === 'client' || user.type === 'customer') && (
+                          <button
                               onClick={handleContactCG}
                               className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                           >
@@ -274,12 +275,12 @@ const Profile: React.FC = () => {
                         onClick={() => setActiveTab(tab.id as any)}
                         disabled={tab.disabled}
                         className={`py-4 px-6 border-b-2 font-medium text-sm transition-all duration-200 ${
-                            tab.disabled 
+                            tab.disabled
                                 ? 'border-transparent text-gray-400 cursor-not-allowed'
-                                : 
-                            activeTab === tab.id
-                                ? 'border-yellow-500 text-yellow-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                :
+                                activeTab === tab.id
+                                    ? 'border-yellow-500 text-yellow-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                     >
                       {tab.label}
@@ -288,9 +289,9 @@ const Profile: React.FC = () => {
                               tab.disabled
                                   ? 'bg-gray-100 text-gray-400'
                                   :
-                              activeTab === tab.id
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-gray-100 text-gray-600'
+                                  activeTab === tab.id
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : 'bg-gray-100 text-gray-600'
                           }`}>
                       {tab.count}
                     </span>
@@ -325,9 +326,9 @@ const Profile: React.FC = () => {
                           {displayPhone && (
                               <div className="flex items-center">
                                 <Phone className="h-4 w-4 text-gray-400 mr-3" />
-                                <a 
-                                  href={`tel:${displayPhone}`}
-                                  className="text-yellow-600 hover:text-yellow-700 transition-colors"
+                                <a
+                                    href={`tel:${displayPhone}`}
+                                    className="text-yellow-600 hover:text-yellow-700 transition-colors"
                                 >
                                   {displayPhone}
                                 </a>

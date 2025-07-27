@@ -133,6 +133,7 @@
     "serviceRadius": "Raggio di servizio: {{radius}} km",
     "contact": "Contatta",
     "loginToContact": "Accedi per Contattare",
+    "cgCannotContact": "I fornitori di servizi non possono contattarsi tra loro",
     "viewProfile": "Visualizza Profilo",
     "searchAreaTitle": "Mappa Fornitori di Servizi",
     "searchAreaSubtitle": "Clicca per cambiare la posizione di ricerca",

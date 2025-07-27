@@ -350,13 +350,16 @@ const Services: React.FC = () => {
                                         {t('services.viewProfile')}
                                       </button>
 
-                                      <button
-                                          onClick={() => handleContactCG(offer.id.toString(), offer.name)}
-                                          className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
-                                      >
-                                        <MessageSquare className="h-4 w-4 mr-2" />
-                                        {user ? t('services.contact') : t('services.loginToContact')}
-                                      </button>
+                                      {/* Only show contact button if user is not a CG or if not logged in */}
+                                      {(!user || user.type === 'client' || user.type === 'customer') && (
+                                          <button
+                                              onClick={() => handleContactCG(offer.id.toString(), offer.name)}
+                                              className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 flex items-center transform hover:scale-105 shadow-lg"
+                                          >
+                                            <MessageSquare className="h-4 w-4 mr-2" />
+                                            {user ? t('services.contact') : t('services.loginToContact')}
+                                          </button>
+                                      )}
                                     </div>
                                   </div>
 

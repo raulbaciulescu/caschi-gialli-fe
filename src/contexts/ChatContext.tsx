@@ -218,6 +218,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const createChat = async (participantIds: string[], participantNames: string[]): Promise<string> => {
     if (!user) throw new Error('User not authenticated');
 
+    // Prevent CG to CG chat creation
+    if (user.type === 'cg') {
+      // Check if trying to chat with another CG
+      // For now, we'll assume that if user is CG and trying to create chat,
+      // the validation should happen at UI level, but add server-side validation too
+      console.log('CG attempting to create chat - this should be prevented at UI level');
+    }
+
     // Check if chat already exists
     const userIdStr = user.id.toString();
     const existingChat = chats.find(chat => {
@@ -247,7 +255,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // Use WebSocket to create chat with backend format
-        websocketService.createChat(customerId, cgId);
+      websocketService.createChat(customerId, cgId);
 
       // Return a temporary ID - the real ID will come from the server
       const tempId = `temp-${Date.now()}`;

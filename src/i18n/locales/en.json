@@ -133,6 +133,7 @@
     "serviceRadius": "Service radius: {{radius}} km",
     "contact": "Contact",
     "loginToContact": "Login to Contact",
+    "cgCannotContact": "Service providers cannot contact each other",
     "viewProfile": "View Profile",
     "searchAreaTitle": "Service Providers Map",
     "searchAreaSubtitle": "Click to change search location",
