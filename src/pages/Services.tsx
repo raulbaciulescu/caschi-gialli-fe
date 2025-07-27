@@ -182,6 +182,7 @@ const Services: React.FC = () => {
   }, [selectedCategory, searchLocation]);
 
   const filteredOffers = cgInRange.filter(offer => {
+    // Filter by search query
     if (!searchQuery) return true;
 
     return offer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
