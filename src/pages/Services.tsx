@@ -43,6 +43,48 @@ const Services: React.FC = () => {
   const [showMap, setShowMap] = useState(false);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
 
+  // Get user's current location
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log('Current location obtained:', { lat: latitude, lng: longitude });
+        setSearchLocation({ lat: latitude, lng: longitude });
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        let errorMessage = 'Unable to get your location. ';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += 'Location access was denied.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += 'Location information is unavailable.';
+            break;
+          case error.TIMEOUT:
+            errorMessage += 'Location request timed out.';
+            break;
+          default:
+            errorMessage += 'An unknown error occurred.';
+            break;
+        }
+        alert(errorMessage + ' Using default location (Rome).');
+        // Fallback to Rome coordinates
+        setSearchLocation({ lat: 41.9028, lng: 12.4964 });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  };
+
   // Service category icons mapping
   const categoryIcons: Record<string, React.ComponentType<any>> = {
     'Plumbing': Wrench,
@@ -67,8 +109,13 @@ const Services: React.FC = () => {
     if (user) {
       const userLocation = user.location || (user.lat && user.lng ? { lat: user.lat, lng: user.lng } : null);
       if (userLocation) {
+        console.log('Using user location from profile:', userLocation);
         setSearchLocation(userLocation);
       }
+    } else {
+      // User not logged in, try to get current location
+      console.log('User not logged in, attempting to get current location');
+      getCurrentLocation();
     }
   }, [user]);
 
@@ -200,17 +247,30 @@ const Services: React.FC = () => {
                   {searchLocation ? (
                       <div className="text-sm text-green-600 bg-green-50 p-2 rounded-lg flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
-                        {t('services.searchNear', { lat: searchLocation.lat.toFixed(4), lng: searchLocation.lng.toFixed(4) })}
+                        {user ? 
+                          t('services.searchNear', { lat: searchLocation.lat.toFixed(4), lng: searchLocation.lng.toFixed(4) }) :
+                          `Searching near your current location: ${searchLocation.lat.toFixed(4)}, ${searchLocation.lng.toFixed(4)}`
+                        }
                       </div>
                   ) : (
                       <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded-lg flex items-center">
                         <AlertCircle className="h-4 w-4 mr-2" />
-                        {user ? t('common.loading') : t('services.clickMapToSetLocation')}
+                        {user ? t('common.loading') : 'Getting your location...'}
                       </div>
                   )}
                 </div>
 
                 <div className="flex gap-2">
+                  {!user && (
+                    <button
+                      onClick={getCurrentLocation}
+                      disabled={loading}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center"
+                    >
+                      <MapPin className="h-4 w-4 mr-2" />
+                      Use My Location
+                    </button>
+                  )}
                   <button
                       onClick={handleSearch}
                       disabled={!searchLocation || loading}
