@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  HardHat, MapPin, MessageSquare, Shield, ArrowRight, CheckCircle,
+  HardHat, MapPin, MessageSquare, Shield, ArrowRight, CheckCircle, Users,
   Wrench, Zap, Hammer, Paintbrush, Flower, Sparkles,
   Truck, Monitor, Settings, Wind, Users, Clock, Award
 } from 'lucide-react';
@@ -109,20 +109,39 @@ const Home: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               {!isAuthenticated ? (
                 <>
-                  <Link
-                    to="/register-client"
-                    className="group relative bg-white text-gray-800 px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-gray-50 transition-all duration-300 inline-flex items-center justify-center transform hover:scale-105 shadow-2xl border border-gray-200 min-w-[200px]"
-                  >
-                    <span className="mr-2">{t('home.needService')}</span>
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </Link>
-                  <Link
-                    to="/register-cg"
-                    className="group relative bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 inline-flex items-center justify-center transform hover:scale-105 shadow-2xl min-w-[200px]"
-                  >
-                    <span className="mr-2">{t('home.becomeProvider')}</span>
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </Link>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl">
+                    {/* Client Registration Card */}
+                    <Link
+                      to="/register-client"
+                      className="group relative bg-white text-gray-800 p-8 rounded-2xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-2xl border border-gray-200 text-center"
+                    >
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <Users className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold mb-2">{t('home.needService')}</h3>
+                      <p className="text-gray-600 text-sm mb-4">Find qualified professionals for your projects</p>
+                      <div className="flex items-center justify-center text-blue-600 font-semibold">
+                        <span className="mr-2">Get Started as Client</span>
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
+                    </Link>
+
+                    {/* CG Registration Card */}
+                    <Link
+                      to="/register-cg"
+                      className="group relative bg-gradient-to-br from-yellow-500 to-orange-500 text-white p-8 rounded-2xl hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-2xl text-center"
+                    >
+                      <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <HardHat className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold mb-2">{t('home.becomeProvider')}</h3>
+                      <p className="text-yellow-100 text-sm mb-4">Join our network of trusted professionals</p>
+                      <div className="flex items-center justify-center text-white font-semibold">
+                        <span className="mr-2">Become Casco Giallo</span>
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
+                    </Link>
+                  </div>
                 </>
               ) : (
                 <Link
@@ -266,8 +285,9 @@ const Home: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link
                 to="/register-client"
-                className="group bg-white text-gray-800 px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-2xl inline-flex items-center justify-center min-w-[200px]"
+                className="group bg-white text-gray-800 px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-2xl inline-flex items-center justify-center min-w-[200px] border border-gray-200"
               >
+                <Users className="h-5 w-5 mr-2 text-blue-500" />
                 <span className="mr-2">{t('home.findServices')}</span>
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
@@ -275,6 +295,7 @@ const Home: React.FC = () => {
                 to="/register-cg"
                 className="group bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/20 px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl inline-flex items-center justify-center min-w-[200px]"
               >
+                <HardHat className="h-5 w-5 mr-2" />
                 <span className="mr-2">{t('home.offerServices')}</span>
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>

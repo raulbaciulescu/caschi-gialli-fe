@@ -121,12 +121,36 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       >
                         {t('common.login')}
                       </Link>
-                      <Link
-                          to="/register-client"
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                      >
-                        {t('navigation.getStarted')}
-                      </Link>
+                      <div className="relative group">
+                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
+                          {t('navigation.getStarted')}
+                          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-200">
+                          <Link
+                            to="/register-client"
+                            className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors"
+                          >
+                            <User className="h-4 w-4 mr-3 text-blue-500" />
+                            <div>
+                              <div className="font-medium">{t('auth.registerAsClient')}</div>
+                              <div className="text-xs text-gray-500">Find trusted professionals</div>
+                            </div>
+                          </Link>
+                          <Link
+                            to="/register-cg"
+                            className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors"
+                          >
+                            <HardHat className="h-4 w-4 mr-3 text-yellow-500" />
+                            <div>
+                              <div className="font-medium">{t('auth.becomeACascoGiallo')}</div>
+                              <div className="text-xs text-gray-500">Offer your services</div>
+                            </div>
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                 )}
               </div>
