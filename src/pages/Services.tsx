@@ -123,27 +123,6 @@ const Services: React.FC = () => {
     }
   }, [selectedCategory, searchLocation]);
 
-  const handleSearch = async () => {
-    if (!searchLocation) {
-      console.warn('No search location available');
-      return;
-    }
-
-    try {
-      const searchParams = {
-        lat: searchLocation.lat,
-        lng: searchLocation.lng,
-        radius: 50, // Fixed large radius to get all CGs in reasonable area
-        services: selectedCategory ? [selectedCategory] : undefined
-      };
-
-      console.log('Manual search with params:', searchParams);
-      await searchCGInRange(searchParams);
-    } catch (error) {
-      console.error('Search failed:', error);
-    }
-  };
-
   const filteredOffers = cgInRange.filter(offer => {
     if (!searchQuery) return true;
 
