@@ -29,9 +29,66 @@ const RegisterCG: React.FC = () => {
   
   const [confirmPassword, setConfirmPassword] = useState('');
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const registerApi = useApi(registerCG);
 
+  // Get user's current location
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    setIsGettingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log('Current location obtained:', { lat: latitude, lng: longitude });
+        setFormData(prev => ({ 
+          ...prev, 
+          location: { lat: latitude, lng: longitude } 
+        }));
+        setIsGettingLocation(false);
+        
+        // Clear location validation error if it exists
+        if (validationErrors.location) {
+          setValidationErrors(prev => ({ ...prev, location: '' }));
+        }
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setIsGettingLocation(false);
+        
+        let errorMessage = 'Unable to get your location. ';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += 'Location access was denied.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += 'Location information is unavailable.';
+            break;
+          case error.TIMEOUT:
+            errorMessage += 'Location request timed out.';
+            break;
+          default:
+            errorMessage += 'An unknown error occurred.';
+            break;
+        }
+        alert(errorMessage + ' Please select your location on the map.');
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  };
+
+  // Try to get location automatically when component mounts
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
@@ -281,7 +338,27 @@ const RegisterCG: React.FC = () => {
 
               {/* Location and Services */}
               <div className="space-y-6">
-                <h3 className="text-xl font-semibold text-gray-900">Service Area & Location</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-semibold text-gray-900">Service Area & Location</h3>
+                  <button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    disabled={isGettingLocation || registerApi.loading}
+                    className="flex items-center px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  >
+                    {isGettingLocation ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Getting Location...
+                      </>
+                    ) : (
+                      <>
+                        <MapPin className="h-4 w-4 mr-2" />
+                        Use My Location
+                      </>
+                    )}
+                  </button>
+                </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
