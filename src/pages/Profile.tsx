@@ -134,15 +134,9 @@ const Profile: React.FC = () => {
   if (!user && !cgProfile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-          <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600 text-lg mb-4">{t('profile.loginToViewProfile')}</p>
-          <button
-            onClick={() => navigate('/login')}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
-          >
-            {t('chat.goToLogin')}
-          </button>
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 text-yellow-600 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
