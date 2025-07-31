@@ -58,18 +58,18 @@ const Profile: React.FC = () => {
   useEffect(() => {
     if (cgProfile) {
       document.title = `${cgProfile.fullName || cgProfile.name} - Profilo Casco Giallo | Caschi Gialli`;
-    } else if (user && !cgProfile) {
+    } else if (user && !cgId) {
       document.title = `${user.name} - Il Mio Profilo | Caschi Gialli`;
     }
   }, [cgProfile, user]);
 
   // Determine if viewing own profile or another CG's profile
   useEffect(() => {
-    console.log('Profile useEffect triggered:', { cgId, user });
+    console.log('Profile useEffect triggered:', { cgId, user: user?.id });
 
-    if (cgId && user) {
-      // Viewing another CG's profile
-      const isOwn = cgId === user.id.toString();
+    if (cgId) {
+      // Viewing a specific CG's profile (could be own or another's)
+      const isOwn = user ? cgId === user.id.toString() : false;
       setIsOwnProfile(isOwn);
       console.log('Loading CG profile for cgId:', cgId, 'isOwn:', isOwn);
       loadCGProfile(cgId);
@@ -79,11 +79,14 @@ const Profile: React.FC = () => {
       console.log('Loading own CG profile from backend for user:', user.id);
       loadCGProfile(user.id.toString());
     } else if (user) {
-      // Viewing own profile
+      // Viewing own client profile
       setIsOwnProfile(true);
       console.log('Viewing own client profile for user type:', user.type);
       // For own profile, we don't need to load from backend, use user data
       setCgProfile(null); // Clear any existing CG profile data
+    } else if (!cgId) {
+      // Not logged in and no cgId - redirect to login
+      navigate('/login');
     }
   }, [cgId, user]);
 
@@ -165,7 +168,8 @@ const Profile: React.FC = () => {
   // Show loading only when we're fetching CG profile data
   const isLoading = getCGProfileApi.loading;
 
-  if (!user && !cgProfile) {
+  // Show loading when fetching CG profile or when we need user data but don't have it yet
+  if (isLoading || (!user && !cgId && !cgProfile)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -174,6 +178,12 @@ const Profile: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // If not logged in and no cgId provided, redirect to login
+  if (!user && !cgId) {
+    navigate('/login');
+    return null;
   }
 
   // Use CG profile data if viewing another CG, otherwise use current user data
@@ -185,11 +195,11 @@ const Profile: React.FC = () => {
   const displayGallery = cgProfile ? cgProfile.galleryImageUrls || [] : user?.galleryImages || [];
   const displayProfileImage = cgProfile ? cgProfile.profileImageUrl : user?.profileImage || user?.profileImageUrl;
   const displayDescription = cgProfile ? cgProfile.description : user?.description || 'Professional service provider with years of experience.';
-  const displayEmail = !isOwnProfile ? 'Contact via platform' : user?.email;
+  const displayEmail = !isOwnProfile || !user ? 'Contact via platform' : user?.email;
 
   // Get location data - prioritize CG profile data, then user data
   const displayLocation = cgProfile ?
-    (user?.location || { lat: 41.9028, lng: 12.4964 }) : // For now, use user location as backend doesn't return coordinates
+    { lat: 41.9028, lng: 12.4964 } : // Default location for CG profiles
     user?.location;
 
   const tabs = [
@@ -278,13 +288,23 @@ const Profile: React.FC = () => {
                       </button>
                     )}
                     {/* Only show contact button if viewing CG profile and current user is client/customer */}
-                    {(user?.type === 'cg' || cgProfile) && !isOwnProfile && user && (user.type === 'client' || user.type === 'customer') && (
+                    {cgProfile && !isOwnProfile && user && (user.type === 'client' || user.type === 'customer') && (
                       <button
                         onClick={handleContactCG}
                         className="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                       >
                         <MessageSquare className="h-4 w-4 mr-2" />
                         {t('profile.contact')}
+                      </button>
+                    )}
+                    {/* Show login prompt for non-logged users viewing CG profiles */}
+                    {cgProfile && !user && (
+                      <button
+                        onClick={() => navigate('/login')}
+                        className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                      >
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Login to Contact
                       </button>
                     )}
                   </div>
