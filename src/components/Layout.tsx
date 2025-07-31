@@ -366,15 +366,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <HardHat className="h-5 w-5" />
                   <span className="text-xs mt-1">{t('navigation.services')}</span>
                 </Link>
-                <Link
-                  to="/login"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/login') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <User className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('common.login')}</span>
-                </Link>
               </>
             )}
           </div>

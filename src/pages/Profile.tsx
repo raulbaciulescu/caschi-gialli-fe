@@ -90,8 +90,42 @@ const Profile: React.FC = () => {
   const loadCGProfile = async (targetCgId: string) => {
     try {
       console.log('Loading CG profile for ID:', targetCgId);
+      
+      // First try to get data from sessionStorage (from Services page)
+      const cachedData = sessionStorage.getItem('cgProfileData');
+      if (cachedData) {
+        try {
+          const cgData = JSON.parse(cachedData);
+          console.log('Using cached CG data from Services:', cgData);
+          
+          // Transform Services data to Profile format
+          const transformedProfile: CGProfileData = {
+            id: cgData.id,
+            fullName: cgData.name,
+            name: cgData.name,
+            phoneNumber: cgData.phoneNumber || '',
+            address: cgData.street || '',
+            serviceRadius: cgData.serviceRadius || cgData.radius || 0,
+            services: cgData.services || [],
+            profileImageUrl: cgData.fullProfileImageUrl || cgData.profileImageUrl,
+            galleryImageUrls: cgData.fullGalleryImageUrls || cgData.galleryImageUrls || [],
+            description: cgData.description || `Professional ${cgData.services?.join(', ').toLowerCase() || ''} services.`,
+            location: cgData.location || { lat: cgData.latitude, lng: cgData.longitude }
+          };
+          
+          setCgProfile(transformedProfile);
+          // Clear cached data after use
+          sessionStorage.removeItem('cgProfileData');
+          return;
+        } catch (error) {
+          console.error('Error parsing cached CG data:', error);
+          sessionStorage.removeItem('cgProfileData');
+        }
+      }
+      
+      // Fallback to API call if no cached data
       const profile = await getCGProfileApi.execute(targetCgId);
-      console.log('CG profile loaded:', profile);
+      console.log('CG profile loaded from API:', profile);
       setCgProfile(profile);
     } catch (error) {
       console.error('Failed to load CG profile:', error);

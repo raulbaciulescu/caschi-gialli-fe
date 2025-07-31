@@ -208,6 +208,15 @@ const Services: React.FC = () => {
 
   const handleViewProfile = (cgId: string) => {
     console.log('Navigating to profile for CG ID:', cgId);
+    
+    // Find the CG data from current search results
+    const cgData = filteredOffers.find(offer => offer.id.toString() === cgId);
+    
+    // Store CG data in sessionStorage for profile page to use
+    if (cgData) {
+      sessionStorage.setItem('cgProfileData', JSON.stringify(cgData));
+    }
+    
     // Navigate to profile page with CG ID
     navigate(`/profile/${cgId}`);
   };
