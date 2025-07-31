@@ -305,48 +305,80 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </footer>
 
         {/* Mobile Navigation */}
-        {isAuthenticated && (
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
-              <div className="flex justify-around items-center py-2">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+          <div className="flex justify-around items-center py-2">
+            {isAuthenticated ? (
+              <>
                 <Link
-                    to="/dashboard"
-                    className={`flex flex-col items-center p-2 ${
-                        isActive('/dashboard') ? 'text-yellow-600' : 'text-gray-500'
-                    }`}
+                  to="/dashboard"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/dashboard') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
                 >
                   <Home className="h-5 w-5" />
                   <span className="text-xs mt-1">{t('navigation.dashboard')}</span>
                 </Link>
                 <Link
-                    to="/services"
-                    className={`flex flex-col items-center p-2 ${
-                        isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
-                    }`}
+                  to="/services"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
                 >
                   <HardHat className="h-5 w-5" />
                   <span className="text-xs mt-1">{t('navigation.services')}</span>
                 </Link>
                 <Link
-                    to="/chat"
-                    className={`flex flex-col items-center p-2 ${
-                        isActive('/chat') ? 'text-yellow-600' : 'text-gray-500'
-                    }`}
+                  to="/chat"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/chat') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
                 >
                   <MessageSquare className="h-5 w-5" />
                   <span className="text-xs mt-1">{t('navigation.messages')}</span>
                 </Link>
                 <Link
-                    to="/profile"
-                    className={`flex flex-col items-center p-2 ${
-                        isActive('/profile') ? 'text-yellow-600' : 'text-gray-500'
-                    }`}
+                  to="/profile"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/profile') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
                 >
                   <User className="h-5 w-5" />
                   <span className="text-xs mt-1">{t('navigation.profile')}</span>
                 </Link>
-              </div>
-            </div>
-        )}
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
+                >
+                  <Home className="h-5 w-5" />
+                  <span className="text-xs mt-1">{t('navigation.home')}</span>
+                </Link>
+                <Link
+                  to="/services"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
+                >
+                  <HardHat className="h-5 w-5" />
+                  <span className="text-xs mt-1">{t('navigation.services')}</span>
+                </Link>
+                <Link
+                  to="/login"
+                  className={`flex flex-col items-center p-2 ${
+                    isActive('/login') ? 'text-yellow-600' : 'text-gray-500'
+                  }`}
+                >
+                  <User className="h-5 w-5" />
+                  <span className="text-xs mt-1">{t('common.login')}</span>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
       </div>
   );
 };
