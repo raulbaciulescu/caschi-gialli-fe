@@ -299,7 +299,6 @@ const CGDashboard: React.FC = () => {
                                               className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors flex items-center"
                                           >
                                             <MessageSquare className="h-3 w-3 mr-1" />
-                                            <MessageSquare className="h-3 w-3 mr-1" />
                                             {t('dashboard.contactClient')}
                                           </button>
                                           <button

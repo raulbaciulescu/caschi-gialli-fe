@@ -80,14 +80,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const updateUserData = (userData: User) => {
     console.log('Updating user data in context:', userData);
     console.log('Current user data before update:', user);
-    
+
     // CRITICAL: Merge new data with existing user data to preserve everything
     const mergedUserData = {
       ...user, // Keep all existing data
       ...userData, // Override with new data from update
       updatedAt: userData.updatedAt || new Date().toISOString()
     };
-    
+
     console.log('Merged user data:', mergedUserData);
     const normalizedUser = normalizeUser(mergedUserData);
     setUser(normalizedUser);

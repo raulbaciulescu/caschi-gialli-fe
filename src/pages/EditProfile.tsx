@@ -388,9 +388,9 @@ const EditProfile: React.FC = () => {
                   ))}
                 </div>
                 <div className="mt-4 text-sm text-gray-600">
-                  {formData.services.length > 0 
-                    ? t('editProfile.selectedServices', { services: formData.services.map(s => t(`categories.${s}`)).join(', ') })
-                    : t('edit.selectedServicesNone')}
+                  {formData.services.length > 0
+                      ? t('editProfile.selectedServices', { services: formData.services.map(s => t(`categories.${s}`)).join(', ') })
+                      : t('edit.selectedServicesNone')}
                 </div>
               </div>
             </div>

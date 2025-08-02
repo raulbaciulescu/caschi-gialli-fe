@@ -77,15 +77,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                 {isAuthenticated ? (
                     <div className="flex items-center space-x-4">
-                      <button className="p-2 text-gray-400 hover:text-gray-500 transition-colors">
-                        <Bell className="h-5 w-5" />
-                      </button>
+                      {/*<button className="p-2 text-gray-400 hover:text-gray-500 transition-colors">*/}
+                      {/*  <Bell className="h-5 w-5" />*/}
+                      {/*</button>*/}
                       <div className="relative group">
                         <button className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 transition-colors">
                           <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
-                            {(user?.profileImageUrl || user?.profileImage) ? (
+                            {(user?.profileImage) ? (
                                 <img
-                                    src={user.profileImageUrl || user.profileImage}
+                                    src={`${user.profileImage}?ts=${Date.now()}`}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
@@ -130,8 +130,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </button>
                         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-200">
                           <Link
-                            to="/register-client"
-                            className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors"
+                              to="/register-client"
+                              className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors"
                           >
                             <User className="h-4 w-4 mr-3 text-blue-500" />
                             <div>
@@ -140,8 +140,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             </div>
                           </Link>
                           <Link
-                            to="/register-cg"
-                            className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors"
+                              to="/register-cg"
+                              className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors"
                           >
                             <HardHat className="h-4 w-4 mr-3 text-yellow-500" />
                             <div>
@@ -308,65 +308,65 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
           <div className="flex justify-around items-center py-2">
             {isAuthenticated ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/dashboard') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <Home className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('navigation.dashboard')}</span>
-                </Link>
-                <Link
-                  to="/services"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <HardHat className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('navigation.services')}</span>
-                </Link>
-                <Link
-                  to="/chat"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/chat') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <MessageSquare className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('navigation.messages')}</span>
-                </Link>
-                <Link
-                  to="/profile"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/profile') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <User className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('navigation.profile')}</span>
-                </Link>
-              </>
+                <>
+                  <Link
+                      to="/dashboard"
+                      className={`flex flex-col items-center p-2 ${
+                          isActive('/dashboard') ? 'text-yellow-600' : 'text-gray-500'
+                      }`}
+                  >
+                    <Home className="h-5 w-5" />
+                    <span className="text-xs mt-1">{t('navigation.dashboard')}</span>
+                  </Link>
+                  <Link
+                      to="/services"
+                      className={`flex flex-col items-center p-2 ${
+                          isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
+                      }`}
+                  >
+                    <HardHat className="h-5 w-5" />
+                    <span className="text-xs mt-1">{t('navigation.services')}</span>
+                  </Link>
+                  <Link
+                      to="/chat"
+                      className={`flex flex-col items-center p-2 ${
+                          isActive('/chat') ? 'text-yellow-600' : 'text-gray-500'
+                      }`}
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    <span className="text-xs mt-1">{t('navigation.messages')}</span>
+                  </Link>
+                  <Link
+                      to="/profile"
+                      className={`flex flex-col items-center p-2 ${
+                          isActive('/profile') ? 'text-yellow-600' : 'text-gray-500'
+                      }`}
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="text-xs mt-1">{t('navigation.profile')}</span>
+                  </Link>
+                </>
             ) : (
-              <>
-                <Link
-                  to="/"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <Home className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('navigation.home')}</span>
-                </Link>
-                <Link
-                  to="/services"
-                  className={`flex flex-col items-center p-2 ${
-                    isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
-                  }`}
-                >
-                  <HardHat className="h-5 w-5" />
-                  <span className="text-xs mt-1">{t('navigation.services')}</span>
-                </Link>
-              </>
+                <>
+                  <Link
+                      to="/"
+                      className={`flex flex-col items-center p-2 ${
+                          isActive('/') ? 'text-yellow-600' : 'text-gray-500'
+                      }`}
+                  >
+                    <Home className="h-5 w-5" />
+                    <span className="text-xs mt-1">{t('navigation.home')}</span>
+                  </Link>
+                  <Link
+                      to="/services"
+                      className={`flex flex-col items-center p-2 ${
+                          isActive('/services') ? 'text-yellow-600' : 'text-gray-500'
+                      }`}
+                  >
+                    <HardHat className="h-5 w-5" />
+                    <span className="text-xs mt-1">{t('navigation.services')}</span>
+                  </Link>
+                </>
             )}
           </div>
         </div>
