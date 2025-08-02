@@ -84,9 +84,6 @@ const Profile: React.FC = () => {
       console.log('Viewing own client profile for user type:', user.type);
       // For own profile, we don't need to load from backend, use user data
       setCgProfile(null); // Clear any existing CG profile data
-    } else if (!cgId) {
-      // Not logged in and no cgId - redirect to login
-      navigate('/login');
     }
   }, [cgId, user]);
 
@@ -180,10 +177,22 @@ const Profile: React.FC = () => {
     );
   }
 
-  // If not logged in and no cgId provided, redirect to login
+  // If not logged in and no cgId provided, show login message
   if (!user && !cgId) {
-    navigate('/login');
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+          <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 text-lg mb-4">{t('profile.loginToViewProfile')}</p>
+          <button 
+            onClick={() => navigate('/login')}
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+          >
+            {t('common.login')}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Use CG profile data if viewing another CG, otherwise use current user data

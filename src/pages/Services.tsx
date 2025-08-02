@@ -39,10 +39,6 @@ const Services: React.FC = () => {
   const navigate = useNavigate();
 
   // Scroll to top when component mounts
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   // Set page title and meta description for SEO
   React.useEffect(() => {
     document.title = 'Trova Caschi Gialli - Professionisti Qualificati nella Tua Zona | Caschi Gialli';
