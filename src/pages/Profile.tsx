@@ -485,41 +485,150 @@ const Profile: React.FC = () => {
               {activeTab === 'gallery' && (
                   <div>
                     {displayGallery.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div>
+                          {/* Gallery Header */}
+                          <div className="mb-6 text-center">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                              {t('profile.workShowcase')}
+                            </h3>
+                            <p className="text-gray-600">
+                              {t('profile.workShowcaseSubtitle', { name: displayName, count: displayGallery.length })}
+                            </p>
+                          </div>
+
+                          {/* Gallery Grid with enhanced layout */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                           {displayGallery.map((image: string, index: number) => (
-                              <button
+                              <div
                                   key={index}
-                                  onClick={() => openGallery(displayGallery, `${displayName}'s Work Gallery`, index)}
-                                  className="aspect-square rounded-lg overflow-hidden bg-gray-100 hover:shadow-lg transition-all duration-200 transform hover:scale-105 group relative"
+                                  className="group relative bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
                               >
-                                <img
-                                    src={`${image}?ts=${Date.now()}`}
-                                    alt={`Work ${index + 1}`}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = 'none';
-                                    }}
-                                />
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
-                                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white text-sm font-medium">
-                                    View Image
+                                {/* Image Container */}
+                                <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+                                  <img
+                                      src={`${image}?ts=${Date.now()}`}
+                                      alt={`${displayName} - ${t('profile.workProject')} ${index + 1}`}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                      }}
+                                  />
+                                  
+                                  {/* Overlay with actions */}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                    <div className="absolute bottom-4 left-4 right-4">
+                                      <div className="flex items-center justify-between">
+                                        <div className="text-white">
+                                          <p className="text-sm font-medium">{t('profile.project')} {index + 1}</p>
+                                          <p className="text-xs opacity-90">{t('profile.clickToView')}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => openGallery(displayGallery, `${displayName}'s ${t('profile.workGallery')}`, index)}
+                                            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200"
+                                        >
+                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </button>
+                                
+                                {/* Card Footer */}
+                                <div className="p-4">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm font-medium text-gray-900">
+                                      {t('profile.professionalWork')}
+                                    </span>
+                                    <button
+                                        onClick={() => openGallery(displayGallery, `${displayName}'s ${t('profile.workGallery')}`, index)}
+                                        className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors duration-200 flex items-center"
+                                    >
+                                      {t('profile.viewFull')}
+                                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
                           ))}
+                          </div>
+
+                          {/* Gallery Stats */}
+                          <div className="mt-8 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                              <div>
+                                <div className="text-2xl font-bold text-yellow-600">{displayGallery.length}</div>
+                                <div className="text-sm text-gray-600">{t('profile.projectsCompleted')}</div>
+                              </div>
+                              <div>
+                                <div className="text-2xl font-bold text-yellow-600">
+                                  {displayServices?.length || 0}
+                                </div>
+                                <div className="text-sm text-gray-600">{t('profile.servicesOffered')}</div>
+                              </div>
+                              <div>
+                                <div className="text-2xl font-bold text-yellow-600">
+                                  {displayRadius || 0}km
+                                </div>
+                                <div className="text-sm text-gray-600">{t('profile.serviceRadius')}</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Call to Action for non-logged users or clients */}
+                          {(!user || (user.type === 'client' || user.type === 'customer')) && cgProfile && (
+                            <div className="mt-8 text-center bg-white rounded-xl p-8 shadow-lg border border-gray-200">
+                              <h4 className="text-xl font-bold text-gray-900 mb-2">
+                                {t('profile.impressedWithWork')}
+                              </h4>
+                              <p className="text-gray-600 mb-6">
+                                {t('profile.contactForProject', { name: displayName })}
+                              </p>
+                              {user ? (
+                                <button
+                                    onClick={handleContactCG}
+                                    className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-3 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-medium"
+                                >
+                                  <MessageSquare className="h-5 w-5 mr-2 inline" />
+                                  {t('profile.startConversation')}
+                                </button>
+                              ) : (
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-medium"
+                                >
+                                  {t('profile.loginToContact')}
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
                     ) : (
                         <div className="text-center py-12">
-                          <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-500">{t('profile.noGalleryImages')}</p>
+                          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-12 border-2 border-dashed border-gray-300">
+                            <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-6" />
+                            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                              {t('profile.noWorkYet')}
+                            </h3>
+                            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                              {isOwnProfile 
+                                ? t('profile.addWorkToShowcase') 
+                                : t('profile.professionalWillAddWork', { name: displayName })
+                              }
+                            </p>
                           {isOwnProfile && user?.type === 'cg' && (
                               <button
                                   onClick={() => navigate('/edit-profile')}
-                                  className="mt-4 text-yellow-600 hover:text-yellow-700 font-medium transition-colors"
+                                  className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-3 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-medium"
                               >
-                                {t('profile.addFirstImages')}
+                                <ImageIcon className="h-5 w-5 mr-2 inline" />
+                                {t('profile.addFirstWork')}
                               </button>
                           )}
+                          </div>
                         </div>
                     )}
                   </div>
