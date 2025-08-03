@@ -373,7 +373,7 @@ const Services: React.FC = () => {
                                       <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
                                         {offer.fullProfileImageUrl ? (
                                             <img
-                                                src={offer.fullProfileImageUrl}
+                                                src={`${offer.fullProfileImageUrl}?ts=${Date.now()}`}
                                                 alt={offer.name}
                                                 className="w-full h-full object-cover"
                                                 onError={(e) => {
