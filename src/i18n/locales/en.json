@@ -63,7 +63,17 @@
     "clickMapToSetLocation": "Click on the map to set your location",
     "locationConfirm": "Location: {{lat}}, {{lng}}",
     "creatingAccount": "Creating Account...",
-    "joinCaschiGialli": "Join Caschi Gialli"
+    "joinCaschiGialli": "Join Caschi Gialli",
+    "addressSearchInfo": "Address Search Help",
+    "addressSearchExamples": "Address Search Examples:",
+    "fullAddress": "Full address:",
+    "cityCountry": "City + Country:",
+    "landmark": "Landmark:",
+    "postalCode": "Postal code:",
+    "justCity": "Just city:",
+    "searchInstructions": "Press Enter to search • Click map to set location",
+    "showAddressHelp": "Show address search help",
+    "hideAddressHelp": "Hide address search help"
   },
   "home": {
     "title": "Caschi Gialli",

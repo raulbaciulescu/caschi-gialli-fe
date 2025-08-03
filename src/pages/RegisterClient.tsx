@@ -32,6 +32,7 @@ const RegisterClient: React.FC = () => {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [isGettingAddress, setIsGettingAddress] = useState(false);
   const [isSearchingAddress, setIsSearchingAddress] = useState(false);
+  const [showAddressInfo, setShowAddressInfo] = useState(false);
 
   const registerApi = useApi(registerClient);
 
@@ -383,24 +384,49 @@ const RegisterClient: React.FC = () => {
                       disabled={registerApi.loading || isSearchingAddress}
                     />
                   </div>
-                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start space-x-2">
-                      <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-                        <span className="text-white text-xs font-bold">i</span>
+                  
+                  {/* Address Search Help Toggle */}
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddressInfo(!showAddressInfo)}
+                      className="flex items-center text-sm text-blue-600 hover:text-blue-700 transition-colors"
+                    >
+                      <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center mr-2">
+                        <span className="text-white text-xs font-bold">?</span>
+                      </div>
+                      {showAddressInfo ? t('auth.hideAddressHelp') : t('auth.showAddressHelp')}
+                    </button>
+                  </div>
+
+                  {/* Address Search Info Modal/Collapsible */}
+                  {showAddressInfo && (
+                    <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="text-sm font-semibold text-blue-800">{t('auth.addressSearchInfo')}</h4>
+                        <button
+                          type="button"
+                          onClick={() => setShowAddressInfo(false)}
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
                       </div>
                       <div className="text-xs text-blue-700">
-                        <p className="font-medium mb-1">Address Search Examples:</p>
-                        <ul className="space-y-0.5 text-blue-600">
-                          <li>• <strong>Full address:</strong> "123 Main Street, New York, NY"</li>
-                          <li>• <strong>City + Country:</strong> "Paris, France"</li>
-                          <li>• <strong>Landmark:</strong> "Eiffel Tower, Paris"</li>
-                          <li>• <strong>Postal code:</strong> "10001, New York"</li>
-                          <li>• <strong>Just city:</strong> "London"</li>
+                        <p className="font-medium mb-2">{t('auth.addressSearchExamples')}</p>
+                        <ul className="space-y-1 text-blue-600">
+                          <li>• <strong>{t('auth.fullAddress')}</strong> "123 Main Street, New York, NY"</li>
+                          <li>• <strong>{t('auth.cityCountry')}</strong> "Paris, France"</li>
+                          <li>• <strong>{t('auth.landmark')}</strong> "Eiffel Tower, Paris"</li>
+                          <li>• <strong>{t('auth.postalCode')}</strong> "10001, New York"</li>
+                          <li>• <strong>{t('auth.justCity')}</strong> "London"</li>
                         </ul>
-                        <p className="mt-2 font-medium">Press Enter to search • Click map to set location</p>
+                        <p className="mt-3 font-medium text-blue-800">{t('auth.searchInstructions')}</p>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div>

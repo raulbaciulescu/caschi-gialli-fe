@@ -37,6 +37,7 @@ const RegisterCG: React.FC = () => {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [isGettingAddress, setIsGettingAddress] = useState(false);
   const [isSearchingAddress, setIsSearchingAddress] = useState(false);
+  const [showAddressInfo, setShowAddressInfo] = useState(false);
 
   const registerApi = useApi(registerCG);
 

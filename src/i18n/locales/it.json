@@ -63,7 +63,17 @@
     "clickMapToSetLocation": "Clicca sulla mappa per impostare la tua posizione",
     "locationConfirm": "Posizione: {{lat}}, {{lng}}",
     "creatingAccount": "Creazione Account...",
-    "joinCaschiGialli": "Unisciti a Caschi Gialli"
+    "joinCaschiGialli": "Unisciti a Caschi Gialli",
+    "addressSearchInfo": "Aiuto Ricerca Indirizzo",
+    "addressSearchExamples": "Esempi di Ricerca Indirizzo:",
+    "fullAddress": "Indirizzo completo:",
+    "cityCountry": "Città + Paese:",
+    "landmark": "Punto di riferimento:",
+    "postalCode": "Codice postale:",
+    "justCity": "Solo città:",
+    "searchInstructions": "Premi Invio per cercare • Clicca sulla mappa per impostare la posizione",
+    "showAddressHelp": "Mostra aiuto ricerca indirizzo",
+    "hideAddressHelp": "Nascondi aiuto ricerca indirizzo"
   },
   "home": {
     "title": "Caschi Gialli",
