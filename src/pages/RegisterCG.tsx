@@ -35,9 +35,57 @@ const RegisterCG: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [isGettingAddress, setIsGettingAddress] = useState(false);
 
   const registerApi = useApi(registerCG);
 
+  // Reverse geocoding function to get address from coordinates
+  const getAddressFromCoordinates = async (lat: number, lng: number) => {
+    setIsGettingAddress(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'CaschiGialli/1.0'
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.display_name) {
+          // Extract a clean address from the response
+          const address = data.address;
+          let cleanAddress = '';
+          
+          if (address) {
+            const parts = [];
+            if (address.road) parts.push(address.road);
+            if (address.house_number) parts.push(address.house_number);
+            if (address.city || address.town || address.village) {
+              parts.push(address.city || address.town || address.village);
+            }
+            if (address.postcode) parts.push(address.postcode);
+            
+            cleanAddress = parts.join(', ');
+          }
+          
+          // Fallback to display_name if we can't build a clean address
+          if (!cleanAddress) {
+            cleanAddress = data.display_name;
+          }
+          
+          setFormData(prev => ({ ...prev, address: cleanAddress }));
+        }
+      }
+    } catch (error) {
+      console.error('Error getting address:', error);
+      // Don't show error to user, just fail silently
+    } finally {
+      setIsGettingAddress(false);
+    }
+  };
   // Get user's current location
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -126,6 +174,8 @@ const RegisterCG: React.FC = () => {
 
   const handleLocationSelect = (lat: number, lng: number) => {
     setFormData(prev => ({ ...prev, location: { lat, lng } }));
+    // Get address for the selected location
+    getAddressFromCoordinates(lat, lng);
     if (validationErrors.location) {
       setValidationErrors(prev => ({ ...prev, location: '' }));
     }
@@ -274,6 +324,12 @@ const RegisterCG: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t('auth.addressOptional')}
                   </label>
+                  {isGettingAddress && (
+                    <div className="text-xs text-blue-600 mb-1 flex items-center">
+                      <div className="animate-spin rounded-full h-3 w-3 border-b border-blue-600 mr-1"></div>
+                      Getting address...
+                    </div>
+                  )}
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <input
@@ -281,11 +337,16 @@ const RegisterCG: React.FC = () => {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                      className={`w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 ${
+                        isGettingAddress ? 'bg-blue-50' : ''
+                      }`}
                       placeholder={t('auth.enterAddress')}
                       disabled={registerApi.loading}
                     />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Address updates automatically when you select a location on the map
+                  </p>
                 </div>
 
                 <div>
