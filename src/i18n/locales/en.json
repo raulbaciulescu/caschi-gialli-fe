@@ -193,7 +193,8 @@
     "memberSince": "Member since {{year}}",
     "loginToViewProfile": "Please log in to access your profile.",
     "failedToLoadProfile": "Failed to load profile",
-    "backToServices": "Back to Services"
+    "backToServices": "Back to Services",
+    "explorePortfolio": "Explore {{name}}'s Portfolio"
   },
   "editProfile": {
     "title": "Edit Profile",

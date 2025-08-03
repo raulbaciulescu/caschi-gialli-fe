@@ -484,6 +484,19 @@ const Profile: React.FC = () => {
               {/* Gallery Tab */}
               {activeTab === 'gallery' && (
                   <div>
+                    {/* Portfolio Header */}
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        {t('profile.explorePortfolio', { name: displayName })}
+                      </h3>
+                      <p className="text-gray-600">
+                        {displayGallery.length > 0 
+                          ? `Discover ${displayName}'s professional work and craftsmanship through ${displayGallery.length} showcase ${displayGallery.length === 1 ? 'image' : 'images'}.`
+                          : `${displayName}'s work portfolio will be displayed here.`
+                        }
+                      </p>
+                    </div>
+
                     {displayGallery.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {displayGallery.map((image: string, index: number) => (

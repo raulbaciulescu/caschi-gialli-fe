@@ -193,7 +193,8 @@
     "memberSince": "Membro dal {{year}}",
     "loginToViewProfile": "Accedi per accedere al tuo profilo.",
     "failedToLoadProfile": "Impossibile caricare il profilo",
-    "backToServices": "Torna ai Servizi"
+    "backToServices": "Torna ai Servizi",
+    "explorePortfolio": "Esplora il Portfolio di {{name}}"
   },
   "editProfile": {
     "title": "Modifica Profilo",
