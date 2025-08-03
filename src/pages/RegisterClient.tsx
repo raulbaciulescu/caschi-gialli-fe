@@ -31,6 +31,7 @@ const RegisterClient: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [isGettingAddress, setIsGettingAddress] = useState(false);
+  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
 
   const registerApi = useApi(registerClient);
 
@@ -81,6 +82,54 @@ const RegisterClient: React.FC = () => {
       setIsGettingAddress(false);
     }
   };
+
+  // Forward geocoding function to get coordinates from address
+  const getCoordinatesFromAddress = async (address: string) => {
+    if (!address.trim()) return;
+    
+    setIsSearchingAddress(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&countrycodes=it`,
+        {
+          headers: {
+            'User-Agent': 'CaschiGialli/1.0'
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          const result = data[0];
+          const lat = parseFloat(result.lat);
+          const lng = parseFloat(result.lon);
+          
+          if (!isNaN(lat) && !isNaN(lng)) {
+            setFormData(prev => ({ 
+              ...prev, 
+              location: { lat, lng },
+              address: result.display_name || address
+            }));
+            
+            // Clear location validation error if it exists
+            if (validationErrors.location) {
+              setValidationErrors(prev => ({ ...prev, location: '' }));
+            }
+          }
+        } else {
+          // No results found
+          alert('Indirizzo non trovato. Prova con un indirizzo più specifico.');
+        }
+      }
+    } catch (error) {
+      console.error('Error searching address:', error);
+      alert('Errore nella ricerca dell\'indirizzo. Riprova più tardi.');
+    } finally {
+      setIsSearchingAddress(false);
+    }
+  };
+
   // Get user's current location
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -153,6 +202,13 @@ const RegisterClient: React.FC = () => {
     if (validationErrors[name] || registerApi.error || registerApi.errors) {
       setValidationErrors(prev => ({ ...prev, [name]: '' }));
       registerApi.reset();
+    }
+  };
+
+  const handleAddressKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      getCoordinatesFromAddress(formData.address);
     }
   };
 
@@ -306,10 +362,10 @@ const RegisterClient: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t('auth.addressOptional')}
                   </label>
-                  {isGettingAddress && (
+                  {(isGettingAddress || isSearchingAddress) && (
                     <div className="text-xs text-blue-600 mb-1 flex items-center">
                       <div className="animate-spin rounded-full h-3 w-3 border-b border-blue-600 mr-1"></div>
-                      Getting address...
+                      {isGettingAddress ? 'Getting address...' : 'Searching address...'}
                     </div>
                   )}
                   <div className="relative">
@@ -319,15 +375,16 @@ const RegisterClient: React.FC = () => {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
+                      onKeyPress={handleAddressKeyPress}
                       className={`w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 ${
-                        isGettingAddress ? 'bg-blue-50' : ''
+                        (isGettingAddress || isSearchingAddress) ? 'bg-blue-50' : ''
                       }`}
                       placeholder={t('auth.enterAddress')}
-                      disabled={registerApi.loading}
+                      disabled={registerApi.loading || isSearchingAddress}
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    Address updates automatically when you select a location on the map
+                    Address updates automatically when you select a location on the map. Press Enter to search for an address.
                   </p>
                 </div>
 
