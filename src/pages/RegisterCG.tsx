@@ -108,6 +108,9 @@ const RegisterCG: React.FC = () => {
         if (validationErrors.location) {
           setValidationErrors(prev => ({ ...prev, location: '' }));
         }
+        
+        // Get address for the current location
+        getAddressFromCoordinates(latitude, longitude);
       },
       (error) => {
         console.error('Error getting location:', error);
