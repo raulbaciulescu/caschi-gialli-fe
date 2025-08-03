@@ -90,7 +90,7 @@ const RegisterClient: React.FC = () => {
     setIsSearchingAddress(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&countrycodes=it`,
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
         {
           headers: {
             'User-Agent': 'CaschiGialli/1.0'
@@ -119,12 +119,12 @@ const RegisterClient: React.FC = () => {
           }
         } else {
           // No results found
-          alert('Indirizzo non trovato. Prova con un indirizzo più specifico.');
+          alert('Address not found. Try with a more specific address.');
         }
       }
     } catch (error) {
       console.error('Error searching address:', error);
-      alert('Errore nella ricerca dell\'indirizzo. Riprova più tardi.');
+      alert('Error searching address. Please try again later.');
     } finally {
       setIsSearchingAddress(false);
     }
@@ -383,9 +383,24 @@ const RegisterClient: React.FC = () => {
                       disabled={registerApi.loading || isSearchingAddress}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Address updates automatically when you select a location on the map. Press Enter to search for an address.
-                  </p>
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-start space-x-2">
+                      <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+                        <span className="text-white text-xs font-bold">i</span>
+                      </div>
+                      <div className="text-xs text-blue-700">
+                        <p className="font-medium mb-1">Address Search Examples:</p>
+                        <ul className="space-y-0.5 text-blue-600">
+                          <li>• <strong>Full address:</strong> "123 Main Street, New York, NY"</li>
+                          <li>• <strong>City + Country:</strong> "Paris, France"</li>
+                          <li>• <strong>Landmark:</strong> "Eiffel Tower, Paris"</li>
+                          <li>• <strong>Postal code:</strong> "10001, New York"</li>
+                          <li>• <strong>Just city:</strong> "London"</li>
+                        </ul>
+                        <p className="mt-2 font-medium">Press Enter to search • Click map to set location</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
