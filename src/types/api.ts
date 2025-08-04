@@ -78,3 +78,11 @@ export class ApiException extends Error {
   }
 }
 
+export interface DeleteAccountRequest {
+  confirmText: string;
+}
+
+export interface DeleteAccountResponse {
+  message: string;
+  deletedAt: string;
+}
