@@ -194,7 +194,15 @@
     "loginToViewProfile": "Please log in to access your profile.",
     "failedToLoadProfile": "Failed to load profile",
     "backToServices": "Back to Services",
-    "explorePortfolio": "Explore {{name}}'s Portfolio"
+    "explorePortfolio": "Explore {{name}}'s Portfolio",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleteAccountWarning": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.",
+    "deleteAccountConfirm": "Are you sure you want to delete your account?",
+    "typeDeleteToConfirm": "Type 'DELETE' to confirm:",
+    "deleting": "Deleting account...",
+    "accountDeleted": "Your account has been successfully deleted.",
+    "deleteAccountError": "Failed to delete account. Please try again."
   },
   "editProfile": {
     "title": "Edit Profile",

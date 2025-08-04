@@ -22,6 +22,17 @@ class UserService {
     const response = await httpService.get<User>(API_ENDPOINTS.USERS.PROFILE);
     return response;
   }
+
+  /**
+   * Delete user account permanently
+   */
+  public async deleteAccount(): Promise<void> {
+    await httpService.delete(API_ENDPOINTS.USERS.DELETE_ACCOUNT);
+    
+    // Clear local storage after successful deletion
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
+  }
 }
 
 export const userService = new UserService();

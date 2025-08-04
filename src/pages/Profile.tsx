@@ -5,13 +5,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { useService } from '../contexts/ServiceContext';
 import { profileService } from '../services/profile.service';
+import { userService } from '../services/user.service';
 import { useApi } from '../hooks/useApi';
 import ImageGalleryModal from '../components/ImageGalleryModal';
 import Map from '../components/Map';
 import {
   User, Mail, Phone, MapPin, HardHat, Ruler, Edit3,
   Star, Award, Camera, Image as ImageIcon, Calendar,
-  MessageSquare, Share2, ExternalLink, Loader2, AlertCircle
+  MessageSquare, Share2, ExternalLink, Loader2, AlertCircle, Trash2
 } from 'lucide-react';
 
 interface CGProfileData {
@@ -39,6 +40,8 @@ const Profile: React.FC = () => {
   const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
   const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [galleryModal, setGalleryModal] = useState<{
     isOpen: boolean;
     images: string[];
@@ -53,6 +56,7 @@ const Profile: React.FC = () => {
 
   // API hooks
   const getCGProfileApi = useApi(profileService.getCGPublicProfile);
+  const deleteAccountApi = useApi(userService.deleteAccount);
 
   // Set page title for SEO
   useEffect(() => {
@@ -160,6 +164,24 @@ const Profile: React.FC = () => {
       title: '',
       initialIndex: 0
     });
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      alert(t('profile.typeDeleteToConfirm'));
+      return;
+    }
+
+    try {
+      await deleteAccountApi.execute();
+      alert(t('profile.accountDeleted'));
+      navigate('/');
+      // The logout will be handled automatically by the service
+      window.location.reload(); // Force reload to clear all state
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+      alert(t('profile.deleteAccountError'));
+    }
   };
 
   // Show loading only when we're fetching CG profile data
@@ -294,6 +316,15 @@ const Profile: React.FC = () => {
                           >
                             <Edit3 className="h-4 w-4 mr-2" />
                             {t('profile.editProfile')}
+                          </button>
+                      )}
+                      {isOwnProfile && user && (
+                          <button
+                              onClick={() => setShowDeleteModal(true)}
+                              className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            {t('profile.deleteAccount')}
                           </button>
                       )}
                       {/* Only show contact button if viewing CG profile and current user is client/customer */}
@@ -560,6 +591,81 @@ const Profile: React.FC = () => {
             initialIndex={galleryModal.initialIndex}
             title={galleryModal.title}
         />
+
+        {/* Delete Account Modal */}
+        {showDeleteModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
+              <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+                <div className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                      <Trash2 className="h-6 w-6 text-red-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{t('profile.dangerZone')}</h3>
+                      <p className="text-sm text-red-600">{t('profile.deleteAccount')}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                      <p className="text-sm text-red-800">
+                        {t('profile.deleteAccountWarning')}
+                      </p>
+                    </div>
+
+                    <p className="text-sm font-medium text-gray-900 mb-2">
+                      {t('profile.deleteAccountConfirm')}
+                    </p>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('profile.typeDeleteToConfirm')}
+                      </label>
+                      <input
+                        type="text"
+                        value={deleteConfirmText}
+                        onChange={(e) => setDeleteConfirmText(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        placeholder="DELETE"
+                        disabled={deleteAccountApi.loading}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => {
+                        setShowDeleteModal(false);
+                        setDeleteConfirmText('');
+                      }}
+                      className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                      disabled={deleteAccountApi.loading}
+                    >
+                      {t('common.cancel')}
+                    </button>
+                    <button
+                      onClick={handleDeleteAccount}
+                      disabled={deleteAccountApi.loading || deleteConfirmText !== 'DELETE'}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center"
+                    >
+                      {deleteAccountApi.loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {t('profile.deleting')}
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {t('profile.deleteAccount')}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        )}
       </div>
   );
 };
