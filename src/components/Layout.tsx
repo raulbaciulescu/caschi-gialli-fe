@@ -290,10 +290,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </div>
                 <div className="flex space-x-6">
                   <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
-                    {t('footer.privacyPolicy')}
+                    <Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors text-sm">
+                      {t('footer.privacyPolicy')}
+                    </Link>
                   </a>
                   <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
-                    {t('footer.termsOfService')}
+                    <Link to="/terms-of-service" className="text-gray-400 hover:text-white transition-colors text-sm">
+                      {t('footer.termsOfService')}
+                    </Link>
                   </a>
                   <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
                     {t('footer.cookiePolicy')}

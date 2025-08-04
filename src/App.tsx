@@ -13,6 +13,8 @@ import Services from './pages/Services';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 // Component to handle scroll to top on route change
 const ScrollToTop: React.FC = () => {
@@ -41,6 +43,8 @@ const AppRoutes: React.FC = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:cgId" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
         </Routes>
       </Layout>
     </>
