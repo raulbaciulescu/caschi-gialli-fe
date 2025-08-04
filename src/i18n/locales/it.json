@@ -203,6 +203,14 @@
     "deleting": "Eliminazione account...",
     "accountDeleted": "Il tuo account è stato eliminato con successo.",
     "deleteAccountError": "Impossibile eliminare l'account. Riprova."
+    "dangerZone": "Zona Pericolosa",
+    "deleteAccount": "Elimina Account",
+    "deleteAccountWarning": "Questa azione non può essere annullata. Eliminerà permanentemente il tuo account e rimuoverà tutti i tuoi dati dai nostri server.",
+    "deleteAccountConfirm": "Sei sicuro di voler eliminare il tuo account?",
+    "typeDeleteToConfirm": "Scrivi 'DELETE' per confermare:",
+    "deleting": "Eliminazione account...",
+    "accountDeleted": "Il tuo account è stato eliminato con successo.",
+    "deleteAccountError": "Impossibile eliminare l'account. Riprova."
   },
   "editProfile": {
     "title": "Modifica Profilo",
