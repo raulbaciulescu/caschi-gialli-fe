@@ -52,7 +52,20 @@ const PrivacyPolicy: React.FC = () => {
                   <li><strong>Dati di utilizzo:</strong> Come utilizzi la piattaforma, pagine visitate</li>
                   <li><strong>Informazioni del dispositivo:</strong> Tipo di dispositivo, browser, sistema operativo</li>
                   <li><strong>Dati di rete:</strong> Indirizzo IP, provider di servizi internet</li>
+                  <li><strong>Dati di archiviazione locale:</strong> Token di autenticazione e dati profilo memorizzati nel browser</li>
                 </ul>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                  <h4 className="font-semibold text-blue-800 mb-2">Archiviazione Locale (Local Storage)</h4>
+                  <p className="text-blue-700 text-sm">
+                    Utilizziamo il Local Storage del tuo browser per memorizzare:
+                  </p>
+                  <ul className="text-blue-700 text-sm mt-2 space-y-1">
+                    <li>• <code className="bg-blue-100 px-1 rounded">auth_token</code>: Token di autenticazione per mantenere la sessione</li>
+                    <li>• <code className="bg-blue-100 px-1 rounded">user_data</code>: Informazioni del profilo utente per ottimizzare le performance</li>
+                    <li>• Preferenze lingua e altre impostazioni dell'interfaccia</li>
+                  </ul>
+                </div>
               </div>
             </section>
 
@@ -77,6 +90,7 @@ const PrivacyPolicy: React.FC = () => {
                   <li>Analizzare l'utilizzo della piattaforma per migliorare l'esperienza utente</li>
                   <li>Sviluppare nuove funzionalità basate sui feedback degli utenti</li>
                   <li>Prevenire frodi e garantire la sicurezza della piattaforma</li>
+                  <li>Ottimizzare le performance tramite archiviazione locale dei dati frequentemente utilizzati</li>
                 </ul>
 
                 <h3 className="text-lg font-semibold text-gray-800 mt-6">Comunicazioni</h3>
@@ -109,6 +123,15 @@ const PrivacyPolicy: React.FC = () => {
                   <li><strong>Fornitori di servizi:</strong> Hosting, analisi (con accordi di riservatezza)</li>
                 </ul>
 
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
+                  <h4 className="font-semibold text-green-800 mb-2">Archiviazione Locale - Nessuna Condivisione</h4>
+                  <p className="text-green-700 text-sm">
+                    I dati memorizzati nel Local Storage del tuo browser (token di autenticazione, 
+                    dati profilo) rimangono esclusivamente sul tuo dispositivo e non vengono 
+                    condivisi con terze parti.
+                  </p>
+                </div>
+
                 <h3 className="text-lg font-semibold text-gray-800 mt-6">Condivisione Legale</h3>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>Quando richiesto dalla legge o da autorità competenti</li>
@@ -138,7 +161,17 @@ const PrivacyPolicy: React.FC = () => {
                   <li><strong>Accesso limitato:</strong> Solo personale autorizzato può accedere ai dati</li>
                   <li><strong>Monitoraggio:</strong> Controllo continuo per rilevare attività sospette</li>
                   <li><strong>Backup sicuri:</strong> Copie di sicurezza crittografate e protette</li>
+                  <li><strong>Archiviazione locale sicura:</strong> I dati nel browser sono protetti dalle politiche di sicurezza del browser stesso</li>
                 </ul>
+
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mt-4">
+                  <h4 className="font-semibold text-purple-800 mb-2">Sicurezza del Local Storage</h4>
+                  <p className="text-purple-700 text-sm">
+                    I dati nel Local Storage sono protetti dalle politiche di sicurezza del browser 
+                    e sono accessibili solo dal dominio caschigialli.it. Vengono automaticamente 
+                    cancellati quando fai logout o cancelli il tuo account.
+                  </p>
+                </div>
               </div>
             </section>
 
@@ -182,6 +215,18 @@ const PrivacyPolicy: React.FC = () => {
                       Puoi richiedere i tuoi dati in un formato strutturato e leggibile.
                     </p>
                   </div>
+                </div>
+
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mt-4">
+                  <h4 className="font-semibold text-orange-800 mb-2">Controllo dell'Archiviazione Locale</h4>
+                  <p className="text-orange-700 text-sm mb-2">
+                    Hai il controllo completo sui dati memorizzati nel tuo browser:
+                  </p>
+                  <ul className="text-orange-700 text-sm space-y-1">
+                    <li>• <strong>Logout:</strong> Cancella automaticamente token e dati di sessione</li>
+                    <li>• <strong>Cancellazione account:</strong> Rimuove tutti i dati dal Local Storage</li>
+                    <li>• <strong>Impostazioni browser:</strong> Puoi cancellare manualmente i dati del sito</li>
+                  </ul>
                 </div>
               </div>
             </section>

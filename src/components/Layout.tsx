@@ -299,9 +299,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       {t('footer.termsOfService')}
                     </Link>
                   </a>
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  <Link to="/cookie-policy" className="text-gray-400 hover:text-white transition-colors text-sm">
                     {t('footer.cookiePolicy')}
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
