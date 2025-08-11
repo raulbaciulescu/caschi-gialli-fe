@@ -15,10 +15,9 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
   },
   USERS: {
-    PROFILE: '/users/profile',
-    UPDATE_PROFILE: '/users/profile',
-    DELETE_ACCOUNT: '/users/delete-account',
-    DELETE_ACCOUNT: '/users/delete-account',
+    PROFILE: 'cg/profile',
+    UPDATE_PROFILE: '/profile',
+    DELETE_ACCOUNT: '/delete-account',
   },
   CG: {
     IN_RANGE: '/cg/inRange',

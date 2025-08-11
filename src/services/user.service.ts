@@ -9,9 +9,6 @@ class UserService {
   public async updateProfile(updates: Partial<User>): Promise<User> {
     const response = await httpService.put<User>(API_ENDPOINTS.USERS.UPDATE_PROFILE, updates);
 
-    // Update local storage with new user data
-    localStorage.setItem('user_data', JSON.stringify(response));
-
     return response;
   }
 
@@ -28,10 +25,6 @@ class UserService {
    */
   public async deleteAccount(): Promise<void> {
     await httpService.delete(API_ENDPOINTS.USERS.DELETE_ACCOUNT);
-    
-    // Clear local storage after successful deletion
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
   }
 
 }

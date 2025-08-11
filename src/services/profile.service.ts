@@ -54,18 +54,16 @@ class ProfileService {
    * Update CG profile with form data including images and CG ID
    */
   public async updateCGProfile(updates: ProfileUpdateRequest): Promise<User> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
+    // Expect the backend to derive user identity from session cookie;
+    // if the API still requires an explicit id, the caller must supply it in `updates`
+    const user = { id: (updates as any)?.id } as any;
 
     const formData = new FormData();
 
     // CRITICAL: Add CG ID to the form data
-    formData.append('cgId', user.id.toString());
+    if (user?.id) {
+      formData.append('cgId', user.id.toString());
+    }
 
     // Add text fields
     Object.entries(updates).forEach(([key, value]) => {
@@ -111,16 +109,12 @@ class ProfileService {
    * Upload profile image only
    */
   public async uploadProfileImage(file: File): Promise<string> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
+    const user = { id: undefined } as any; // rely on server session; optional id may be added by caller
 
     const formData = new FormData();
-    formData.append('cgId', user.id.toString()); // Include CG ID
+    if (user?.id) {
+      formData.append('cgId', user.id.toString());
+    }
     formData.append('profileImage', file);
 
     const response = await httpService.post<{ profileImageUrl: string }>(
@@ -140,16 +134,12 @@ class ProfileService {
    * Upload gallery images
    */
   public async uploadGalleryImages(files: File[]): Promise<string[]> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
+    const user = { id: undefined } as any;
 
     const formData = new FormData();
-    formData.append('cgId', user.id.toString()); // Include CG ID
+    if (user?.id) {
+      formData.append('cgId', user.id.toString());
+    }
     files.forEach(file => {
       formData.append('galleryImages', file);
     });
@@ -171,17 +161,11 @@ class ProfileService {
    * Delete gallery image
    */
   public async deleteGalleryImage(imageUrl: string): Promise<void> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
+    const user = { id: undefined } as any;
 
     await httpService.delete(`${API_ENDPOINTS.CG.PROFILE}/gallery-image`, {
       data: {
-        cgId: user.id.toString(), // Include CG ID
+        cgId: user?.id?.toString?.(),
         imageUrl
       }
     });
@@ -191,14 +175,7 @@ class ProfileService {
    * Get current user's CG profile data (for editing own profile) 
    */
   public async getMyCGProfile(cgId?: string): Promise<CGProfileResponse> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
-    const targetCgId = cgId || user.id;
+    const targetCgId = cgId; // rely on explicit param or server session
 
     // Include CG ID as query parameter for GET request
     console.log('Making GET request for own profile to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${targetCgId}`);
@@ -207,24 +184,24 @@ class ProfileService {
     
     // Transform backend response to User format
     const transformedUser: User = {
-      id: user.id, // Keep original user ID
-      email: user.email, // Keep original email
-      name: response.fullName || response.name || user.name,
-      type: user.type,
-      location: user.location, // Keep original location
-      address: response.address || user.address,
-      phone: response.phoneNumber || user.phone,
-      phoneNumber: response.phoneNumber || user.phoneNumber,
-      profileImage: response.profileImageUrl || user.profileImage,
-      profileImageUrl: response.profileImageUrl || user.profileImageUrl,
-      galleryImages: response.galleryImageUrls || user.galleryImages,
-      galleryImageUrls: response.galleryImageUrls || user.galleryImageUrls,
-      services: response.services || user.services,
-      radius: response.serviceRadius || user.radius,
-      description: response.description || user.description,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    };
+      id: 0,
+      email: '',
+      name: response.fullName || response.name || '',
+      type: 'cg' as any,
+      location: undefined,
+      address: response.address,
+      phone: response.phoneNumber,
+      phoneNumber: response.phoneNumber,
+      profileImage: response.profileImageUrl,
+      profileImageUrl: response.profileImageUrl,
+      galleryImages: response.galleryImageUrls,
+      galleryImageUrls: response.galleryImageUrls,
+      services: response.services,
+      radius: response.serviceRadius,
+      description: response.description,
+      createdAt: undefined,
+      updatedAt: undefined
+    } as any;
     
     return transformedUser;
   }
@@ -233,17 +210,8 @@ class ProfileService {
    * Get CG profile data for viewing (returns backend format)
    */
   public async getCGProfileForViewing(): Promise<CGProfileResponse> {
-    // Get current user data to extract CG ID
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-      throw new Error('User not authenticated');
-    }
-
-    const user = JSON.parse(userData);
-
-    // Include CG ID as query parameter for GET request
-    console.log('Making GET request for profile viewing to:', `${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
-    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}?cgId=${user.id}`);
+    // Use session cookie; backend infers user
+    const response = await httpService.get<CGProfileResponse>(`${API_ENDPOINTS.CG.PROFILE}`);
     console.log('CG profile for viewing response:', response);
     return response;
   }

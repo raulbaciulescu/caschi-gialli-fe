@@ -8,8 +8,8 @@ import {
 } from '../types/api';
 
 interface AuthResponse {
-  token: string;
-  expiresIn: string;
+  token?: string; // token may be returned for non-cookie flows; optional now
+  expiresIn?: string;
   user: User;
 }
 
@@ -24,11 +24,10 @@ class AuthService {
           credentials
       );
 
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
+      // If backend returns a token for hybrid flows, keep it only in memory
+      if (response.token) {
+        httpService.setToken(response.token.startsWith('Bearer') ? response.token : `Bearer ${response.token}`);
+      }
 
       return response;
     } catch (error) {
@@ -47,11 +46,9 @@ class AuthService {
           credentials
       );
 
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
+      if (response.token) {
+        httpService.setToken(response.token.startsWith('Bearer') ? response.token : `Bearer ${response.token}`);
+      }
 
       return response;
     } catch (error) {
@@ -70,11 +67,9 @@ class AuthService {
           userData
       );
 
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
+      if (response.token) {
+        httpService.setToken(response.token.startsWith('Bearer') ? response.token : `Bearer ${response.token}`);
+      }
 
       return response;
     } catch (error) {
@@ -93,11 +88,9 @@ class AuthService {
           userData
       );
 
-      // Store token
-      httpService.setToken(response.token);
-
-      // Store user data locally
-      localStorage.setItem('user_data', JSON.stringify(response.user));
+      if (response.token) {
+        httpService.setToken(response.token.startsWith('Bearer') ? response.token : `Bearer ${response.token}`);
+      }
 
       return response;
     } catch (error) {
@@ -110,31 +103,30 @@ class AuthService {
    * Get user from localStorage (no API call)
    */
   public getUserFromStorage(): User | null {
-    try {
-      const userData = localStorage.getItem('user_data');
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error('Failed to parse user data from storage:', error);
-      return null;
-    }
+    return null; // No longer trusting localStorage for user state
   }
 
   /**
    * Logout user - only clear localStorage, no API call
    */
   public async logout(): Promise<void> {
-    // Clear token and user data from localStorage
+    // Call backend to clear HttpOnly cookie if supported
+    try {
+      await httpService.post(API_ENDPOINTS.AUTH.LOGOUT);
+    } catch (err) {
+      // Ignore network/401 here, still clear client state
+    }
+    // Clear client-side memory token
     httpService.clearToken();
-    localStorage.removeItem('user_data');
   }
 
   /**
    * Check if user is authenticated
    */
   public isAuthenticated(): boolean {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user_data');
-    return !!(token && userData);
+    // Without localStorage, rely on in-memory token presence.
+    // When using HttpOnly cookies, prefer server verification flows.
+    return false;
   }
 }
 

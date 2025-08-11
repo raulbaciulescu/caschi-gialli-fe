@@ -13,10 +13,15 @@ class HttpService {
       headers: {
         'Content-Type': 'application/json',
       },
+      // Enable cookie-based auth (HttpOnly cookies) when the backend is configured for it
+      withCredentials: true,
+      // Optional XSRF support if backend sets a CSRF cookie (adjust names to your backend)
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-CSRF-Token',
     });
 
     this.setupInterceptors();
-    this.loadTokenFromStorage();
+    // Stop loading token from localStorage for improved security
   }
 
   private setupInterceptors(): void {
@@ -63,22 +68,19 @@ class HttpService {
     }
   }
 
-  private loadTokenFromStorage(): void {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      this.token = token;
-    }
-  }
+  // Keep token only in memory; do not persist to localStorage
+  private loadTokenFromStorage(): void {}
 
   public setToken(token: string): void {
     this.token = token;
-    localStorage.setItem('auth_token', token);
   }
 
   public clearToken(): void {
     this.token = null;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    // Clean up any legacy storage if present
+    try {
+      localStorage.removeItem('auth_token');
+    } catch {}
   }
 
   // HTTP Methods

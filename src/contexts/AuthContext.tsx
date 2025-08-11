@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService } from '../services/auth.service';
+import { userService } from '../services/user.service';
 import { User, LoginRequest, RegisterClientRequest, RegisterCGRequest } from '../types/api';
 
 interface AuthContextType {
@@ -49,22 +50,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const initializeAuth = async () => {
     setLoading(true);
     try {
-      // Check if we have a valid token and user data
-      if (authService.isAuthenticated()) {
-        const userData = authService.getUserFromStorage();
-        if (userData) {
-          setUser(normalizeUser(userData));
-          setIsAuthenticated(true);
-        } else {
-          // Token exists but no user data - clear everything
-          await authService.logout();
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
+      // Prefer server verification: fetch profile; succeeds if session cookie is valid
+      const profile = await userService.getProfile();
+      setUser(normalizeUser(profile));
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Failed to initialize auth:', error);
       // Clear invalid data
@@ -91,8 +80,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     console.log('Merged user data:', mergedUserData);
     const normalizedUser = normalizeUser(mergedUserData);
     setUser(normalizedUser);
-    localStorage.setItem('user_data', JSON.stringify(normalizedUser));
-    console.log('User data updated successfully in context and localStorage:', normalizedUser);
+    console.log('User data updated successfully in context:', normalizedUser);
   };
 
   const loginClient = async (credentials: LoginRequest): Promise<void> => {
