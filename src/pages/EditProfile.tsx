@@ -50,7 +50,18 @@ const EditProfile: React.FC = () => {
     }
 
     // Load current CG profile data from backend
-    loadCGProfile();
+    //loadCGProfile();
+    setFormData({
+      name: user.name || '',
+      phone: user.phone || user.phoneNumber || '',
+      address: user.address || '',
+      description: user.description || '',
+      services: user.services || [],
+      radius: user.radius || 10
+    });
+    setCurrentGallery(user.galleryImageUrls || []);
+    setCurrentProfileImage(user.profileImage || '');
+    setProfileImagePreview(user.profileImage || '');
   }, [isAuthenticated, user, navigate]);
 
   const loadCGProfile = async () => {
@@ -63,7 +74,7 @@ const EditProfile: React.FC = () => {
       // Populate form with backend data
       setFormData({
         name: cgProfile.name || '',
-        phone: cgProfile.phone || cgProfile.phoneNumber || '',
+        phone: cgProfile.phoneNumber || '',
         address: cgProfile.address || '',
         description: cgProfile.description || '', // Description from backend
         services: cgProfile.services || [], // Services already selected
@@ -86,7 +97,7 @@ const EditProfile: React.FC = () => {
         services: user.services || [],
         radius: user.radius || 10
       });
-      setCurrentGallery(user.galleryImages || []);
+      setCurrentGallery(user.galleryImageUrls || []);
       setCurrentProfileImage(user.profileImage || '');
       setProfileImagePreview(user.profileImage || '');
     }
@@ -129,7 +140,7 @@ const EditProfile: React.FC = () => {
 
   const handleDeleteExistingImage = async (imageUrl: string) => {
     try {
-      await deleteImageApi.execute(imageUrl);
+      await deleteImageApi.execute(user.id, imageUrl);
       setCurrentGallery(prev => prev.filter(url => url !== imageUrl));
     } catch (error) {
       console.error('Failed to delete image:', error);
@@ -144,6 +155,7 @@ const EditProfile: React.FC = () => {
     try {
       const updateData = {
         ...formData,
+        cgId: user.id,
         profileImage: profileImage || undefined,
         galleryImages: galleryImages.length > 0 ? galleryImages : undefined
       };

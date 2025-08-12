@@ -15,7 +15,7 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
   },
   USERS: {
-    PROFILE: 'cg/profile',
+    PROFILE: '/auth/session',
     UPDATE_PROFILE: '/profile',
     DELETE_ACCOUNT: '/delete-account',
   },

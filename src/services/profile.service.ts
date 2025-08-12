@@ -160,12 +160,10 @@ class ProfileService {
   /**
    * Delete gallery image
    */
-  public async deleteGalleryImage(imageUrl: string): Promise<void> {
-    const user = { id: undefined } as any;
-
+  public async deleteGalleryImage(id: number, imageUrl: string): Promise<void> {
     await httpService.delete(`${API_ENDPOINTS.CG.PROFILE}/gallery-image`, {
       data: {
-        cgId: user?.id?.toString?.(),
+        cgId: id,
         imageUrl
       }
     });
