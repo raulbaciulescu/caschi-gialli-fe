@@ -220,23 +220,6 @@ const TermsOfService: React.FC = () => {
                     gli utenti saranno informati con almeno 30 giorni di preavviso.
                   </p>
                 </div>
-
-                <h3 className="text-lg font-semibold text-gray-800 mt-6">Archiviazione Dati Locale</h3>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-green-800 mb-2">
-                    <strong>Utilizzo del Local Storage:</strong> Per migliorare l'esperienza utente, 
-                    memorizziamo alcuni dati nel tuo browser:
-                  </p>
-                  <ul className="text-green-700 text-sm space-y-1">
-                    <li>• Token di autenticazione per mantenere la sessione di login</li>
-                    <li>• Dati del profilo per ottimizzare le performance</li>
-                    <li>• Preferenze dell'interfaccia (lingua, tema)</li>
-                  </ul>
-                  <p className="text-green-800 text-sm mt-2">
-                    Questi dati rimangono sul tuo dispositivo e vengono cancellati automaticamente 
-                    quando fai logout o cancelli il tuo account.
-                  </p>
-                </div>
               </div>
             </section>
 
@@ -347,17 +330,7 @@ const TermsOfService: React.FC = () => {
                   <li>Cancellazione dei dati del profilo</li>
                   <li>Interruzione delle comunicazioni in corso</li>
                   <li>Mantenimento dei dati per obblighi legali (se applicabile)</li>
-                  <li>Cancellazione automatica dei dati memorizzati nel Local Storage del browser</li>
                 </ul>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-                  <h4 className="font-semibold text-blue-800 mb-2">Cancellazione Dati Locali</h4>
-                  <p className="text-blue-700 text-sm">
-                    Alla chiusura dell'account, tutti i dati memorizzati nel Local Storage 
-                    (token di autenticazione, dati profilo, preferenze) vengono automaticamente 
-                    rimossi dal tuo browser per garantire la privacy e la sicurezza.
-                  </p>
-                </div>
               </div>
             </section>
 
