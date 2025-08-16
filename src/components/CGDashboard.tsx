@@ -70,12 +70,7 @@ const CGDashboard: React.FC = () => {
     try {
       await assignToRequest(requestId);
       
-      // Add success notification
-      addNotification({
-        type: 'system',
-        title: 'Job Accepted!',
-        message: 'You have successfully accepted a new job. Check your active jobs.'
-      });
+      // Notification will be sent by backend via WebSocket
       
       // Requests will be automatically refreshed by the hook
     } catch (error) {
@@ -87,12 +82,7 @@ const CGDashboard: React.FC = () => {
     try {
       await completeRequestApi.execute(requestId);
       
-      // Add success notification
-      addNotification({
-        type: 'system',
-        title: 'Job Completed!',
-        message: 'Job has been marked as completed successfully.'
-      });
+      // Notification will be sent by backend via WebSocket
       
       // Refresh the requests after completion
       await loadMyRequests();

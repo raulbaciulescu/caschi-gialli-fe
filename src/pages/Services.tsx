@@ -204,12 +204,7 @@ const Services: React.FC = () => {
       // Create chat and navigate to chat page
       const chatId = await createChat([user.id, cgId], [user.name, cgName]);
       
-      // Add notification
-      addNotification({
-        type: 'system',
-        title: 'Chat Started!',
-        message: `You can now chat with ${cgName}. Check your messages.`
-      });
+      // Notification will be sent by backend via WebSocket
       
       navigate('/chat');
     } catch (error) {

@@ -38,4 +38,13 @@ export const API_ENDPOINTS = {
     LIST: '/chat',
     MESSAGES: '/chat/{chatId}/messages',
   },
+  NOTIFICATIONS: {
+    LIST: '/notifications',
+    MARK_READ: '/notifications/{notificationId}/read',
+    MARK_ALL_READ: '/notifications/read-all',
+    DELETE: '/notifications/{notificationId}',
+    PREFERENCES: '/notifications/preferences',
+    PUSH_SUBSCRIBE: '/notifications/push-subscribe',
+    PUSH_UNSUBSCRIBE: '/notifications/push-unsubscribe',
+  },
 } as const;

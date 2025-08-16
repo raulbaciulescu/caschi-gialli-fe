@@ -49,12 +49,7 @@ const ClientDashboard: React.FC = () => {
         address: requestForm.address
       });
 
-      // Add success notification
-      addNotification({
-        type: 'system',
-        title: 'Request Created!',
-        message: `Your ${requestForm.service} request has been submitted successfully.`
-      });
+      // Notification will be sent by backend via WebSocket
 
       setShowRequestForm(false);
       setRequestForm({
@@ -76,7 +71,7 @@ const ClientDashboard: React.FC = () => {
     if (!user) return;
     try {
       await createChat([user.id, cgId], [user.name, cgName]);
-      // Navigate to chat would happen here in a real app
+      // Notification will be sent by backend via WebSocket
     } catch (error) {
       console.error('Failed to create chat:', error);
     }

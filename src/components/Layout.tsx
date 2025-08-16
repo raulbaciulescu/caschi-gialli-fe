@@ -88,7 +88,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
                             {(user?.profileImage) ? (
                                 <img
-                                    src={`${user.profileImage}?ts=${Date.now()}`}
+                                    src={user.profileImage}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />

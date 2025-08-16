@@ -30,7 +30,6 @@ export const useChat = () => {
 
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
-  const notificationsContext = React.useContext(React.createContext<any>(undefined));
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
@@ -177,23 +176,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const isOwnMessage = user && data.senderId.toString() === user.id.toString();
       const shouldIncrementUnread = !isOwnMessage && activeChat !== data.chatId;
 
-      // Create notification for new messages from others
-      if (!isOwnMessage && notificationsContext?.addNotification) {
-        // Find the chat to get sender name
-        const chat = chats.find(c => c.id === data.chatId);
-        const senderName = chat ? 
-          (data.senderId.toString() === chat.customerId.toString() ? chat.customerName : chat.cgName) :
-          'Unknown User';
-
-        notificationsContext.addNotification({
-          type: 'message',
-          title: `New message from ${senderName}`,
-          message: data.content,
-          chatId: data.chatId,
-          senderId: data.senderId.toString(),
-          senderName: senderName
-        });
-      }
+      // Note: Notifications are now handled by NotificationContext via WebSocket listeners
+      
       setChats(prev =>
           prev.map(chat =>
               chat.id === data.chatId

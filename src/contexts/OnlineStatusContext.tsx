@@ -1,19 +1,22 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { websocketService } from '../services/websocket.service';
 
 interface OnlineUser {
   userId: string;
   userName: string;
   lastSeen: Date;
   isOnline: boolean;
+  avatar?: string;
 }
 
 interface OnlineStatusContextType {
   onlineUsers: Map<string, OnlineUser>;
   isUserOnline: (userId: string) => boolean;
   getUserLastSeen: (userId: string) => Date | null;
-  setUserOnline: (userId: string, userName: string) => void;
+  setUserOnline: (userId: string, userName: string, avatar?: string) => void;
   setUserOffline: (userId: string) => void;
+  updateUserActivity: (userId: string) => void;
 }
 
 const OnlineStatusContext = createContext<OnlineStatusContextType | undefined>(undefined);
@@ -27,44 +30,76 @@ export const useOnlineStatus = () => {
 };
 
 export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [onlineUsers, setOnlineUsers] = useState<Map<string, OnlineUser>>(new Map());
 
-  // Simulate online status updates (in a real app, this would come from WebSocket)
+  // Setup WebSocket listeners for online status updates
   useEffect(() => {
-    if (!user) return;
+    if (!isAuthenticated || !user) {
+      setOnlineUsers(new Map());
+      return;
+    }
 
+    setupWebSocketListeners();
+    
     // Mark current user as online
-    setUserOnline(user.id.toString(), user.name);
+    setUserOnline(user.id.toString(), user.name, user.profileImage);
 
-    // Simulate some other users being online
-    const simulateOnlineUsers = () => {
-      const mockOnlineUsers = [
-        { id: '151', name: 'CG Professional' },
-        { id: 'cg-2', name: 'Anna Verdi' },
-        { id: '552', name: 'Client User' }
-      ];
+    // Send heartbeat every 30 seconds to maintain online status
+    const heartbeatInterval = setInterval(() => {
+      if (websocketService.connected) {
+        websocketService.sendHeartbeat?.();
+      }
+    }, 30000);
 
-      mockOnlineUsers.forEach(mockUser => {
-        if (mockUser.id !== user.id.toString()) {
-          // Randomly set users as online/offline
-          const isOnline = Math.random() > 0.3;
-          if (isOnline) {
-            setUserOnline(mockUser.id, mockUser.name);
-          } else {
-            setUserOffline(mockUser.id);
-          }
-        }
-      });
+    return () => {
+      clearInterval(heartbeatInterval);
+      cleanupWebSocketListeners();
     };
+  }, [isAuthenticated, user]);
 
-    simulateOnlineUsers();
+  const setupWebSocketListeners = () => {
+    // Listen for user online status updates
+    websocketService.onMessage('user_online', (data: any) => {
+      setUserOnline(data.userId, data.userName, data.avatar);
+    });
 
-    // Update online status every 30 seconds
-    const interval = setInterval(simulateOnlineUsers, 30000);
+    // Listen for user offline status updates
+    websocketService.onMessage('user_offline', (data: any) => {
+      setUserOffline(data.userId);
+    });
 
-    return () => clearInterval(interval);
-  }, [user]);
+    // Listen for user activity updates
+    websocketService.onMessage('user_activity', (data: any) => {
+      updateUserActivity(data.userId);
+    });
+
+    // Listen for bulk online users list (sent on connection)
+    websocketService.onMessage('online_users_list', (data: any) => {
+      if (data.users && Array.isArray(data.users)) {
+        const newOnlineUsers = new Map<string, OnlineUser>();
+        
+        data.users.forEach((userData: any) => {
+          newOnlineUsers.set(userData.userId, {
+            userId: userData.userId,
+            userName: userData.userName,
+            lastSeen: new Date(userData.lastSeen),
+            isOnline: userData.isOnline,
+            avatar: userData.avatar
+          });
+        });
+        
+        setOnlineUsers(newOnlineUsers);
+      }
+    });
+  };
+
+  const cleanupWebSocketListeners = () => {
+    websocketService.offMessage('user_online');
+    websocketService.offMessage('user_offline');
+    websocketService.offMessage('user_activity');
+    websocketService.offMessage('online_users_list');
+  };
 
   const isUserOnline = (userId: string): boolean => {
     const userStatus = onlineUsers.get(userId);
@@ -80,17 +115,23 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
     return userStatus ? userStatus.lastSeen : null;
   };
 
-  const setUserOnline = (userId: string, userName: string) => {
+  const setUserOnline = (userId: string, userName: string, avatar?: string) => {
     setOnlineUsers(prev => {
       const newMap = new Map(prev);
       newMap.set(userId, {
         userId,
         userName,
         lastSeen: new Date(),
-        isOnline: true
+        isOnline: true,
+        avatar
       });
       return newMap;
     });
+
+    // Send online status to backend via WebSocket
+    if (websocketService.connected && user && userId === user.id.toString()) {
+      websocketService.sendUserStatus?.('online');
+    }
   };
 
   const setUserOffline = (userId: string) => {
@@ -106,7 +147,57 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
       return newMap;
     });
+
+    // Send offline status to backend via WebSocket
+    if (websocketService.connected && user && userId === user.id.toString()) {
+      websocketService.sendUserStatus?.('offline');
+    }
   };
+
+  const updateUserActivity = (userId: string) => {
+    setOnlineUsers(prev => {
+      const newMap = new Map(prev);
+      const existingUser = newMap.get(userId);
+      if (existingUser) {
+        newMap.set(userId, {
+          ...existingUser,
+          lastSeen: new Date(),
+          isOnline: true
+        });
+      }
+      return newMap;
+    });
+  };
+
+  // Send activity heartbeat when user interacts with the page
+  useEffect(() => {
+    if (!user || !websocketService.connected) return;
+
+    const handleUserActivity = () => {
+      updateUserActivity(user.id.toString());
+      websocketService.sendUserActivity?.();
+    };
+
+    // Listen for user activity events
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    
+    let activityTimeout: NodeJS.Timeout;
+    const throttledActivity = () => {
+      clearTimeout(activityTimeout);
+      activityTimeout = setTimeout(handleUserActivity, 1000); // Throttle to once per second
+    };
+
+    events.forEach(event => {
+      document.addEventListener(event, throttledActivity, { passive: true });
+    });
+
+    return () => {
+      clearTimeout(activityTimeout);
+      events.forEach(event => {
+        document.removeEventListener(event, throttledActivity);
+      });
+    };
+  }, [user, websocketService.connected]);
 
   return (
     <OnlineStatusContext.Provider value={{
@@ -114,7 +205,8 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
       isUserOnline,
       getUserLastSeen,
       setUserOnline,
-      setUserOffline
+      setUserOffline,
+      updateUserActivity
     }}>
       {children}
     </OnlineStatusContext.Provider>
