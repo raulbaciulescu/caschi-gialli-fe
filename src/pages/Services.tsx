@@ -4,6 +4,8 @@ import {useTranslation} from 'react-i18next';
 import {useService} from '../contexts/ServiceContext';
 import {useAuth} from '../contexts/AuthContext';
 import {useChat} from '../contexts/ChatContext';
+import {useNotifications} from '../contexts/NotificationContext';
+import OnlineStatusIndicator from '../components/OnlineStatusIndicator';
 import {useCGInRange} from '../hooks/useCGInRange';
 import Map from '../components/Map';
 import {
@@ -34,6 +36,7 @@ const Services: React.FC = () => {
   const { serviceCategories } = useService();
   const { user } = useAuth();
   const { createChat } = useChat();
+  const { addNotification } = useNotifications();
   const { data: cgInRange, loading, error, searchCGInRange, reset } = useCGInRange();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -200,6 +203,14 @@ const Services: React.FC = () => {
     try {
       // Create chat and navigate to chat page
       const chatId = await createChat([user.id, cgId], [user.name, cgName]);
+      
+      // Add notification
+      addNotification({
+        type: 'system',
+        title: 'Chat Started!',
+        message: `You can now chat with ${cgName}. Check your messages.`
+      });
+      
       navigate('/chat');
     } catch (error) {
       console.error('Failed to create chat:', error);
@@ -371,6 +382,13 @@ const Services: React.FC = () => {
                                   <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center space-x-4">
                                       <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                                        {/* Online Status Indicator */}
+                                        <div className="absolute top-0 right-0">
+                                          <OnlineStatusIndicator 
+                                            userId={offer.id.toString()}
+                                            size="sm"
+                                          />
+                                        </div>
                                         {offer.fullProfileImageUrl ? (
                                             <img
                                                 src={`${offer.fullProfileImageUrl}?ts=${Date.now()}`}
@@ -387,6 +405,11 @@ const Services: React.FC = () => {
                                       <div>
                                         <h3 className="text-xl font-semibold text-gray-900">{offer.name}</h3>
                                         <div className="flex items-center space-x-2 mt-1">
+                                          <OnlineStatusIndicator 
+                                            userId={offer.id.toString()}
+                                            size="sm"
+                                            showText={true}
+                                          />
                                           <span className="text-sm text-blue-600 font-medium">{t('services.kmAway', { distance: offer.distance })}</span>
                                         </div>
                                       </div>

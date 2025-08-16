@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
+import { useOnlineStatus } from '../contexts/OnlineStatusContext';
+import OnlineStatusIndicator from '../components/OnlineStatusIndicator';
 import { MessageSquare, Send, ArrowLeft, Users, Phone, RefreshCw } from 'lucide-react';
 
 const Chat: React.FC = () => {
@@ -16,6 +18,7 @@ const Chat: React.FC = () => {
     loading,
     refreshChats
   } = useChat();
+  const { isUserOnline } = useOnlineStatus();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -230,6 +233,12 @@ const Chat: React.FC = () => {
                                     <p className="text-sm font-medium text-gray-900 truncate">
                                       {getOtherParticipant(chat)}
                                     </p>
+                                    <div className="flex items-center space-x-2">
+                                      {/* Online Status */}
+                                      <OnlineStatusIndicator 
+                                        userId={user.id.toString() === chat.customerId.toString() ? chat.cgId : chat.customerId}
+                                        size="sm"
+                                      />
                                     {chat.lastMessage && (
                                         <p className="text-xs text-gray-500">
                                           {formatTime(chat.lastMessage.timestamp)}
@@ -278,6 +287,11 @@ const Chat: React.FC = () => {
                               <h3 className="text-lg font-semibold text-gray-900">
                                 {getOtherParticipant(currentChat)}
                               </h3>
+                              <OnlineStatusIndicator 
+                                userId={user.id.toString() === currentChat.customerId.toString() ? currentChat.cgId : currentChat.customerId}
+                                size="sm"
+                                showText={true}
+                              />
                             </div>
                           </div>
 
@@ -324,6 +338,7 @@ const Chat: React.FC = () => {
                                   </span>
                                           </div>
                                       )}
+                                    </div>
                                       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                                         <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                                             isOwn

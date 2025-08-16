@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
+import NotificationBell from './NotificationBell';
+import NotificationToast from './NotificationToast';
 import { HardHat, Home, User, MessageSquare, Settings, LogOut, Bell, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 interface LayoutProps {
@@ -24,6 +26,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
       <div className="min-h-screen">
+        {/* Notification Toasts */}
+        <NotificationToast />
+        
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,9 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                 {isAuthenticated ? (
                     <div className="flex items-center space-x-4">
-                      {/*<button className="p-2 text-gray-400 hover:text-gray-500 transition-colors">*/}
-                      {/*  <Bell className="h-5 w-5" />*/}
-                      {/*</button>*/}
+                      <NotificationBell />
                       <div className="relative group">
                         <button className="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 transition-colors">
                           <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center overflow-hidden">

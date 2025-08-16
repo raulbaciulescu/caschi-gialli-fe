@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useService } from '../contexts/ServiceContext';
 import { useChat } from '../contexts/ChatContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import { requestsService } from '../services/requests.service';
 import { useApi } from '../hooks/useApi';
 import Map from './Map';
@@ -12,6 +13,7 @@ const ClientDashboard: React.FC = () => {
   const { user } = useAuth();
   const { serviceCategories } = useService();
   const { createChat } = useChat();
+  const { addNotification } = useNotifications();
   const { t } = useTranslation();
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestForm, setRequestForm] = useState({
@@ -45,6 +47,13 @@ const ClientDashboard: React.FC = () => {
         description: requestForm.description,
         location: requestForm.location,
         address: requestForm.address
+      });
+
+      // Add success notification
+      addNotification({
+        type: 'system',
+        title: 'Request Created!',
+        message: `Your ${requestForm.service} request has been submitted successfully.`
       });
 
       setShowRequestForm(false);

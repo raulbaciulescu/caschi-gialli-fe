@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { AuthProvider } from './contexts/AuthContext';
 import { ServiceProvider } from './contexts/ServiceContext';
 import { ChatProvider } from './contexts/ChatContext';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { OnlineStatusProvider } from './contexts/OnlineStatusContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import RegisterClient from './pages/RegisterClient';
@@ -56,13 +58,17 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
       <AuthProvider>
-        <ServiceProvider>
-          <ChatProvider>
-            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <AppRoutes />
-            </Router>
-          </ChatProvider>
-        </ServiceProvider>
+        <OnlineStatusProvider>
+          <ServiceProvider>
+            <ChatProvider>
+              <NotificationProvider>
+                <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                  <AppRoutes />
+                </Router>
+              </NotificationProvider>
+            </ChatProvider>
+          </ServiceProvider>
+        </OnlineStatusProvider>
       </AuthProvider>
   );
 }

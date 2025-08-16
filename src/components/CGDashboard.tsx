@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import { useCGRequests } from '../hooks/useCGRequests';
 import { requestsService } from '../services/requests.service';
 import { useApi } from '../hooks/useApi';
@@ -12,6 +13,7 @@ import { MapPin, Clock, DollarSign, Star, MessageSquare, Settings, Loader2, Aler
 const CGDashboard: React.FC = () => {
   const { user } = useAuth();
   const { createChat } = useChat();
+  const { addNotification } = useNotifications();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'opportunities' | 'active' | 'completed'>('opportunities');
@@ -67,6 +69,14 @@ const CGDashboard: React.FC = () => {
   const handleTakeJob = async (requestId: string) => {
     try {
       await assignToRequest(requestId);
+      
+      // Add success notification
+      addNotification({
+        type: 'system',
+        title: 'Job Accepted!',
+        message: 'You have successfully accepted a new job. Check your active jobs.'
+      });
+      
       // Requests will be automatically refreshed by the hook
     } catch (error) {
       console.error('Failed to take job:', error);
@@ -76,6 +86,14 @@ const CGDashboard: React.FC = () => {
   const handleMarkComplete = async (requestId: string) => {
     try {
       await completeRequestApi.execute(requestId);
+      
+      // Add success notification
+      addNotification({
+        type: 'system',
+        title: 'Job Completed!',
+        message: 'Job has been marked as completed successfully.'
+      });
+      
       // Refresh the requests after completion
       await loadMyRequests();
     } catch (error) {
