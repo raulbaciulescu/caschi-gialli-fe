@@ -22,7 +22,6 @@ const Chat: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Set page title for SEO
   React.useEffect(() => {
     document.title = 'Messaggi - Chat con Professionisti | Caschi Gialli';
   }, []);
@@ -68,37 +67,45 @@ const Chat: React.FC = () => {
   const getOtherParticipant = (chat: any) => {
     if (!user) return 'Unknown';
 
-    // Convert IDs to strings for consistent comparison
     const currentUserId = user.id.toString();
     const customerIdStr = chat.customerId.toString();
     const cgIdStr = chat.cgId.toString();
 
     if (currentUserId === customerIdStr) {
-      // Current user is customer, show CG name
       return chat.cgName;
     } else if (currentUserId === cgIdStr) {
-      // Current user is CG, show customer name
       return chat.customerName;
     }
 
-    // Fallback
     return 'Unknown User';
   };
 
-  // Get phone number from chat data (from API response)
-  const getOtherParticipantPhone = (chat: any) => {
-    if (!user) return null;
+  const getOtherParticipantId = (chat: any) => {
+    if (!user) return '';
 
-    // Convert IDs to strings for consistent comparison
     const currentUserId = user.id.toString();
     const customerIdStr = chat.customerId.toString();
     const cgIdStr = chat.cgId.toString();
 
     if (currentUserId === customerIdStr) {
-      // Current user is customer, return CG phone number
+      return cgIdStr;
+    } else if (currentUserId === cgIdStr) {
+      return customerIdStr;
+    }
+
+    return '';
+  };
+
+  const getOtherParticipantPhone = (chat: any) => {
+    if (!user) return null;
+
+    const currentUserId = user.id.toString();
+    const customerIdStr = chat.customerId.toString();
+    const cgIdStr = chat.cgId.toString();
+
+    if (currentUserId === customerIdStr) {
       return chat.cgPhoneNumber || null;
     } else if (currentUserId === cgIdStr) {
-      // Current user is CG, return customer phone number
       return chat.customerPhoneNumber || null;
     }
 
@@ -163,7 +170,6 @@ const Chat: React.FC = () => {
   return (
       <div className="h-screen bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header with refresh button */}
           <div className="mb-4 flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900">{t('chat.title')}</h1>
             <button
@@ -178,7 +184,6 @@ const Chat: React.FC = () => {
 
           <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-10rem)] overflow-hidden">
             <div className="flex h-full">
-              {/* Chat List - Hidden on mobile when chat is active */}
               <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col ${
                   showMobileChat ? 'hidden md:flex' : 'flex'
               }`}>
@@ -224,9 +229,14 @@ const Chat: React.FC = () => {
                                 }`}
                             >
                               <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center overflow-hidden">
-                                  {/* Try to get profile image for the other participant */}
+                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center overflow-hidden relative">
                                   <Users className="h-6 w-6 text-white" />
+                                  <div className="absolute top-0 right-0">
+                                    <OnlineStatusIndicator 
+                                      userId={getOtherParticipantId(chat)}
+                                      size="sm"
+                                    />
+                                  </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between">
@@ -234,9 +244,8 @@ const Chat: React.FC = () => {
                                       {getOtherParticipant(chat)}
                                     </p>
                                     <div className="flex items-center space-x-2">
-                                      {/* Online Status */}
                                       <OnlineStatusIndicator 
-                                        userId={user.id.toString() === chat.customerId.toString() ? chat.cgId : chat.customerId}
+                                        userId={getOtherParticipantId(chat)}
                                         size="sm"
                                       />
                                     {chat.lastMessage && (
@@ -265,13 +274,11 @@ const Chat: React.FC = () => {
                 </div>
               </div>
 
-              {/* Chat Area - Full width on mobile when active */}
               <div className={`flex-1 flex flex-col ${
                   showMobileChat ? 'flex' : 'hidden md:flex'
               }`}>
                 {activeChat && currentChat ? (
                     <>
-                      {/* Chat Header */}
                       <div className="p-4 border-b border-gray-200 bg-white">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
@@ -281,22 +288,27 @@ const Chat: React.FC = () => {
                             >
                               <ArrowLeft className="h-5 w-5" />
                             </button>
-                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center overflow-hidden">
+                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center overflow-hidden relative">
                               <Users className="h-5 w-5 text-white" />
+                              <div className="absolute top-0 right-0">
+                                <OnlineStatusIndicator 
+                                  userId={getOtherParticipantId(currentChat)}
+                                  size="sm"
+                                />
+                              </div>
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-gray-900">
                                 {getOtherParticipant(currentChat)}
                               </h3>
                               <OnlineStatusIndicator 
-                                userId={user.id.toString() === currentChat.customerId.toString() ? currentChat.cgId : currentChat.customerId}
+                                userId={getOtherParticipantId(currentChat)}
                                 size="sm"
                                 showText={true}
                               />
                             </div>
                           </div>
 
-                          {/* Contact Info - Only show if phone number is available */}
                           {getOtherParticipantPhone(currentChat) && (
                               <div className="flex items-center">
                                 <a
@@ -311,7 +323,6 @@ const Chat: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Messages */}
                       <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
                         {currentMessages.length === 0 ? (
                             <div className="text-center py-8">
@@ -322,7 +333,6 @@ const Chat: React.FC = () => {
                         ) : (
                             <>
                               {currentMessages.map((message, index) => {
-                                // Convert IDs to strings for consistent comparison
                                 const currentUserId = user.id.toString();
                                 const messageSenderId = message.senderId.toString();
                                 const isOwn = messageSenderId === currentUserId;
@@ -361,7 +371,6 @@ const Chat: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Message Input */}
                       <div className="p-4 border-t border-gray-200 bg-white">
                         <form onSubmit={handleSendMessage} className="flex space-x-2">
                           <input

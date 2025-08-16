@@ -12,14 +12,12 @@ export interface ChatMessage {
 
 export interface ChatRoom {
   id: string;
-  // Backend specific fields
   customerId: string;
   customerName: string;
   customerPhoneNumber?: string;
   cgId: string;
   cgName: string;
   cgPhoneNumber?: string;
-  // Legacy compatibility fields
   participants: string[];
   participantNames: string[];
   lastMessage?: ChatMessage;
@@ -46,12 +44,10 @@ class WebSocketService {
     return new Promise((resolve, reject) => {
       this.userId = userId;
 
-      // Construct WebSocket URL
       let wsUrl: string;
       if (import.meta.env.VITE_WS_URL) {
         wsUrl = `${import.meta.env.VITE_WS_URL}?userId=${userId}`;
       } else {
-        // Convert HTTP/HTTPS base URL to WebSocket URL
         const baseUrl = API_CONFIG.BASE_URL;
         const wsBaseUrl = baseUrl.replace(/^https?:\/\//, (match) => {
           return match === 'https://' ? 'wss://' : 'ws://';
@@ -67,10 +63,7 @@ class WebSocketService {
           this.isConnected = true;
           this.reconnectAttempts = 0;
           this.startHeartbeat();
-          
-          // Send initial online status
           this.sendUserStatus('online');
-          
           resolve();
         };
 
@@ -88,7 +81,6 @@ class WebSocketService {
           this.isConnected = false;
           this.stopHeartbeat();
           
-          // Only attempt reconnect if it wasn't a manual close
           if (event.code !== 1000) {
             this.attemptReconnect();
           }
@@ -107,7 +99,6 @@ class WebSocketService {
 
   public disconnect(): void {
     if (this.ws) {
-      // Send offline status before disconnecting
       this.sendUserStatus('offline');
       this.ws.close(1000, 'Manual disconnect');
       this.ws = null;
@@ -208,112 +199,7 @@ class WebSocketService {
 
   private handleMessage(payload: WebSocketPayload): void {
     const { type, data } = payload;
-
-    // Handle different message types from backend
-    switch (type) {
-      case 'chat_created':
-        this.handleChatCreated(data);
-        break;
-      case 'chat_message':
-        this.handleChatMessage(data);
-        break;
-      case 'user_online':
-        this.handleUserOnline(data);
-        break;
-      case 'user_offline':
-        this.handleUserOffline(data);
-        break;
-      case 'user_activity':
-        this.handleUserActivity(data);
-        break;
-      case 'online_users_list':
-        this.handleOnlineUsersList(data);
-        break;
-      case 'job_assigned':
-        this.handleJobAssigned(data);
-        break;
-      case 'job_completed':
-        this.handleJobCompleted(data);
-        break;
-      case 'new_service_request':
-        this.handleNewServiceRequest(data);
-        break;
-      case 'request_status_updated':
-        this.handleRequestStatusUpdated(data);
-        break;
-      case 'heartbeat_response':
-        // Handle heartbeat response if needed
-        break;
-      default:
-        console.log('Unhandled WebSocket message type:', type, data);
-    }
-  }
-
-  private handleChatCreated(data: any): void {
-    const handler = this.messageHandlers.get('chat_created');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleChatMessage(data: any): void {
-    const handler = this.messageHandlers.get('chat_message');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleUserOnline(data: any): void {
-    const handler = this.messageHandlers.get('user_online');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleUserOffline(data: any): void {
-    const handler = this.messageHandlers.get('user_offline');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleUserActivity(data: any): void {
-    const handler = this.messageHandlers.get('user_activity');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleOnlineUsersList(data: any): void {
-    const handler = this.messageHandlers.get('online_users_list');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleJobAssigned(data: any): void {
-    const handler = this.messageHandlers.get('job_assigned');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleJobCompleted(data: any): void {
-    const handler = this.messageHandlers.get('job_completed');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleNewServiceRequest(data: any): void {
-    const handler = this.messageHandlers.get('new_service_request');
-    if (handler) {
-      handler(data);
-    }
-  }
-
-  private handleRequestStatusUpdated(data: any): void {
-    const handler = this.messageHandlers.get('request_status_updated');
+    const handler = this.messageHandlers.get(type);
     if (handler) {
       handler(data);
     }
@@ -323,7 +209,7 @@ class WebSocketService {
     this.stopHeartbeat();
     this.heartbeatInterval = setInterval(() => {
       this.sendHeartbeat();
-    }, 30000); // Send heartbeat every 30 seconds
+    }, 30000);
   }
 
   private stopHeartbeat(): void {

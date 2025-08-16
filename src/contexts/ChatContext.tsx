@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { websocketService, ChatMessage, ChatRoom } from '../services/websocket.service';
 import { chatService, MessageDto, ChatDto } from '../services/chat.service';
 import { useAuth } from './AuthContext';
-import { useNotifications } from './NotificationContext';
 
 interface ChatContextType {
   chats: ChatRoom[];
@@ -36,7 +35,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Initialize WebSocket connection and load chats when user is authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
       initializeChat();
@@ -53,15 +51,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!user) return;
 
     try {
-      // Connect to WebSocket
       await connectWebSocket();
-
-      // Load existing chats from REST API
       await loadChatsFromAPI();
     } catch (error) {
       console.error('Failed to initialize chat:', error);
       setIsConnected(false);
-      // Still try to load chats even if WebSocket fails
       await loadChatsFromAPI();
     }
   };
@@ -70,7 +64,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!user) return;
 
     try {
-      await websocketService.connect(user.id);
+      await websocketService.connect(user.id.toString());
       setIsConnected(true);
       setupMessageHandlers();
     } catch (error) {
@@ -91,22 +85,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const chatsData = await chatService.getUserChats();
 
-      // Transform backend chat data to frontend format
       const transformedChats: ChatRoom[] = chatsData.map(chat => {
-        // Convert IDs to strings for consistent comparison
         const customerIdStr = chat.customerId.toString();
         const cgIdStr = chat.cgId.toString();
 
         return {
           id: chat.id.toString(),
-          // Store both customer and CG info for easy access
           customerId: customerIdStr,
           customerName: chat.customerName,
-          customerPhoneNumber: chat.customerPhoneNumber, // Add phone number
+          customerPhoneNumber: chat.customerPhoneNumber,
           cgId: cgIdStr,
           cgName: chat.cgName,
-          cgPhoneNumber: chat.cgPhoneNumber, // Add phone number
-          // Keep participants array for compatibility
+          cgPhoneNumber: chat.cgPhoneNumber,
           participants: [customerIdStr, cgIdStr],
           participantNames: [chat.customerName, chat.cgName],
           lastMessage: chat.lastMessage ? transformMessageDto(chat.lastMessage, chat.id.toString()) : undefined,
@@ -127,7 +117,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const messagesData = await chatService.getChatMessages(chatId);
 
-      // Transform backend message data to frontend format
       const transformedMessages: ChatMessage[] = messagesData.map(msg => {
         return transformMessageDto(msg, chatId);
       });
@@ -145,7 +134,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return {
       id: dto.id.toString(),
       chatId: chatId,
-      senderId: dto.senderId.toString(), // Ensure senderId is string
+      senderId: dto.senderId.toString(),
       content: dto.content,
       timestamp: new Date(dto.timestamp),
       type: (dto.type as 'text' | 'image') || 'text'
@@ -153,12 +142,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const setupMessageHandlers = () => {
-    // Handle incoming chat messages
     websocketService.onMessage('chat_message', (data: any) => {
       const message: ChatMessage = {
         id: data.id.toString(),
         chatId: data.chatId,
-        senderId: data.senderId.toString(), // Ensure senderId is string
+        senderId: data.senderId.toString(),
         content: data.content,
         timestamp: new Date(data.timestamp),
         type: data.type || 'text'
@@ -169,14 +157,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         [data.chatId]: [...(prev[data.chatId] || []), message]
       }));
 
-      // Update chat's last message and unread count
-      // Only increment unread count if:
-      // 1. The message is NOT from the current user
-      // 2. The chat is NOT currently active
       const isOwnMessage = user && data.senderId.toString() === user.id.toString();
       const shouldIncrementUnread = !isOwnMessage && activeChat !== data.chatId;
-
-      // Note: Notifications are now handled by NotificationContext via WebSocket listeners
       
       setChats(prev =>
           prev.map(chat =>
@@ -191,7 +173,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       );
     });
 
-    // Handle chat creation - backend format
     websocketService.onMessage('chat_created', (data: any) => {
       const newChat: ChatRoom = {
         id: data.id.toString(),
@@ -213,7 +194,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return [...prev, newChat];
       });
 
-      // Set as active chat when created
       setActiveChat(data.id.toString());
     });
   };
@@ -221,15 +201,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const createChat = async (participantIds: string[], participantNames: string[]): Promise<string> => {
     if (!user) throw new Error('User not authenticated');
 
-    // Prevent CG to CG chat creation
-    if (user.type === 'cg') {
-      // Check if trying to chat with another CG
-      // For now, we'll assume that if user is CG and trying to create chat,
-      // the validation should happen at UI level, but add server-side validation too
-      console.log('CG attempting to create chat - this should be prevented at UI level');
-    }
-
-    // Check if chat already exists
     const userIdStr = user.id.toString();
     const existingChat = chats.find(chat => {
       const customerIdStr = chat.customerId.toString();
@@ -240,31 +211,26 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
 
     if (existingChat) {
-      // Set this chat as active when creating/finding it
       setActiveChat(existingChat.id);
       return existingChat.id;
     }
 
     if (isConnected) {
-      // Determine who is customer and who is CG based on user type
       let customerId: string, cgId: string;
 
       if (user.type === 'client' || user.type === 'customer') {
         customerId = user.id.toString();
-        cgId = participantIds.find(id => id !== user.id) || participantIds[1];
+        cgId = participantIds.find(id => id !== user.id.toString()) || participantIds[1];
       } else {
         cgId = user.id.toString();
         customerId = participantIds.find(id => id !== cgId) || participantIds[0];
       }
 
-      // Use WebSocket to create chat with backend format
       websocketService.createChat(customerId, cgId);
 
-      // Return a temporary ID - the real ID will come from the server
       const tempId = `temp-${Date.now()}`;
       return tempId;
     } else {
-      // Fallback to local chat creation
       const newChat: ChatRoom = {
         id: Date.now().toString(),
         customerId: user.type === 'client' || user.type === 'customer' ? user.id.toString() : participantIds[0],
@@ -280,7 +246,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setChats(prev => [...prev, newChat]);
       setMessages(prev => ({ ...prev, [newChat.id]: [] }));
 
-      // Set this chat as active
       setActiveChat(newChat.id);
 
       return newChat.id;
@@ -291,10 +256,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!user) return;
 
     if (isConnected) {
-      // Send via WebSocket - the message handler will update the UI
       websocketService.sendMessage(chatId, content, type);
     } else {
-      // Fallback to local message handling
       const message: ChatMessage = {
         id: Date.now().toString(),
         chatId,
@@ -309,15 +272,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         [chatId]: [...(prev[chatId] || []), message]
       }));
 
-      // For local messages, update last message but don't change unread count
-      // since it's your own message
       setChats(prev =>
           prev.map(chat =>
               chat.id === chatId
                   ? {
                     ...chat,
                     lastMessage: message,
-                    // Don't change unread count for own messages
                     unreadCount: chat.unreadCount
                   }
                   : chat
@@ -339,7 +299,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (chatId) {
       markAsRead(chatId);
-      // Load chat history when switching to a chat
       await loadChatHistory(chatId);
     }
   };

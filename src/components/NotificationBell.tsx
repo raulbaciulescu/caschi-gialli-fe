@@ -15,7 +15,6 @@ const NotificationBell: React.FC = () => {
   const handleNotificationClick = (notification: any) => {
     markAsRead(notification.id);
     
-    // Navigate based on notification type
     switch (notification.type) {
       case 'message':
         if (notification.chatId) {
@@ -30,7 +29,6 @@ const NotificationBell: React.FC = () => {
         setIsOpen(false);
         break;
       case 'system':
-        // System notifications might not need navigation
         break;
       default:
         break;
@@ -98,38 +96,31 @@ const NotificationBell: React.FC = () => {
 
   return (
     <div className="relative">
-      {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-lg hover:bg-gray-100 group"
       >
         <Bell className="h-6 w-6 group-hover:animate-pulse" />
         
-        {/* Unread Count Badge */}
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse shadow-lg">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
 
-        {/* Loading indicator */}
         {loading && (
           <div className="absolute -top-1 -right-1 h-3 w-3 bg-yellow-500 rounded-full animate-ping"></div>
         )}
       </button>
 
-      {/* Notification Dropdown */}
       {isOpen && (
         <>
-          {/* Backdrop */}
           <div 
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
           
-          {/* Notification Panel */}
           <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 max-h-[32rem] overflow-hidden">
-            {/* Header */}
             <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-yellow-50 to-orange-50">
               <div className="flex items-center justify-between">
                 <div>
@@ -167,7 +158,6 @@ const NotificationBell: React.FC = () => {
               </div>
             </div>
 
-            {/* Notifications List */}
             <div className="max-h-80 overflow-y-auto">
               {loading ? (
                 <div className="p-8 text-center">
@@ -196,7 +186,6 @@ const NotificationBell: React.FC = () => {
                         }`}
                       >
                         <div className="flex items-start space-x-3">
-                          {/* Avatar/Icon */}
                           <div className="relative flex-shrink-0">
                             <div className={`w-10 h-10 bg-gradient-to-r ${colorClass} rounded-full flex items-center justify-center shadow-lg`}>
                               {notification.avatar ? (
@@ -210,13 +199,11 @@ const NotificationBell: React.FC = () => {
                               )}
                             </div>
                             
-                            {/* Online Status Indicator */}
                             {notification.senderId && senderIsOnline && (
                               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse"></div>
                             )}
                           </div>
 
-                          {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-medium text-gray-900 truncate group-hover:text-yellow-700 transition-colors">
@@ -272,7 +259,6 @@ const NotificationBell: React.FC = () => {
               )}
             </div>
 
-            {/* Footer */}
             {notifications.length > 0 && (
               <div className="p-3 border-t border-gray-200 bg-gray-50">
                 <div className="flex items-center justify-between">

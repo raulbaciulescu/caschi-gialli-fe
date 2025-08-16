@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useOnlineStatus } from '../contexts/OnlineStatusContext';
-import { X, MessageSquare, Bell, CheckCircle, AlertTriangle, Briefcase, User } from 'lucide-react';
+import { X, MessageSquare, Bell, CheckCircle, AlertTriangle, Briefcase, User, Clock } from 'lucide-react';
 
 const NotificationToast: React.FC = () => {
   const { notifications } = useNotifications();
@@ -10,19 +10,17 @@ const NotificationToast: React.FC = () => {
   const navigate = useNavigate();
   const [visibleToasts, setVisibleToasts] = useState<string[]>([]);
 
-  // Show toast for new unread notifications
   useEffect(() => {
     const newUnreadNotifications = notifications.filter(n => 
       !n.read && 
       !visibleToasts.includes(n.id) &&
-      (n.type === 'message' || n.type === 'job_assigned' || n.type === 'job_completed') // Show toasts for important notifications
+      (n.type === 'message' || n.type === 'job_assigned' || n.type === 'job_completed')
     );
 
     if (newUnreadNotifications.length > 0) {
       const newToastIds = newUnreadNotifications.map(n => n.id);
       setVisibleToasts(prev => [...prev, ...newToastIds]);
 
-      // Auto-hide toasts after 6 seconds
       newToastIds.forEach(toastId => {
         setTimeout(() => {
           setVisibleToasts(prev => prev.filter(id => id !== toastId));
@@ -38,7 +36,6 @@ const NotificationToast: React.FC = () => {
   const handleToastClick = (notification: any) => {
     hideToast(notification.id);
     
-    // Navigate based on notification type
     switch (notification.type) {
       case 'message':
         navigate('/chat');
@@ -82,6 +79,16 @@ const NotificationToast: React.FC = () => {
     }
   };
 
+  const formatTime = (date: Date) => {
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return date.toLocaleDateString();
+  };
+
   const visibleNotifications = notifications.filter(n => visibleToasts.includes(n.id));
 
   if (visibleNotifications.length === 0) return null;
@@ -100,7 +107,6 @@ const NotificationToast: React.FC = () => {
             className="bg-white rounded-lg shadow-2xl border border-gray-200 p-4 max-w-sm transform transition-all duration-300 hover:scale-105 cursor-pointer group animate-slideInRight"
           >
             <div className="flex items-start space-x-3">
-              {/* Icon/Avatar */}
               <div className="relative flex-shrink-0">
                 <div className={`w-10 h-10 bg-gradient-to-r ${colorClass} rounded-full flex items-center justify-center shadow-lg`}>
                   {notification.avatar ? (
@@ -114,7 +120,6 @@ const NotificationToast: React.FC = () => {
                   )}
                 </div>
                 
-                {/* Online Status Indicator */}
                 {notification.senderId && senderIsOnline && (
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse"></div>
                 )}
@@ -160,7 +165,6 @@ const NotificationToast: React.FC = () => {
                   )}
                 </div>
 
-                {/* Action hint */}
                 <div className="mt-2 text-xs text-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity">
                   Click to {notification.type === 'message' ? 'view conversation' : 'view details'} →
                 </div>

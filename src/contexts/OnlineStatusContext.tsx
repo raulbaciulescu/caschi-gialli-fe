@@ -33,7 +33,6 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
   const { user, isAuthenticated } = useAuth();
   const [onlineUsers, setOnlineUsers] = useState<Map<string, OnlineUser>>(new Map());
 
-  // Setup WebSocket listeners for online status updates
   useEffect(() => {
     if (!isAuthenticated || !user) {
       setOnlineUsers(new Map());
@@ -41,14 +40,11 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
 
     setupWebSocketListeners();
-    
-    // Mark current user as online
     setUserOnline(user.id.toString(), user.name, user.profileImage);
 
-    // Send heartbeat every 30 seconds to maintain online status
     const heartbeatInterval = setInterval(() => {
       if (websocketService.connected) {
-        websocketService.sendHeartbeat?.();
+        websocketService.sendHeartbeat();
       }
     }, 30000);
 
@@ -59,22 +55,18 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, [isAuthenticated, user]);
 
   const setupWebSocketListeners = () => {
-    // Listen for user online status updates
     websocketService.onMessage('user_online', (data: any) => {
       setUserOnline(data.userId, data.userName, data.avatar);
     });
 
-    // Listen for user offline status updates
     websocketService.onMessage('user_offline', (data: any) => {
       setUserOffline(data.userId);
     });
 
-    // Listen for user activity updates
     websocketService.onMessage('user_activity', (data: any) => {
       updateUserActivity(data.userId);
     });
 
-    // Listen for bulk online users list (sent on connection)
     websocketService.onMessage('online_users_list', (data: any) => {
       if (data.users && Array.isArray(data.users)) {
         const newOnlineUsers = new Map<string, OnlineUser>();
@@ -105,7 +97,6 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
     const userStatus = onlineUsers.get(userId);
     if (!userStatus) return false;
     
-    // Consider user offline if last seen more than 5 minutes ago
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     return userStatus.isOnline && userStatus.lastSeen > fiveMinutesAgo;
   };
@@ -128,9 +119,8 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
       return newMap;
     });
 
-    // Send online status to backend via WebSocket
     if (websocketService.connected && user && userId === user.id.toString()) {
-      websocketService.sendUserStatus?.('online');
+      websocketService.sendUserStatus('online');
     }
   };
 
@@ -148,9 +138,8 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
       return newMap;
     });
 
-    // Send offline status to backend via WebSocket
     if (websocketService.connected && user && userId === user.id.toString()) {
-      websocketService.sendUserStatus?.('offline');
+      websocketService.sendUserStatus('offline');
     }
   };
 
@@ -169,22 +158,20 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
     });
   };
 
-  // Send activity heartbeat when user interacts with the page
   useEffect(() => {
     if (!user || !websocketService.connected) return;
 
     const handleUserActivity = () => {
       updateUserActivity(user.id.toString());
-      websocketService.sendUserActivity?.();
+      websocketService.sendUserActivity();
     };
 
-    // Listen for user activity events
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
     
     let activityTimeout: NodeJS.Timeout;
     const throttledActivity = () => {
       clearTimeout(activityTimeout);
-      activityTimeout = setTimeout(handleUserActivity, 1000); // Throttle to once per second
+      activityTimeout = setTimeout(handleUserActivity, 1000);
     };
 
     events.forEach(event => {
@@ -200,15 +187,17 @@ export const OnlineStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, [user, websocketService.connected]);
 
   return (
-    <OnlineStatusContext.Provider value={{
-      onlineUsers,
-      isUserOnline,
-      getUserLastSeen,
-      setUserOnline,
-      setUserOffline,
-      updateUserActivity
+    <NotificationContext.Provider value={{
+      notifications,
+      unreadCount,
+      addNotification,
+      markAsRead,
+      markAllAsRead,
+      removeNotification,
+      clearAllNotifications,
+      loading
     }}>
       {children}
-    </OnlineStatusContext.Provider>
+    </NotificationContext.Provider>
   );
 };

@@ -13,7 +13,7 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   avatar?: string;
-  data?: any; // Additional data from backend
+  data?: any;
 }
 
 interface NotificationContextType {
@@ -42,10 +42,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Calculate unread count
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  // Initialize WebSocket listeners when user is authenticated
   useEffect(() => {
     if (!isAuthenticated || !user) {
       setNotifications([]);
@@ -53,7 +51,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
 
     setupWebSocketListeners();
-    loadInitialNotifications();
 
     return () => {
       cleanupWebSocketListeners();
@@ -61,11 +58,9 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, [isAuthenticated, user]);
 
   const setupWebSocketListeners = () => {
-    // Listen for new chat messages
     websocketService.onMessage('chat_message', (data: any) => {
       if (!user) return;
 
-      // Only create notification if message is not from current user
       const messageSenderId = data.senderId?.toString();
       const currentUserId = user.id.toString();
 
@@ -83,7 +78,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     });
 
-    // Listen for job assignments
     websocketService.onMessage('job_assigned', (data: any) => {
       addNotification({
         type: 'job_assigned',
@@ -93,7 +87,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       });
     });
 
-    // Listen for job completions
     websocketService.onMessage('job_completed', (data: any) => {
       addNotification({
         type: 'job_completed',
@@ -103,7 +96,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       });
     });
 
-    // Listen for new service requests (for CGs)
     websocketService.onMessage('new_service_request', (data: any) => {
       if (user?.type === 'cg') {
         addNotification({
@@ -115,7 +107,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     });
 
-    // Listen for request status updates
     websocketService.onMessage('request_status_updated', (data: any) => {
       const statusMessages = {
         'accepted': 'Your request has been accepted',
@@ -134,7 +125,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       });
     });
 
-    // Listen for chat creation
     websocketService.onMessage('chat_created', (data: any) => {
       if (!user) return;
 
@@ -142,7 +132,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       const isInitiator = data.initiatorId?.toString() === currentUserId;
 
       if (!isInitiator) {
-        // Someone else started a chat with you
         const initiatorName = data.initiatorName || 'User';
         addNotification({
           type: 'message',
@@ -166,21 +155,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     websocketService.offMessage('chat_created');
   };
 
-  const loadInitialNotifications = async () => {
-    // In a real implementation, you might load recent notifications from the backend
-    // For now, we'll start with an empty state and rely on WebSocket for new notifications
-    setLoading(true);
-    try {
-      // Simulate loading recent notifications from backend
-      // const recentNotifications = await notificationService.getRecentNotifications();
-      // setNotifications(recentNotifications);
-    } catch (error) {
-      console.error('Failed to load initial notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification: Notification = {
       ...notification,
@@ -190,7 +164,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     };
 
     setNotifications(prev => {
-      // Prevent duplicate notifications for the same message
       if (notification.type === 'message' && notification.chatId) {
         const existingMessageNotification = prev.find(n => 
           n.type === 'message' && 
@@ -207,14 +180,12 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       return [newNotification, ...prev];
     });
 
-    // Auto-remove system notifications after 10 seconds
     if (notification.type === 'system' || notification.type === 'job_assigned' || notification.type === 'job_completed') {
       setTimeout(() => {
         removeNotification(newNotification.id);
       }, 10000);
     }
 
-    // Show browser notification if permission is granted
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(notification.title, {
         body: notification.message,
@@ -252,7 +223,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     setNotifications([]);
   };
 
-  // Request notification permission when component mounts
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
