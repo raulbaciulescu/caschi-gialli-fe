@@ -58,16 +58,18 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, [isAuthenticated, user]);
 
   const setupWebSocketListeners = () => {
+    // Handle incoming chat messages for notifications
     websocketService.onMessage('chat_message', (data: any) => {
       if (!user) return;
 
       const messageSenderId = data.senderId?.toString();
       const currentUserId = user.id.toString();
 
-      if (messageSenderId !== currentUserId) {
+      // Only create notification for messages from others (not backfill)
+      if (messageSenderId !== currentUserId && !data.isBackfill) {
         addNotification({
           type: 'message',
-          title: `New message from ${data.senderName || 'User'}`,
+          title: `Mesaj nou de la ${data.senderName || 'Utilizator'}`,
           message: data.content,
           chatId: data.chatId,
           senderId: messageSenderId,
@@ -78,53 +80,58 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     });
 
+    // Handle job assignment notifications
     websocketService.onMessage('job_assigned', (data: any) => {
       addNotification({
         type: 'job_assigned',
-        title: 'New Job Assignment',
-        message: `You have been assigned to: ${data.serviceName}`,
+        title: 'Job Nou Asignat',
+        message: `Ai fost asignat la: ${data.serviceName}`,
         data: data
       });
     });
 
+    // Handle job completion notifications
     websocketService.onMessage('job_completed', (data: any) => {
       addNotification({
         type: 'job_completed',
-        title: 'Job Completed',
-        message: `Job "${data.serviceName}" has been marked as completed`,
+        title: 'Job Finalizat',
+        message: `Job-ul "${data.serviceName}" a fost marcat ca finalizat`,
         data: data
       });
     });
 
+    // Handle new service requests for CGs
     websocketService.onMessage('new_service_request', (data: any) => {
       if (user?.type === 'cg') {
         addNotification({
           type: 'request',
-          title: 'New Service Request',
-          message: `New ${data.category} request in your area`,
+          title: 'Cerere Nouă de Serviciu',
+          message: `Cerere nouă ${data.category} în zona ta`,
           data: data
         });
       }
     });
 
+    // Handle request status updates
     websocketService.onMessage('request_status_updated', (data: any) => {
       const statusMessages = {
-        'accepted': 'Your request has been accepted',
-        'in_progress': 'Work has started on your request',
-        'completed': 'Your request has been completed',
-        'cancelled': 'Your request has been cancelled'
+        'accepted': 'Cererea ta a fost acceptată',
+        'in_progress': 'Lucrul a început la cererea ta',
+        'completed': 'Cererea ta a fost finalizată',
+        'cancelled': 'Cererea ta a fost anulată'
       };
 
-      const message = statusMessages[data.status as keyof typeof statusMessages] || 'Request status updated';
+      const message = statusMessages[data.status as keyof typeof statusMessages] || 'Status cerere actualizat';
 
       addNotification({
         type: 'system',
-        title: 'Request Update',
+        title: 'Actualizare Cerere',
         message: message,
         data: data
       });
     });
 
+    // Handle chat creation notifications
     websocketService.onMessage('chat_created', (data: any) => {
       if (!user) return;
 
@@ -132,17 +139,32 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       const isInitiator = data.initiatorId?.toString() === currentUserId;
 
       if (!isInitiator) {
-        const initiatorName = data.initiatorName || 'User';
+        const initiatorName = data.initiatorName || 'Utilizator';
         addNotification({
           type: 'message',
-          title: 'New Conversation',
-          message: `${initiatorName} started a conversation with you`,
+          title: 'Conversație Nouă',
+          message: `${initiatorName} a început o conversație cu tine`,
           chatId: data.id.toString(),
           senderId: data.initiatorId?.toString(),
           senderName: initiatorName,
           data: data
         });
       }
+    });
+
+    // Handle message delivery confirmations (optional - for debugging)
+    websocketService.onMessage('message_delivered', (data: any) => {
+      console.log('Message delivered:', data);
+    });
+
+    // Handle message read confirmations (optional - for debugging)
+    websocketService.onMessage('message_read', (data: any) => {
+      console.log('Message read:', data);
+    });
+
+    // Handle unread count updates (optional - for debugging)
+    websocketService.onMessage('unread_count', (data: any) => {
+      console.log('Unread count updated:', data);
     });
   };
 
@@ -153,6 +175,9 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     websocketService.offMessage('new_service_request');
     websocketService.offMessage('request_status_updated');
     websocketService.offMessage('chat_created');
+    websocketService.offMessage('message_delivered');
+    websocketService.offMessage('message_read');
+    websocketService.offMessage('unread_count');
   };
 
   const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
@@ -164,6 +189,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     };
 
     setNotifications(prev => {
+      // Prevent duplicate message notifications
       if (notification.type === 'message' && notification.chatId) {
         const existingMessageNotification = prev.find(n => 
           n.type === 'message' && 
@@ -180,12 +206,14 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       return [newNotification, ...prev];
     });
 
+    // Auto-remove system notifications after 10 seconds
     if (notification.type === 'system' || notification.type === 'job_assigned' || notification.type === 'job_completed') {
       setTimeout(() => {
         removeNotification(newNotification.id);
       }, 10000);
     }
 
+    // Browser notification if permission granted
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(notification.title, {
         body: notification.message,
@@ -223,6 +251,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     setNotifications([]);
   };
 
+  // Request notification permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();

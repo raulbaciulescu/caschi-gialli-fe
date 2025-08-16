@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useOnlineStatus } from '../contexts/OnlineStatusContext';
-import { Bell, MessageSquare, X, Check, CheckCheck, Clock, User, Briefcase, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Bell, MessageSquare, X, Check, CheckCheck, Clock, User, Briefcase, AlertTriangle, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 const NotificationBell: React.FC = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, loading } = useNotifications();
@@ -11,6 +11,7 @@ const NotificationBell: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleNotificationClick = (notification: any) => {
     markAsRead(notification.id);
@@ -39,9 +40,9 @@ const NotificationBell: React.FC = () => {
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    if (diffInMinutes < 1) return 'Acum';
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString();
   };
 
@@ -80,19 +81,21 @@ const NotificationBell: React.FC = () => {
   const getNotificationDescription = (notification: any) => {
     switch (notification.type) {
       case 'message':
-        return 'Click to view conversation';
+        return 'Apasă pentru a vedea conversația';
       case 'job_assigned':
-        return 'Click to view job details';
+        return 'Apasă pentru a vedea detaliile job-ului';
       case 'job_completed':
-        return 'Click to view completed job';
+        return 'Apasă pentru a vedea job-ul finalizat';
       case 'request':
-        return 'Click to view request';
+        return 'Apasă pentru a vedea cererea';
       case 'system':
-        return 'System notification';
+        return 'Notificare sistem';
       default:
         return '';
     }
   };
+
+  const recentNotifications = notifications.slice(0, isExpanded ? notifications.length : 5);
 
   return (
     <div className="relative">
@@ -126,12 +129,12 @@ const NotificationBell: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                     <Bell className="h-5 w-5 mr-2 text-yellow-600" />
-                    Notifications
+                    Notificări
                   </h3>
                   <p className="text-sm text-gray-600">
                     {unreadCount > 0 
-                      ? `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
-                      : 'All caught up! 🎉'
+                      ? `${unreadCount} notificare${unreadCount === 1 ? '' : 'i'} necitit${unreadCount === 1 ? 'ă' : 'e'}`
+                      : 'Toate notificările sunt citite! 🎉'
                     }
                   </p>
                 </div>
@@ -145,7 +148,7 @@ const NotificationBell: React.FC = () => {
                       className="text-xs text-yellow-600 hover:text-yellow-700 font-medium transition-colors flex items-center px-2 py-1 rounded-lg hover:bg-yellow-100"
                     >
                       <CheckCheck className="h-3 w-3 mr-1" />
-                      Mark all read
+                      Marchează toate
                     </button>
                   )}
                   <button
@@ -162,17 +165,17 @@ const NotificationBell: React.FC = () => {
               {loading ? (
                 <div className="p-8 text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 mx-auto mb-4"></div>
-                  <p className="text-gray-500">Loading notifications...</p>
+                  <p className="text-gray-500">Se încarcă notificările...</p>
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="p-8 text-center">
                   <Bell className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">No notifications yet</p>
-                  <p className="text-gray-400 text-sm mt-1">You'll see new messages and updates here</p>
+                  <p className="text-gray-500 text-lg">Nicio notificare încă</p>
+                  <p className="text-gray-400 text-sm mt-1">Vei vedea aici mesajele și actualizările noi</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100">
-                  {notifications.map(notification => {
+                  {recentNotifications.map(notification => {
                     const IconComponent = getNotificationIcon(notification.type);
                     const colorClass = getNotificationColor(notification.type);
                     const senderIsOnline = notification.senderId ? isUserOnline(notification.senderId) : false;
@@ -270,18 +273,40 @@ const NotificationBell: React.FC = () => {
                     className="text-sm text-yellow-600 hover:text-yellow-700 font-medium transition-colors flex items-center"
                   >
                     <MessageSquare className="h-3 w-3 mr-1" />
-                    View all messages
+                    Vezi toate mesajele
                   </button>
-                  <button
-                    onClick={() => {
-                      markAllAsRead();
-                      setTimeout(() => setIsOpen(false), 300);
-                    }}
-                    className="text-sm text-gray-600 hover:text-gray-700 transition-colors flex items-center px-2 py-1 rounded-lg hover:bg-gray-200"
-                  >
-                    <Check className="h-3 w-3 mr-1" />
-                    Clear all
-                  </button>
+                  
+                  <div className="flex items-center space-x-2">
+                    {notifications.length > 5 && (
+                      <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-sm text-gray-600 hover:text-gray-700 transition-colors flex items-center px-2 py-1 rounded-lg hover:bg-gray-200"
+                      >
+                        {isExpanded ? (
+                          <>
+                            <ChevronUp className="h-3 w-3 mr-1" />
+                            Arată mai puține
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-3 w-3 mr-1" />
+                            Arată toate ({notifications.length})
+                          </>
+                        )}
+                      </button>
+                    )}
+                    
+                    <button
+                      onClick={() => {
+                        markAllAsRead();
+                        setTimeout(() => setIsOpen(false), 300);
+                      }}
+                      className="text-sm text-gray-600 hover:text-gray-700 transition-colors flex items-center px-2 py-1 rounded-lg hover:bg-gray-200"
+                    >
+                      <Check className="h-3 w-3 mr-1" />
+                      Șterge toate
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

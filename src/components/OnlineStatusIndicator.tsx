@@ -26,14 +26,14 @@ const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({
   };
 
   const formatLastSeen = (date: Date | null) => {
-    if (!date) return 'Unknown';
+    if (!date) return 'Necunoscut';
     
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    if (diffInMinutes < 1) return 'Acum';
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString();
   };
 
@@ -47,7 +47,7 @@ const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({
         <span className={`ml-2 text-xs ${
           isOnline ? 'text-green-600' : 'text-gray-500'
         }`}>
-          {isOnline ? 'Online' : `Last seen ${formatLastSeen(lastSeen)}`}
+          {isOnline ? 'Online' : `Văzut ${formatLastSeen(lastSeen)}`}
         </span>
       )}
     </div>

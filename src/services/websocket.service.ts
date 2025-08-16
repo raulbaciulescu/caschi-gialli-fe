@@ -8,6 +8,10 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
   type: 'text' | 'image';
+  delivered?: boolean;
+  read?: boolean;
+  deliveredAt?: Date;
+  readAt?: Date;
 }
 
 export interface ChatRoom {
@@ -189,6 +193,40 @@ class WebSocketService {
     this.ws.send(JSON.stringify(payload));
   }
 
+  // New methods for message status handling
+  public acknowledgeMessage(messageId: string, recipientId: string): void {
+    if (!this.isConnected || !this.ws) return;
+
+    const payload: WebSocketPayload = {
+      type: 'ack_message',
+      data: {
+        messageId,
+        recipientId,
+        timestamp: new Date().toISOString()
+      }
+    };
+
+    console.log('Sending message acknowledgment:', payload);
+    this.ws.send(JSON.stringify(payload));
+  }
+
+  public markMessagesAsRead(chatId: string, upToMessageId?: string): void {
+    if (!this.isConnected || !this.ws || !this.userId) return;
+
+    const payload: WebSocketPayload = {
+      type: 'messages_read',
+      data: {
+        chatId,
+        userId: this.userId,
+        upToMessageId,
+        timestamp: new Date().toISOString()
+      }
+    };
+
+    console.log('Marking messages as read:', payload);
+    this.ws.send(JSON.stringify(payload));
+  }
+
   public onMessage(type: string, handler: (data: any) => void): void {
     this.messageHandlers.set(type, handler);
   }
@@ -199,6 +237,8 @@ class WebSocketService {
 
   private handleMessage(payload: WebSocketPayload): void {
     const { type, data } = payload;
+    console.log('Received WebSocket message:', type, data);
+    
     const handler = this.messageHandlers.get(type);
     if (handler) {
       handler(data);

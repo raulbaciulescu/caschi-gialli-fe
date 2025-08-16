@@ -83,9 +83,9 @@ const NotificationToast: React.FC = () => {
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    if (diffInMinutes < 1) return 'Acum';
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString();
   };
 
@@ -166,7 +166,7 @@ const NotificationToast: React.FC = () => {
                 </div>
 
                 <div className="mt-2 text-xs text-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Click to {notification.type === 'message' ? 'view conversation' : 'view details'} →
+                  Apasă pentru a {notification.type === 'message' ? 'vedea conversația' : 'vedea detaliile'} →
                 </div>
               </div>
             </div>

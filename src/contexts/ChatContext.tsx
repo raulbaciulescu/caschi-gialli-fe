@@ -125,6 +125,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         ...prev,
         [chatId]: transformedMessages
       }));
+
+      // Send acknowledgment for all messages (including backfill)
+      if (transformedMessages.length > 0 && user) {
+        transformedMessages.forEach(message => {
+          if (message.senderId !== user.id.toString()) {
+            websocketService.acknowledgeMessage(message.id, user.id.toString());
+          }
+        });
+      }
     } catch (error) {
       console.error('Failed to load chat history:', error);
     }
@@ -137,11 +146,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       senderId: dto.senderId.toString(),
       content: dto.content,
       timestamp: new Date(dto.timestamp),
-      type: (dto.type as 'text' | 'image') || 'text'
+      type: (dto.type as 'text' | 'image') || 'text',
+      delivered: false,
+      read: false
     };
   };
 
   const setupMessageHandlers = () => {
+    // Handle incoming chat messages
     websocketService.onMessage('chat_message', (data: any) => {
       const message: ChatMessage = {
         id: data.id.toString(),
@@ -149,7 +161,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         senderId: data.senderId.toString(),
         content: data.content,
         timestamp: new Date(data.timestamp),
-        type: data.type || 'text'
+        type: data.type || 'text',
+        delivered: false,
+        read: false
       };
 
       setMessages(prev => ({
@@ -161,18 +175,95 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const shouldIncrementUnread = !isOwnMessage && activeChat !== data.chatId;
       
       setChats(prev =>
-          prev.map(chat =>
-              chat.id === data.chatId
-                  ? {
-                    ...chat,
-                    lastMessage: message,
-                    unreadCount: shouldIncrementUnread ? chat.unreadCount + 1 : chat.unreadCount
-                  }
-                  : chat
-          )
+        prev.map(chat =>
+          chat.id === data.chatId
+            ? {
+              ...chat,
+              lastMessage: message,
+              unreadCount: shouldIncrementUnread ? chat.unreadCount + 1 : chat.unreadCount
+            }
+            : chat
+        )
       );
+
+      // Send acknowledgment for received messages (not backfill and not own messages)
+      if (!data.isBackfill && !isOwnMessage && user) {
+        websocketService.acknowledgeMessage(data.id.toString(), user.id.toString());
+      }
     });
 
+    // Handle message delivery confirmations
+    websocketService.onMessage('message_delivered', (data: any) => {
+      const { messageId, recipientId, deliveredAt } = data;
+      
+      setMessages(prev => {
+        const updatedMessages = { ...prev };
+        
+        Object.keys(updatedMessages).forEach(chatId => {
+          updatedMessages[chatId] = updatedMessages[chatId].map(message =>
+            message.id === messageId
+              ? { 
+                  ...message, 
+                  delivered: true, 
+                  deliveredAt: new Date(deliveredAt) 
+                }
+              : message
+          );
+        });
+        
+        return updatedMessages;
+      });
+
+      console.log(`Message ${messageId} delivered to ${recipientId} at ${deliveredAt}`);
+    });
+
+    // Handle message read confirmations
+    websocketService.onMessage('message_read', (data: any) => {
+      const { chatId, readerId, upToMessageId, readAt } = data;
+      
+      setMessages(prev => {
+        if (!prev[chatId]) return prev;
+        
+        const updatedMessages = prev[chatId].map(message => {
+          // Mark as read if it's up to the specified message or all messages if no upToMessageId
+          const shouldMarkAsRead = upToMessageId 
+            ? parseInt(message.id) <= parseInt(upToMessageId)
+            : true;
+            
+          return shouldMarkAsRead && message.senderId === user?.id.toString()
+            ? { 
+                ...message, 
+                read: true, 
+                readAt: new Date(readAt) 
+              }
+            : message;
+        });
+        
+        return {
+          ...prev,
+          [chatId]: updatedMessages
+        };
+      });
+
+      console.log(`Messages in chat ${chatId} read by ${readerId} up to ${upToMessageId || 'latest'} at ${readAt}`);
+    });
+
+    // Handle unread count updates
+    websocketService.onMessage('unread_count', (data: any) => {
+      const { chatId, count } = data;
+      
+      setChats(prev =>
+        prev.map(chat =>
+          chat.id === chatId
+            ? { ...chat, unreadCount: count }
+            : chat
+        )
+      );
+
+      console.log(`Unread count for chat ${chatId}: ${count}`);
+    });
+
+    // Handle chat creation
     websocketService.onMessage('chat_created', (data: any) => {
       const newChat: ChatRoom = {
         id: data.id.toString(),
@@ -207,7 +298,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const cgIdStr = chat.cgId.toString();
 
       return (customerIdStr === userIdStr && participantIds.includes(cgIdStr)) ||
-          (cgIdStr === userIdStr && participantIds.includes(customerIdStr));
+        (cgIdStr === userIdStr && participantIds.includes(customerIdStr));
     });
 
     if (existingChat) {
@@ -264,7 +355,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         senderId: user.id.toString(),
         content,
         timestamp: new Date(),
-        type
+        type,
+        delivered: false,
+        read: false
       };
 
       setMessages(prev => ({
@@ -273,24 +366,34 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }));
 
       setChats(prev =>
-          prev.map(chat =>
-              chat.id === chatId
-                  ? {
-                    ...chat,
-                    lastMessage: message,
-                    unreadCount: chat.unreadCount
-                  }
-                  : chat
-          )
+        prev.map(chat =>
+          chat.id === chatId
+            ? {
+              ...chat,
+              lastMessage: message,
+              unreadCount: chat.unreadCount
+            }
+            : chat
+        )
       );
     }
   };
 
   const markAsRead = (chatId: string) => {
+    // Find the latest message in the chat to mark as read up to that point
+    const chatMessages = messages[chatId] || [];
+    const latestMessage = chatMessages[chatMessages.length - 1];
+    
+    if (latestMessage && user) {
+      // Send read confirmation to backend
+      websocketService.markMessagesAsRead(chatId, latestMessage.id);
+    }
+
+    // Update local state
     setChats(prev =>
-        prev.map(chat =>
-            chat.id === chatId ? { ...chat, unreadCount: 0 } : chat
-        )
+      prev.map(chat =>
+        chat.id === chatId ? { ...chat, unreadCount: 0 } : chat
+      )
     );
   };
 
@@ -298,8 +401,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setActiveChat(chatId);
 
     if (chatId) {
-      markAsRead(chatId);
       await loadChatHistory(chatId);
+      markAsRead(chatId);
     }
   };
 
@@ -308,20 +411,20 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-      <ChatContext.Provider value={{
-        chats,
-        activeChat,
-        messages,
-        setActiveChat: handleSetActiveChat,
-        sendMessage,
-        createChat,
-        markAsRead,
-        isConnected,
-        loading,
-        loadChatHistory,
-        refreshChats
-      }}>
-        {children}
-      </ChatContext.Provider>
+    <ChatContext.Provider value={{
+      chats,
+      activeChat,
+      messages,
+      setActiveChat: handleSetActiveChat,
+      sendMessage,
+      createChat,
+      markAsRead,
+      isConnected,
+      loading,
+      loadChatHistory,
+      refreshChats
+    }}>
+      {children}
+    </ChatContext.Provider>
   );
 };
