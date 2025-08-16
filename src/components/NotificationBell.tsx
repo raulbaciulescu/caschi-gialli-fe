@@ -40,7 +40,7 @@ const NotificationBell: React.FC = () => {
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Acum';
+    if (diffInMinutes < 1) return t('common.now') || 'Now';
     if (diffInMinutes < 60) return `${diffInMinutes}m`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString();
@@ -81,15 +81,15 @@ const NotificationBell: React.FC = () => {
   const getNotificationDescription = (notification: any) => {
     switch (notification.type) {
       case 'message':
-        return 'Apasă pentru a vedea conversația';
+        return t('notifications.clickToViewConversation') || 'Click to view conversation';
       case 'job_assigned':
-        return 'Apasă pentru a vedea detaliile job-ului';
+        return t('notifications.clickToViewJobDetails') || 'Click to view job details';
       case 'job_completed':
-        return 'Apasă pentru a vedea job-ul finalizat';
+        return t('notifications.clickToViewCompletedJob') || 'Click to view completed job';
       case 'request':
-        return 'Apasă pentru a vedea cererea';
+        return t('notifications.clickToViewRequest') || 'Click to view request';
       case 'system':
-        return 'Notificare sistem';
+        return t('notifications.systemNotification') || 'System notification';
       default:
         return '';
     }
@@ -129,12 +129,12 @@ const NotificationBell: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                     <Bell className="h-5 w-5 mr-2 text-yellow-600" />
-                    Notificări
+                    {t('notifications.title') || 'Notifications'}
                   </h3>
                   <p className="text-sm text-gray-600">
                     {unreadCount > 0 
-                      ? `${unreadCount} notificare${unreadCount === 1 ? '' : 'i'} necitit${unreadCount === 1 ? 'ă' : 'e'}`
-                      : 'Toate notificările sunt citite! 🎉'
+                      ? t('notifications.unreadCount', { count: unreadCount }) || `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
+                      : t('notifications.allRead') || 'All notifications are read! 🎉'
                     }
                   </p>
                 </div>
@@ -148,7 +148,7 @@ const NotificationBell: React.FC = () => {
                       className="text-xs text-yellow-600 hover:text-yellow-700 font-medium transition-colors flex items-center px-2 py-1 rounded-lg hover:bg-yellow-100"
                     >
                       <CheckCheck className="h-3 w-3 mr-1" />
-                      Marchează toate
+                      {t('notifications.markAllRead') || 'Mark all read'}
                     </button>
                   )}
                   <button
@@ -165,13 +165,13 @@ const NotificationBell: React.FC = () => {
               {loading ? (
                 <div className="p-8 text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 mx-auto mb-4"></div>
-                  <p className="text-gray-500">Se încarcă notificările...</p>
+                  <p className="text-gray-500">{t('notifications.loading') || 'Loading notifications...'}</p>
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="p-8 text-center">
                   <Bell className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">Nicio notificare încă</p>
-                  <p className="text-gray-400 text-sm mt-1">Vei vedea aici mesajele și actualizările noi</p>
+                  <p className="text-gray-500 text-lg">{t('notifications.noNotifications') || 'No notifications yet'}</p>
+                  <p className="text-gray-400 text-sm mt-1">{t('notifications.noNotificationsSubtitle') || 'You\'ll see new messages and updates here'}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100">
@@ -248,7 +248,7 @@ const NotificationBell: React.FC = () => {
                                     senderIsOnline ? 'bg-green-500' : 'bg-gray-400'
                                   }`}></div>
                                   <span className={senderIsOnline ? 'text-green-600' : 'text-gray-500'}>
-                                    {senderIsOnline ? 'Online' : 'Offline'}
+                                    {senderIsOnline ? (t('status.online') || 'Online') : (t('status.offline') || 'Offline')}
                                   </span>
                                 </div>
                               )}
@@ -273,7 +273,7 @@ const NotificationBell: React.FC = () => {
                     className="text-sm text-yellow-600 hover:text-yellow-700 font-medium transition-colors flex items-center"
                   >
                     <MessageSquare className="h-3 w-3 mr-1" />
-                    Vezi toate mesajele
+                    {t('notifications.viewAllMessages') || 'View all messages'}
                   </button>
                   
                   <div className="flex items-center space-x-2">
@@ -285,12 +285,12 @@ const NotificationBell: React.FC = () => {
                         {isExpanded ? (
                           <>
                             <ChevronUp className="h-3 w-3 mr-1" />
-                            Arată mai puține
+                            {t('notifications.showLess') || 'Show less'}
                           </>
                         ) : (
                           <>
                             <ChevronDown className="h-3 w-3 mr-1" />
-                            Arată toate ({notifications.length})
+                            {t('notifications.showAll', { count: notifications.length }) || `Show all (${notifications.length})`}
                           </>
                         )}
                       </button>
@@ -304,7 +304,7 @@ const NotificationBell: React.FC = () => {
                       className="text-sm text-gray-600 hover:text-gray-700 transition-colors flex items-center px-2 py-1 rounded-lg hover:bg-gray-200"
                     >
                       <Check className="h-3 w-3 mr-1" />
-                      Șterge toate
+                      {t('notifications.clearAll') || 'Clear all'}
                     </button>
                   </div>
                 </div>

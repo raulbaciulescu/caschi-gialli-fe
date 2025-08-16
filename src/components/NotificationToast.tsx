@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useOnlineStatus } from '../contexts/OnlineStatusContext';
 import { X, MessageSquare, Bell, CheckCircle, AlertTriangle, Briefcase, User, Clock } from 'lucide-react';
@@ -7,6 +8,7 @@ import { X, MessageSquare, Bell, CheckCircle, AlertTriangle, Briefcase, User, Cl
 const NotificationToast: React.FC = () => {
   const { notifications } = useNotifications();
   const { isUserOnline } = useOnlineStatus();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [visibleToasts, setVisibleToasts] = useState<string[]>([]);
 
@@ -27,7 +29,7 @@ const NotificationToast: React.FC = () => {
         }, 6000);
       });
     }
-  }, [notifications]);
+  }, [notifications, visibleToasts]);
 
   const hideToast = (toastId: string) => {
     setVisibleToasts(prev => prev.filter(id => id !== toastId));
@@ -38,7 +40,11 @@ const NotificationToast: React.FC = () => {
     
     switch (notification.type) {
       case 'message':
-        navigate('/chat');
+        if (notification.chatId) {
+          navigate(`/chat?chatId=${notification.chatId}`);
+        } else {
+          navigate('/chat');
+        }
         break;
       case 'job_assigned':
       case 'job_completed':
@@ -83,7 +89,7 @@ const NotificationToast: React.FC = () => {
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Acum';
+    if (diffInMinutes < 1) return t('common.now') || 'Now';
     if (diffInMinutes < 60) return `${diffInMinutes}m`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString();
@@ -159,14 +165,14 @@ const NotificationToast: React.FC = () => {
                         senderIsOnline ? 'bg-green-500' : 'bg-gray-400'
                       }`}></div>
                       <span className={senderIsOnline ? 'text-green-600' : 'text-gray-500'}>
-                        {senderIsOnline ? 'Online' : 'Offline'}
+                        {senderIsOnline ? t('status.online') : t('status.offline')}
                       </span>
                     </div>
                   )}
                 </div>
 
                 <div className="mt-2 text-xs text-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Apasă pentru a {notification.type === 'message' ? 'vedea conversația' : 'vedea detaliile'} →
+                  {t('notifications.clickToView') || 'Click to view'} →
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
@@ -21,10 +21,11 @@ const Chat: React.FC = () => {
   const { isUserOnline } = useOnlineStatus();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   React.useEffect(() => {
-    document.title = 'Messaggi - Chat con Professionisti | Caschi Gialli';
-  }, []);
+    document.title = t('chat.title') + ' - Caschi Gialli';
+  }, [t]);
 
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
@@ -32,6 +33,18 @@ const Chat: React.FC = () => {
 
   const currentMessages = activeChat ? messages[activeChat] || [] : [];
   const currentChat = chats.find(chat => chat.id === activeChat);
+
+  // Handle chat selection from URL parameters or notifications
+  useEffect(() => {
+    const chatId = searchParams.get('chatId');
+    if (chatId && chats.length > 0) {
+      const chat = chats.find(c => c.id === chatId);
+      if (chat) {
+        setActiveChat(chatId);
+        setShowMobileChat(true);
+      }
+    }
+  }, [searchParams, chats, setActiveChat]);
 
   useEffect(() => {
     scrollToBottom();
@@ -57,11 +70,22 @@ const Chat: React.FC = () => {
   const handleChatSelect = (chatId: string) => {
     setActiveChat(chatId);
     setShowMobileChat(true);
+    
+    // Update URL to reflect selected chat
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('chatId', chatId);
+    navigate(`/chat?${newSearchParams.toString()}`, { replace: true });
   };
 
   const handleBackToList = () => {
     setShowMobileChat(false);
     setActiveChat(null);
+    
+    // Clear chat selection from URL
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('chatId');
+    const newUrl = newSearchParams.toString() ? `/chat?${newSearchParams.toString()}` : '/chat';
+    navigate(newUrl, { replace: true });
   };
 
   const getOtherParticipant = (chat: any) => {
@@ -150,7 +174,7 @@ const Chat: React.FC = () => {
     }
   };
 
-  const getMessageStatusIcon = (message: ChatMessage) => {
+  const getMessageStatusIcon = (message: any) => {
     if (message.senderId !== user?.id.toString()) return null;
 
     if (message.read) {

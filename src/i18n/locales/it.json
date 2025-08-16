@@ -20,7 +20,8 @@
     "submit": "Invia",
     "confirm": "Conferma",
     "yes": "Sì",
-    "no": "No"
+    "no": "No",
+    "now": "Ora"
   },
   "navigation": {
     "home": "Home",
@@ -167,6 +168,37 @@
     "you": "Tu",
     "loginRequired": "Accedi per accedere ai messaggi.",
     "goToLogin": "Vai al Login"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "unreadCount": "{{count}} notifica non letta",
+    "unreadCount_plural": "{{count}} notifiche non lette",
+    "allRead": "Tutte le notifiche sono lette! 🎉",
+    "markAllRead": "Segna tutte come lette",
+    "clearAll": "Cancella tutte",
+    "showAll": "Mostra tutte ({{count}})",
+    "showLess": "Mostra meno",
+    "loading": "Caricamento notifiche...",
+    "noNotifications": "Nessuna notifica ancora",
+    "noNotificationsSubtitle": "Vedrai qui i nuovi messaggi e aggiornamenti",
+    "viewAllMessages": "Vedi tutti i messaggi",
+    "clickToViewConversation": "Clicca per vedere la conversazione",
+    "clickToViewJobDetails": "Clicca per vedere i dettagli del lavoro",
+    "clickToViewCompletedJob": "Clicca per vedere il lavoro completato",
+    "clickToViewRequest": "Clicca per vedere la richiesta",
+    "systemNotification": "Notifica di sistema",
+    "newMessage": "Nuovo messaggio da {{name}}",
+    "newJobAssigned": "Nuovo Lavoro Assegnato",
+    "jobCompleted": "Lavoro Completato",
+    "newServiceRequest": "Nuova Richiesta di Servizio",
+    "requestStatusUpdated": "Stato Richiesta Aggiornato",
+    "newConversation": "Nuova Conversazione",
+    "startedConversation": "{{name}} ha iniziato una conversazione con te"
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline",
+    "lastSeen": "Visto {{time}}"
   },
   "profile": {
     "editProfile": "Modifica Profilo",

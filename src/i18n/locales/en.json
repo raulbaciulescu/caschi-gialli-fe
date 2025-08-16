@@ -20,7 +20,8 @@
     "submit": "Submit",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "now": "Now"
   },
   "navigation": {
     "home": "Home",
@@ -167,6 +168,37 @@
     "you": "You",
     "loginRequired": "Please log in to access messages.",
     "goToLogin": "Go to Login"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadCount": "{{count}} unread notification",
+    "unreadCount_plural": "{{count}} unread notifications",
+    "allRead": "All notifications are read! 🎉",
+    "markAllRead": "Mark all read",
+    "clearAll": "Clear all",
+    "showAll": "Show all ({{count}})",
+    "showLess": "Show less",
+    "loading": "Loading notifications...",
+    "noNotifications": "No notifications yet",
+    "noNotificationsSubtitle": "You'll see new messages and updates here",
+    "viewAllMessages": "View all messages",
+    "clickToViewConversation": "Click to view conversation",
+    "clickToViewJobDetails": "Click to view job details",
+    "clickToViewCompletedJob": "Click to view completed job",
+    "clickToViewRequest": "Click to view request",
+    "systemNotification": "System notification",
+    "newMessage": "New message from {{name}}",
+    "newJobAssigned": "New Job Assigned",
+    "jobCompleted": "Job Completed",
+    "newServiceRequest": "New Service Request",
+    "requestStatusUpdated": "Request Status Updated",
+    "newConversation": "New Conversation",
+    "startedConversation": "{{name}} started a conversation with you"
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline",
+    "lastSeen": "Last seen {{time}}"
   },
   "profile": {
     "editProfile": "Edit Profile",

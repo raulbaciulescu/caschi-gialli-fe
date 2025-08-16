@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useOnlineStatus } from '../contexts/OnlineStatusContext';
 
 interface OnlineStatusIndicatorProps {
@@ -15,6 +16,7 @@ const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({
   className = ''
 }) => {
   const { isUserOnline, getUserLastSeen } = useOnlineStatus();
+  const { t } = useTranslation();
   
   const isOnline = isUserOnline(userId);
   const lastSeen = getUserLastSeen(userId);
@@ -26,12 +28,12 @@ const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({
   };
 
   const formatLastSeen = (date: Date | null) => {
-    if (!date) return 'Necunoscut';
+    if (!date) return t('status.unknown') || 'Unknown';
     
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Acum';
+    if (diffInMinutes < 1) return t('common.now') || 'Now';
     if (diffInMinutes < 60) return `${diffInMinutes}m`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return date.toLocaleDateString();
@@ -47,7 +49,7 @@ const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({
         <span className={`ml-2 text-xs ${
           isOnline ? 'text-green-600' : 'text-gray-500'
         }`}>
-          {isOnline ? 'Online' : `Văzut ${formatLastSeen(lastSeen)}`}
+          {isOnline ? t('status.online') : t('status.lastSeen', { time: formatLastSeen(lastSeen) })}
         </span>
       )}
     </div>
