@@ -12,6 +12,9 @@ export interface ChatMessage {
   read?: boolean;
   deliveredAt?: Date;
   readAt?: Date;
+  // NEW:
+  notificationId?: string;
+  unreadCount?: number;
 }
 
 export interface ChatRoom {
@@ -117,19 +120,34 @@ class WebSocketService {
       console.error('WebSocket not connected');
       return;
     }
-
     const payload: WebSocketPayload = {
-      type: 'chat_message',
+      type: 'create_message', // was: 'chat_message'
       data: {
         chatId,
         senderId: this.userId,
         content,
         messageType: type,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
-
     this.ws.send(JSON.stringify(payload));
+  }
+
+  public acknowledgeNotification(notificationId: string): void {
+    if (!this.isConnected || !this.ws) return;
+    const payload: WebSocketPayload = {
+      type: 'ack_notification',
+      data: {
+        notificationId,
+        timestamp: new Date().toISOString(),
+      },
+    };
+    this.ws.send(JSON.stringify(payload));
+  }
+
+// compat: dacă te-ai obișnuit cu acknowledgeMessage, fă-l proxy
+  public acknowledgeMessage(notificationId: string): void {
+    this.acknowledgeNotification(notificationId);
   }
 
   public createChat(customerId: string, cgId: string): void {
@@ -238,11 +256,14 @@ class WebSocketService {
   private handleMessage(payload: WebSocketPayload): void {
     const { type, data } = payload;
     console.log('Received WebSocket message:', type, data);
-    
-    const handler = this.messageHandlers.get(type);
-    if (handler) {
-      handler(data);
+
+    // AUTO-ACK doar pentru mesaje primite de la celălalt user
+    if (type === 'chat_message' && data?.notificationId && data?.senderId !== this.userId) {
+      this.acknowledgeNotification(data.notificationId);
     }
+
+    const handler = this.messageHandlers.get(type);
+    if (handler) handler(data);
   }
 
   private startHeartbeat(): void {

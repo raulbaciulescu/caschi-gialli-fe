@@ -60,13 +60,14 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const setupWebSocketListeners = () => {
     // Handle incoming chat messages for notifications
     websocketService.onMessage('chat_message', (data: any) => {
+      console.log('Received setup:', data);
       if (!user) return;
 
       const messageSenderId = data.senderId?.toString();
       const currentUserId = user.id.toString();
 
       // Only create notification for messages from others (not backfill)
-      if (messageSenderId !== currentUserId && !data.isBackfill) {
+      if (messageSenderId !== currentUserId) {
         addNotification({
           type: 'message',
           title: `Mesaj nou de la ${data.senderName || 'Utilizator'}`,
@@ -168,7 +169,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     });
   };
 
-  const cleanupWebSocketListeners = () => {
+    const cleanupWebSocketListeners = () => {
     websocketService.offMessage('chat_message');
     websocketService.offMessage('job_assigned');
     websocketService.offMessage('job_completed');
