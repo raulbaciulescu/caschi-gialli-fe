@@ -379,10 +379,10 @@ const Services: React.FC = () => {
                                       <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
                                         {/* Online Status Indicator */}
                                         <div className="absolute top-0 right-0">
-                                          <OnlineStatusIndicator 
-                                            userId={offer.id.toString()}
-                                            size="sm"
-                                          />
+                                          {/*<OnlineStatusIndicator */}
+                                          {/*  userId={offer.id.toString()}*/}
+                                          {/*  size="sm"*/}
+                                          {/*/>*/}
                                         </div>
                                         {offer.fullProfileImageUrl ? (
                                             <img
@@ -400,11 +400,11 @@ const Services: React.FC = () => {
                                       <div>
                                         <h3 className="text-xl font-semibold text-gray-900">{offer.name}</h3>
                                         <div className="flex items-center space-x-2 mt-1">
-                                          <OnlineStatusIndicator 
-                                            userId={offer.id.toString()}
-                                            size="sm"
-                                            showText={true}
-                                          />
+                                          {/*<OnlineStatusIndicator */}
+                                          {/*  userId={offer.id.toString()}*/}
+                                          {/*  size="sm"*/}
+                                          {/*  showText={true}*/}
+                                          {/*/>*/}
                                           <span className="text-sm text-blue-600 font-medium">{t('services.kmAway', { distance: offer.distance })}</span>
                                         </div>
                                       </div>

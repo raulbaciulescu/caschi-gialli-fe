@@ -5,7 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import NotificationBell from './NotificationBell';
 import NotificationToast from './NotificationToast';
-import NotificationToast from './NotificationToast';
 import { HardHat, Home, User, MessageSquare, Settings, LogOut, Bell, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 interface LayoutProps {
@@ -27,8 +26,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
       <div className="min-h-screen">
-        <NotificationToast />
-        
         {/* Notification Toasts */}
         <NotificationToast />
         

@@ -166,31 +166,31 @@ class WebSocketService {
   }
 
   public sendUserActivity(): void {
-    if (!this.isConnected || !this.ws || !this.userId) return;
-
-    const payload: WebSocketPayload = {
-      type: 'user_activity',
-      data: {
-        userId: this.userId,
-        timestamp: new Date().toISOString()
-      }
-    };
-
-    this.ws.send(JSON.stringify(payload));
+    // if (!this.isConnected || !this.ws || !this.userId) return;
+    //
+    // const payload: WebSocketPayload = {
+    //   type: 'user_activity',
+    //   data: {
+    //     userId: this.userId,
+    //     timestamp: new Date().toISOString()
+    //   }
+    // };
+    //
+    // this.ws.send(JSON.stringify(payload));
   }
 
   public sendHeartbeat(): void {
-    if (!this.isConnected || !this.ws || !this.userId) return;
-
-    const payload: WebSocketPayload = {
-      type: 'heartbeat',
-      data: {
-        userId: this.userId,
-        timestamp: new Date().toISOString()
-      }
-    };
-
-    this.ws.send(JSON.stringify(payload));
+    // if (!this.isConnected || !this.ws || !this.userId) return;
+    //
+    // const payload: WebSocketPayload = {
+    //   type: 'heartbeat',
+    //   data: {
+    //     userId: this.userId,
+    //     timestamp: new Date().toISOString()
+    //   }
+    // };
+    //
+    // this.ws.send(JSON.stringify(payload));
   }
 
   // New methods for message status handling

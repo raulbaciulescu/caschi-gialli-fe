@@ -34,17 +34,17 @@ const Chat: React.FC = () => {
   const currentMessages = activeChat ? messages[activeChat] || [] : [];
   const currentChat = chats.find(chat => chat.id === activeChat);
 
-  // Handle chat selection from URL parameters or notifications
-  useEffect(() => {
-    const chatId = searchParams.get('chatId');
-    if (chatId && chats.length > 0) {
-      const chat = chats.find(c => c.id === chatId);
-      if (chat) {
-        setActiveChat(chatId);
-        setShowMobileChat(true);
-      }
-    }
-  }, [searchParams, chats, setActiveChat]);
+  // // Handle chat selection from URL parameters or notifications
+  // useEffect(() => {
+  //   const chatId = searchParams.get('chatId');
+  //   if (chatId && chats.length > 0) {
+  //     const chat = chats.find(c => c.id === chatId);
+  //     if (chat) {
+  //       setActiveChat(chatId);
+  //       setShowMobileChat(true);
+  //     }
+  //   }
+  // }, [searchParams, chats, setActiveChat]);
 
   useEffect(() => {
     scrollToBottom();
@@ -267,29 +267,29 @@ const Chat: React.FC = () => {
                         <div className="flex items-center space-x-3">
                           <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center overflow-hidden relative">
                             <Users className="h-6 w-6 text-white" />
-                            <div className="absolute top-0 right-0">
-                              <OnlineStatusIndicator 
-                                userId={getOtherParticipantId(chat)}
-                                size="sm"
-                              />
-                            </div>
+                            {/*<div className="absolute top-0 right-0">*/}
+                            {/*  <OnlineStatusIndicator */}
+                            {/*    userId={getOtherParticipantId(chat)}*/}
+                            {/*    size="sm"*/}
+                            {/*  />*/}
+                            {/*</div>*/}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-medium text-gray-900 truncate">
                                 {getOtherParticipant(chat)}
                               </p>
-                              <div className="flex items-center space-x-2">
-                                <OnlineStatusIndicator 
-                                  userId={getOtherParticipantId(chat)}
-                                  size="sm"
-                                />
-                                {chat.lastMessage && (
-                                  <p className="text-xs text-gray-500">
-                                    {formatTime(chat.lastMessage.timestamp)}
-                                  </p>
-                                )}
-                              </div>
+                              {/*<div className="flex items-center space-x-2">*/}
+                              {/*  <OnlineStatusIndicator */}
+                              {/*    userId={getOtherParticipantId(chat)}*/}
+                              {/*    size="sm"*/}
+                              {/*  />*/}
+                              {/*  {chat.lastMessage && (*/}
+                              {/*    <p className="text-xs text-gray-500">*/}
+                              {/*      {formatTime(chat.lastMessage.timestamp)}*/}
+                              {/*    </p>*/}
+                              {/*  )}*/}
+                              {/*</div>*/}
                             </div>
                             <div className="flex items-center justify-between">
                               <p className="text-sm text-gray-500 truncate">
@@ -326,22 +326,22 @@ const Chat: React.FC = () => {
                         </button>
                         <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center overflow-hidden relative">
                           <Users className="h-5 w-5 text-white" />
-                          <div className="absolute top-0 right-0">
-                            <OnlineStatusIndicator 
-                              userId={getOtherParticipantId(currentChat)}
-                              size="sm"
-                            />
-                          </div>
+                          {/*<div className="absolute top-0 right-0">*/}
+                          {/*  <OnlineStatusIndicator */}
+                          {/*    userId={getOtherParticipantId(currentChat)}*/}
+                          {/*    size="sm"*/}
+                          {/*  />*/}
+                          {/*</div>*/}
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {getOtherParticipant(currentChat)}
                           </h3>
-                          <OnlineStatusIndicator 
-                            userId={getOtherParticipantId(currentChat)}
-                            size="sm"
-                            showText={true}
-                          />
+                          {/*<OnlineStatusIndicator */}
+                          {/*  userId={getOtherParticipantId(currentChat)}*/}
+                          {/*  size="sm"*/}
+                          {/*  showText={true}*/}
+                          {/*/>*/}
                         </div>
                       </div>
 
