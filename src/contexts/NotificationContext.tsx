@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { websocketService } from '../services/websocket.service';
+import { API_CONFIG } from '../config/api';
 
 export interface Notification {
   id: string;
@@ -13,7 +14,7 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   avatar?: string;
-  data?: any;
+  data?: any; // include aici notificationId (server), kind, etc.
 }
 
 interface NotificationContextType {
@@ -37,6 +38,49 @@ export const useNotifications = () => {
   return context;
 };
 
+// ---- REST helpers (MVP) ----
+type ServerNotifStatus = 'PENDING' | 'DELIVERED' | 'SEEN' | 'DISMISSED';
+type ServerNotifKind = 'MESSAGE_NEW' | 'CHAT_CREATED';
+interface ServerNotificationDto {
+  id: number;
+  kind: ServerNotifKind;
+  chatId?: number;
+  messageId?: number;
+  fromUserId?: number;
+  preview?: string;
+  createdAt: string;
+  status: ServerNotifStatus;
+}
+
+const BASE = API_CONFIG.BASE_URL;
+
+async function fetchPending(limit = 50): Promise<ServerNotificationDto[]> {
+  const res = await fetch(`${BASE}/notifications?status=PENDING&limit=${limit}`, { credentials: 'include' });
+  if (!res.ok) throw new Error('Failed to fetch notifications');
+  return res.json();
+}
+
+async function markDelivered(id: number, channel: 'REST' | 'WS' = 'REST'): Promise<void> {
+  await fetch(`${BASE}/notifications/${id}/delivered?channel=${channel}`, {
+    method: 'PATCH',
+    credentials: 'include'
+  });
+}
+
+async function markSeen(id: number): Promise<void> {
+  await fetch(`${BASE}/notifications/${id}/seen`, {
+    method: 'PATCH',
+    credentials: 'include'
+  });
+}
+
+async function markSeenByChat(chatId: number): Promise<void> {
+  await fetch(`${BASE}/notifications/seen/by-chat/${chatId}`, {
+    method: 'POST',
+    credentials: 'include'
+  });
+}
+
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -51,91 +95,51 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
 
     setupWebSocketListeners();
+    // PULL offline la login
+    pullPending().catch(console.error);
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') pullPending().catch(() => {});
+    };
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       cleanupWebSocketListeners();
+      document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user?.id]);
 
   const setupWebSocketListeners = () => {
-    // Handle incoming chat messages for notifications
     websocketService.onMessage('chat_message', (data: any) => {
-      console.log('Received setup:', data);
       if (!user) return;
 
       const messageSenderId = data.senderId?.toString();
       const currentUserId = user.id.toString();
 
-      // Only create notification for messages from others (not backfill)
+      if (messageSenderId !== currentUserId && data.notificationId) {
+        if (typeof (websocketService as any).acknowledgeNotification === 'function') {
+          (websocketService as any).acknowledgeNotification(String(data.notificationId));
+        } else if (typeof (websocketService as any).acknowledgeMessage === 'function') {
+          (websocketService as any).acknowledgeMessage(String(data.notificationId), currentUserId);
+        }
+      }
+
       if (messageSenderId !== currentUserId) {
         addNotification({
           type: 'message',
-          title: `Mesaj nou de la ${data.senderName || 'Utilizator'}`,
+          title: `New message from ${data.senderName || 'User'}`,
           message: data.content,
-          chatId: data.chatId,
+          chatId: String(data.chatId),
           senderId: messageSenderId,
           senderName: data.senderName,
           avatar: data.senderAvatar,
-          data: data
+          data
         });
       }
     });
 
-    // Handle job assignment notifications
-    websocketService.onMessage('job_assigned', (data: any) => {
-      addNotification({
-        type: 'job_assigned',
-        title: 'Job Nou Asignat',
-        message: `Ai fost asignat la: ${data.serviceName}`,
-        data: data
-      });
-    });
-
-    // Handle job completion notifications
-    websocketService.onMessage('job_completed', (data: any) => {
-      addNotification({
-        type: 'job_completed',
-        title: 'Job Finalizat',
-        message: `Job-ul "${data.serviceName}" a fost marcat ca finalizat`,
-        data: data
-      });
-    });
-
-    // Handle new service requests for CGs
-    websocketService.onMessage('new_service_request', (data: any) => {
-      if (user?.type === 'cg') {
-        addNotification({
-          type: 'request',
-          title: 'Cerere Nouă de Serviciu',
-          message: `Cerere nouă ${data.category} în zona ta`,
-          data: data
-        });
-      }
-    });
-
-    // Handle request status updates
-    websocketService.onMessage('request_status_updated', (data: any) => {
-      const statusMessages = {
-        'accepted': 'Cererea ta a fost acceptată',
-        'in_progress': 'Lucrul a început la cererea ta',
-        'completed': 'Cererea ta a fost finalizată',
-        'cancelled': 'Cererea ta a fost anulată'
-      };
-
-      const message = statusMessages[data.status as keyof typeof statusMessages] || 'Status cerere actualizat';
-
-      addNotification({
-        type: 'system',
-        title: 'Actualizare Cerere',
-        message: message,
-        data: data
-      });
-    });
-
-    // Handle chat creation notifications
     websocketService.onMessage('chat_created', (data: any) => {
       if (!user) return;
-
       const currentUserId = user.id.toString();
       const isInitiator = data.initiatorId?.toString() === currentUserId;
 
@@ -145,78 +149,150 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
           type: 'message',
           title: 'Conversație Nouă',
           message: `${initiatorName} a început o conversație cu tine`,
-          chatId: data.id.toString(),
+          chatId: String(data.id),
           senderId: data.initiatorId?.toString(),
           senderName: initiatorName,
-          data: data
+          data
         });
       }
     });
 
-    // Handle message delivery confirmations (optional - for debugging)
-    websocketService.onMessage('message_delivered', (data: any) => {
-      console.log('Message delivered:', data);
+    // Exemple păstrate — dacă le emiți pe WS
+    websocketService.onMessage('job_assigned', (data: any) => {
+      addNotification({
+        type: 'job_assigned',
+        title: 'Job Nou Asignat',
+        message: `Ai fost asignat la: ${data.serviceName}`,
+        data
+      });
     });
 
-    // Handle message read confirmations (optional - for debugging)
-    websocketService.onMessage('message_read', (data: any) => {
-      console.log('Message read:', data);
+    websocketService.onMessage('job_completed', (data: any) => {
+      addNotification({
+        type: 'job_completed',
+        title: 'Job Finalizat',
+        message: `Job-ul "${data.serviceName}" a fost marcat ca finalizat`,
+        data
+      });
     });
 
-    // Handle unread count updates (optional - for debugging)
-    websocketService.onMessage('unread_count', (data: any) => {
-      console.log('Unread count updated:', data);
+    websocketService.onMessage('new_service_request', (data: any) => {
+      if (user?.type === 'cg') {
+        addNotification({
+          type: 'request',
+          title: 'Cerere Nouă de Serviciu',
+          message: `Cerere nouă ${data.category} în zona ta`,
+          data
+        });
+      }
     });
+
+    websocketService.onMessage('request_status_updated', (data: any) => {
+      const statusMessages: Record<string, string> = {
+        accepted: 'Cererea ta a fost acceptată',
+        in_progress: 'Lucrul a început la cererea ta',
+        completed: 'Cererea ta a fost finalizată',
+        cancelled: 'Cererea ta a fost anulată'
+      };
+      const message = statusMessages[data.status] || 'Status cerere actualizat';
+      addNotification({
+        type: 'system',
+        title: 'Actualizare Cerere',
+        message,
+        data
+      });
+    });
+
+    // debug hooks — păstrează dacă le emiți
+    websocketService.onMessage('message_delivered', (d: any) => console.log('Message delivered:', d));
+    websocketService.onMessage('message_read', (d: any) => console.log('Message read:', d));
+    websocketService.onMessage('unread_count', (d: any) => console.log('Unread count updated:', d));
   };
 
-    const cleanupWebSocketListeners = () => {
+  const cleanupWebSocketListeners = () => {
     websocketService.offMessage('chat_message');
+    websocketService.offMessage('chat_created');
     websocketService.offMessage('job_assigned');
     websocketService.offMessage('job_completed');
     websocketService.offMessage('new_service_request');
     websocketService.offMessage('request_status_updated');
-    websocketService.offMessage('chat_created');
     websocketService.offMessage('message_delivered');
     websocketService.offMessage('message_read');
     websocketService.offMessage('unread_count');
   };
 
+  // PULL “offline” din REST + marcare DELIVERED (REST) după afișare
+  const pullPending = async () => {
+    try {
+      setLoading(true);
+      const list = await fetchPending(50);
+
+      // 1) adaugă în UI (folosim id din server ca să evităm duplicate)
+      for (const n of list) {
+        addNotification(mapServerDtoToUi(n));
+      }
+
+      // 2) marchează DELIVERED pe REST după ce le-ai afișat
+      await Promise.allSettled(list.map(n => markDelivered(n.id, 'REST')));
+    } catch (e) {
+      console.error('pullPending failed', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mapServerDtoToUi = (dto: ServerNotificationDto): Omit<Notification, 'id' | 'timestamp' | 'read'> => {
+    const isMessage = dto.kind === 'MESSAGE_NEW';
+    const title = isMessage ? 'New message' : 'New conversation';
+    const message = dto.preview ?? (isMessage ? 'New message' : 'New chat');
+    return {
+      type: isMessage ? 'message' : 'system',
+      title,
+      message,
+      chatId: dto.chatId ? String(dto.chatId) : undefined,
+      senderId: dto.fromUserId ? String(dto.fromUserId) : undefined,
+      data: {
+        notificationId: dto.id,
+        kind: dto.kind,
+        chatId: dto.chatId,
+        messageId: dto.messageId,
+        createdAt: dto.createdAt,
+        status: dto.status
+      }
+    };
+  };
+
   const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+    const serverId = notification.data?.notificationId as number | undefined;
+
     const newNotification: Notification = {
       ...notification,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      id: serverId ? String(serverId) : Date.now().toString() + Math.random().toString(36).slice(2),
       timestamp: new Date(),
       read: false
     };
 
     setNotifications(prev => {
-      // Prevent duplicate message notifications
       if (notification.type === 'message' && notification.chatId) {
-        const existingMessageNotification = prev.find(n => 
-          n.type === 'message' && 
-          n.chatId === notification.chatId && 
-          n.message === notification.message &&
-          n.senderId === notification.senderId
+        const exists = prev.find(n =>
+            n.type === 'message' &&
+            n.chatId === notification.chatId &&
+            n.message === notification.message &&
+            n.senderId === notification.senderId
         );
-        
-        if (existingMessageNotification) {
-          return prev;
-        }
+        if (exists) return prev;
       }
 
+      if (serverId && prev.some(n => n.id === String(serverId))) return prev;
       return [newNotification, ...prev];
     });
 
-    // Auto-remove system notifications after 10 seconds
     if (notification.type === 'system' || notification.type === 'job_assigned' || notification.type === 'job_completed') {
-      setTimeout(() => {
-        removeNotification(newNotification.id);
-      }, 10000);
+      setTimeout(() => removeNotification(newNotification.id), 10000);
     }
 
-    // Browser notification if permission granted
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(notification.title, {
+    if ('Notification' in window && window.Notification.permission === 'granted') {
+      new window.Notification(notification.title, {
         body: notification.message,
         icon: '/helmet-icon.svg',
         badge: '/helmet-icon.svg',
@@ -228,49 +304,52 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const markAsRead = (notificationId: string) => {
     setNotifications(prev =>
-      prev.map(notification =>
-        notification.id === notificationId
-          ? { ...notification, read: true }
-          : notification
-      )
+        prev.map(notification =>
+            notification.id === notificationId ? { ...notification, read: true } : notification
+        )
     );
+
+    const n = notifications.find(x => x.id === notificationId);
+    const serverId = n?.data?.notificationId as number | undefined;
+    if (serverId) {
+      markSeen(serverId).catch(console.error);
+    }
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, read: true }))
-    );
+    setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
+    const serverIds = notifications
+        .map(n => n.data?.notificationId as number | undefined)
+        .filter((id): id is number => typeof id === 'number');
+    Promise.allSettled(serverIds.map(id => markSeen(id))).catch(() => {});
   };
 
   const removeNotification = (notificationId: string) => {
-    setNotifications(prev =>
-      prev.filter(notification => notification.id !== notificationId)
-    );
+    setNotifications(prev => prev.filter(notification => notification.id !== notificationId));
   };
 
   const clearAllNotifications = () => {
     setNotifications([]);
   };
 
-  // Request notification permission on mount
   useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+    if ('Notification' in window && window.Notification.permission === 'default') {
+      window.Notification.requestPermission();
     }
   }, []);
 
   return (
-    <NotificationContext.Provider value={{
-      notifications,
-      unreadCount,
-      addNotification,
-      markAsRead,
-      markAllAsRead,
-      removeNotification,
-      clearAllNotifications,
-      loading
-    }}>
-      {children}
-    </NotificationContext.Provider>
+      <NotificationContext.Provider value={{
+        notifications,
+        unreadCount,
+        addNotification,
+        markAsRead,
+        markAllAsRead,
+        removeNotification,
+        clearAllNotifications,
+        loading
+      }}>
+        {children}
+      </NotificationContext.Provider>
   );
 };
