@@ -6,8 +6,7 @@ import { useOnlineStatus } from '../contexts/OnlineStatusContext';
 import { X, MessageSquare, Bell, CheckCircle, AlertTriangle, Briefcase, Clock } from 'lucide-react';
 
 const NotificationToast: React.FC = () => {
-  // ⬇️ folosim markAsRead din context (apelează și BE)
-  const { notifications, markAsRead } = useNotifications(); // CHANGED
+  const { notifications, markAsRead } = useNotifications();
   const { isUserOnline } = useOnlineStatus();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -26,9 +25,8 @@ const NotificationToast: React.FC = () => {
 
       newToastIds.forEach(toastId => {
         setTimeout(() => {
-          // la auto-hide le marcăm ca read, ca să nu reapară și să sync cu BE
           setVisibleToasts(prev => prev.filter(id => id !== toastId));
-          markAsRead(toastId); // CHANGED
+          markAsRead(toastId);
         }, 6000);
       });
     }
@@ -158,7 +156,7 @@ const NotificationToast: React.FC = () => {
                     </div>
 
                     <div className="mt-2 text-xs text-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {t('notifications.clickToView') || 'Click to view'} →
+                      {t('notifications.clickToViewConversation') || 'Click to view'} →
                     </div>
                   </div>
                 </div>

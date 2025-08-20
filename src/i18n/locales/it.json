@@ -188,6 +188,7 @@
     "clickToViewRequest": "Clicca per vedere la richiesta",
     "systemNotification": "Notifica di sistema",
     "newMessage": "Nuovo messaggio da {{name}}",
+    "newMessage2": "Nuovo messaggio",
     "newJobAssigned": "Nuovo Lavoro Assegnato",
     "jobCompleted": "Lavoro Completato",
     "newServiceRequest": "Nuova Richiesta di Servizio",

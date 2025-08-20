@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useAuth } from './AuthContext';
 import { websocketService } from '../services/websocket.service';
 import { API_CONFIG } from '../config/api';
+import {t} from "i18next";
 
 export interface Notification {
   id: string;
@@ -127,7 +128,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       if (messageSenderId !== currentUserId) {
         addNotification({
           type: 'message',
-          title: `New message from ${data.senderName || 'User'}`,
+          title: t('notifications.newMessage2'),
+          // title: `New message from ${data.senderName || 'User'}`,
           message: data.content,
           chatId: String(data.chatId),
           senderId: messageSenderId,
@@ -243,8 +245,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const mapServerDtoToUi = (dto: ServerNotificationDto): Omit<Notification, 'id' | 'timestamp' | 'read'> => {
     const isMessage = dto.kind === 'MESSAGE_NEW';
-    const title = isMessage ? 'New message' : 'New conversation';
-    const message = dto.preview ?? (isMessage ? 'New message' : 'New chat');
+    const title = isMessage ? t('notifications.newMessage2') : 'New conversation';
+    const message = dto.preview ?? (isMessage ? t('notifications.newMessage2') : 'New chat');
     return {
       type: isMessage ? 'message' : 'system',
       title,
