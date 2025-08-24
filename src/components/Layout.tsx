@@ -162,12 +162,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1">
+        <main className={`flex-1 ${location.pathname === '/chat' ? 'md:block hidden' : ''}`}>
           {children}
         </main>
 
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white">
+        {/* Footer - Hidden on chat page */}
+        <footer className={`bg-gray-900 text-white ${location.pathname === '/chat' ? 'hidden' : ''}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {/* Brand Section */}
@@ -312,7 +312,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </footer>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 ${location.pathname === '/chat' ? 'hidden' : ''}`}>
           <div className="flex justify-around items-center py-2">
             {isAuthenticated ? (
                 <>

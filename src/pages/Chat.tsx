@@ -204,7 +204,7 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <div className="h-screen bg-gray-50 overflow-hidden">
+    <div className="h-screen bg-gray-50 overflow-hidden fixed inset-0 md:relative md:h-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">{t('chat.title')}</h1>
@@ -218,7 +218,7 @@ const Chat: React.FC = () => {
           </button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-10rem)] overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-10rem)] md:h-[calc(100vh-10rem)] overflow-hidden">
           <div className="flex h-full">
             <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col ${
               showMobileChat ? 'hidden md:flex' : 'flex'
@@ -359,7 +359,7 @@ const Chat: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 overscroll-contain" style={{ scrollBehavior: 'smooth' }}>
                     {currentMessages.length === 0 ? (
                       <div className="text-center py-8">
                         <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
