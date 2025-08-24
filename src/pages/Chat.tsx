@@ -236,7 +236,7 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-gray-50 flex flex-col overflow-hidden">
       {/* Main Chat Container */}
       <div className="flex-1 flex overflow-hidden">
         {/* Chat List Sidebar */}
@@ -729,6 +729,48 @@ const Chat: React.FC = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Mobile Navigation - Only show when not viewing messages */}
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 ${
+        showMobileChat ? 'hidden' : ''
+      }`}>
+        <div className="flex justify-around items-center py-2">
+          <Link
+            to="/dashboard"
+            className={`flex flex-col items-center p-2 ${
+              location.pathname === '/dashboard' ? 'text-yellow-600' : 'text-gray-500'
+            }`}
+          >
+            <Home className="h-5 w-5" />
+            <span className="text-xs mt-1">{t('navigation.dashboard')}</span>
+          </Link>
+          <Link
+            to="/services"
+            className={`flex flex-col items-center p-2 ${
+              location.pathname === '/services' ? 'text-yellow-600' : 'text-gray-500'
+            }`}
+          >
+            <HardHat className="h-5 w-5" />
+            <span className="text-xs mt-1">{t('navigation.services')}</span>
+          </Link>
+          <Link
+            to="/chat"
+            className="flex flex-col items-center p-2 text-yellow-600"
+          >
+            <MessageSquare className="h-5 w-5" />
+            <span className="text-xs mt-1">{t('navigation.messages')}</span>
+          </Link>
+          <Link
+            to="/profile"
+            className={`flex flex-col items-center p-2 ${
+              location.pathname === '/profile' ? 'text-yellow-600' : 'text-gray-500'
+            }`}
+          >
+            <User className="h-5 w-5" />
+            <span className="text-xs mt-1">{t('navigation.profile')}</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
