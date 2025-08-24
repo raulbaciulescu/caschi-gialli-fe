@@ -204,9 +204,10 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <div className="h-screen bg-gray-50 overflow-hidden fixed inset-0 md:relative md:h-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-4 flex items-center justify-between">
+    <div className="fixed inset-0 bg-gray-50 flex flex-col md:relative md:min-h-screen">
+      {/* Header - Fixed on mobile */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 px-4 py-4 md:px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">{t('chat.title')}</h1>
           <button
             onClick={refreshChats}
@@ -217,8 +218,12 @@ const Chat: React.FC = () => {
             {t('chat.refresh')}
           </button>
         </div>
+      </div>
 
-        <div className="bg-white rounded-xl shadow-lg h-[calc(100vh-10rem)] md:h-[calc(100vh-10rem)] overflow-hidden">
+      {/* Chat Container - Flexible height */}
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex h-full">
+          <div className="bg-white rounded-none md:rounded-xl shadow-none md:shadow-lg w-full flex overflow-hidden">
           <div className="flex h-full">
             <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col ${
               showMobileChat ? 'hidden md:flex' : 'flex'
@@ -315,7 +320,7 @@ const Chat: React.FC = () => {
             }`}>
               {activeChat && currentChat ? (
                 <>
-                  <div className="p-4 border-b border-gray-200 bg-white">
+                  <div className="flex-shrink-0 p-4 border-b border-gray-200 bg-white">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <button
@@ -359,7 +364,7 @@ const Chat: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4 overscroll-contain" style={{ scrollBehavior: 'smooth' }}>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
                     {currentMessages.length === 0 ? (
                       <div className="text-center py-8">
                         <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -414,7 +419,7 @@ const Chat: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="p-4 border-t border-gray-200 bg-white">
+                  <div className="flex-shrink-0 p-4 border-t border-gray-200 bg-white">
                     <form onSubmit={handleSendMessage} className="flex space-x-2">
                       <input
                         type="text"
@@ -451,6 +456,7 @@ const Chat: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
           </div>
         </div>
       </div>

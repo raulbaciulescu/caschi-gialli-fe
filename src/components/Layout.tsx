@@ -162,7 +162,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </header>
 
         {/* Main Content */}
-        <main className={`flex-1 ${location.pathname === '/chat' ? 'md:block hidden' : ''}`}>
+        <main className={`${location.pathname === '/chat' ? 'flex-1 overflow-hidden' : 'flex-1'}`}>
           {children}
         </main>
 
