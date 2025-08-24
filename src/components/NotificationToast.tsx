@@ -149,7 +149,7 @@ const NotificationToast: React.FC = () => {
                           <div className="flex items-center text-xs">
                             <div className={`w-2 h-2 rounded-full mr-1 ${senderIsOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
                             <span className={senderIsOnline ? 'text-green-600' : 'text-gray-500'}>
-                        {senderIsOnline ? t('status.online') : t('status.offline')}
+                        {/*{senderIsOnline ? t('status.online') : t('status.offline')}*/}
                       </span>
                           </div>
                       )}
