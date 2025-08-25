@@ -120,7 +120,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       if (messageSenderId !== currentUserId && data.notificationId) {
         if (typeof (websocketService as any).acknowledgeNotification === 'function') {
           (websocketService as any).acknowledgeNotification(String(data.notificationId));
-        } else if (typeof (websocketService as any).acknowledgeMessage === 'function') {
+        } else if (typeof (websocketService as any).acknowledgeNotification === 'function') {
           (websocketService as any).acknowledgeMessage(String(data.notificationId), currentUserId);
         }
       }

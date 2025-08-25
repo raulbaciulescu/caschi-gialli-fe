@@ -130,6 +130,7 @@ class WebSocketService {
         timestamp: new Date().toISOString(),
       },
     };
+    console.log("sending message")
     this.ws.send(JSON.stringify(payload));
   }
 
@@ -143,11 +144,6 @@ class WebSocketService {
       },
     };
     this.ws.send(JSON.stringify(payload));
-  }
-
-// compat: dacă te-ai obișnuit cu acknowledgeMessage, fă-l proxy
-  public acknowledgeMessage(notificationId: string): void {
-    this.acknowledgeNotification(notificationId);
   }
 
   public createChat(customerId: string, cgId: string): void {

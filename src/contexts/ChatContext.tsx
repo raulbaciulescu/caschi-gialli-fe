@@ -165,6 +165,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         delivered: false,
         read: false
       };
+      console.log("receiving message")
 
       setMessages(prev => ({
         ...prev,
