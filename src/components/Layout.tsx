@@ -312,7 +312,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </footer>
 
         {/* Mobile Navigation */}
-        <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 ${location.pathname === '/chat' ? 'hidden' : ''}`}>
+        <div className={`md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 ${location.pathname === '/chat' && location.search.startsWith('?chatId=') ? 'hidden' : ''}`}>
           <div className="flex justify-around items-center py-2">
             {isAuthenticated ? (
                 <>

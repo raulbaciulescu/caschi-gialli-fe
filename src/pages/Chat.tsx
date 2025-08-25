@@ -256,12 +256,12 @@ const Chat: React.FC = () => {
                 >
                   <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
                 </button>
-                <button
-                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
-                  title="New conversation"
-                >
-                  <Plus className="h-5 w-5" />
-                </button>
+                {/*<button*/}
+                {/*  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"*/}
+                {/*  title="New conversation"*/}
+                {/*>*/}
+                {/*  <Plus className="h-5 w-5" />*/}
+                {/*</button>*/}
               </div>
             </div>
 
@@ -333,9 +333,9 @@ const Chat: React.FC = () => {
                             <Users className="h-6 w-6 text-white" />
                           </div>
                           {/* Online Status */}
-                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full ${
-                            isOnline ? 'bg-green-500' : 'bg-gray-400'
-                          }`}></div>
+                          {/*<div className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full ${*/}
+                          {/*  isOnline ? 'bg-green-500' : 'bg-gray-400'*/}
+                          {/*}`}></div>*/}
                         </div>
 
                         {/* Chat Info */}
@@ -368,16 +368,16 @@ const Chat: React.FC = () => {
                           </div>
 
                           {/* Online Status Text */}
-                          <div className="flex items-center mt-1">
-                            <div className={`w-2 h-2 rounded-full mr-2 ${
-                              isOnline ? 'bg-green-500' : 'bg-gray-400'
-                            }`}></div>
-                            <span className={`text-xs ${
-                              isOnline ? 'text-green-600' : 'text-gray-500'
-                            }`}>
-                              {isOnline ? 'Online' : 'Offline'}
-                            </span>
-                          </div>
+                          {/*<div className="flex items-center mt-1">*/}
+                          {/*  <div className={`w-2 h-2 rounded-full mr-2 ${*/}
+                          {/*    isOnline ? 'bg-green-500' : 'bg-gray-400'*/}
+                          {/*  }`}></div>*/}
+                          {/*  <span className={`text-xs ${*/}
+                          {/*    isOnline ? 'text-green-600' : 'text-gray-500'*/}
+                          {/*  }`}>*/}
+                          {/*    {isOnline ? 'Online' : 'Offline'}*/}
+                          {/*  </span>*/}
+                          {/*</div>*/}
                         </div>
                       </div>
                     </button>
@@ -419,11 +419,11 @@ const Chat: React.FC = () => {
                       <h3 className="text-lg font-semibold text-gray-900 truncate">
                         {getOtherParticipant(currentChat)}
                       </h3>
-                      <p className={`text-sm ${
-                        isUserOnline(getOtherParticipantId(currentChat)) ? 'text-green-600' : 'text-gray-500'
-                      }`}>
-                        {isUserOnline(getOtherParticipantId(currentChat)) ? 'Online now' : 'Offline'}
-                      </p>
+                      {/*<p className={`text-sm ${*/}
+                      {/*  isUserOnline(getOtherParticipantId(currentChat)) ? 'text-green-600' : 'text-gray-500'*/}
+                      {/*}`}>*/}
+                      {/*  {isUserOnline(getOtherParticipantId(currentChat)) ? 'Online now' : 'Offline'}*/}
+                      {/*</p>*/}
                     </div>
                   </div>
 
@@ -438,12 +438,12 @@ const Chat: React.FC = () => {
                         <Phone className="h-5 w-5" />
                       </a>
                     )}
-                    <button
-                      className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                      title="Video call"
-                    >
-                      <Video className="h-5 w-5" />
-                    </button>
+                    {/*<button*/}
+                    {/*  className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"*/}
+                    {/*  title="Video call"*/}
+                    {/*>*/}
+                    {/*  <Video className="h-5 w-5" />*/}
+                    {/*</button>*/}
                     <button
                       onClick={() => setShowChatInfo(!showChatInfo)}
                       className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
@@ -571,7 +571,7 @@ const Chat: React.FC = () => {
                     className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200"
                     title="Attach file"
                   >
-                    <Paperclip className="h-5 w-5" />
+                    {/*<Paperclip className="h-5 w-5" />*/}
                   </button>
 
                   {/* Message Input */}

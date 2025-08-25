@@ -73,6 +73,13 @@ class AuthService {
 
       return response;
     } catch (error) {
+      const status = error?.response?.status ?? error?.status ?? error?.cause?.status ?? 0;
+
+      if (status === 409) throw new Error('Client registration failed, email already used!');
+      // if (status === 400) throw new Error('INVALID_REQUEST');
+      // if (status === 401 || status === 403) throw new Error('FORBIDDEN');
+      // if (status >= 500) throw new Error('SERVER_ERROR');
+
       console.error('Client registration failed:', error);
       throw new Error('Client registration failed');
     }
@@ -94,8 +101,12 @@ class AuthService {
 
       return response;
     } catch (error) {
-      console.error('CG registration failed:', error);
-      throw new Error('CG registration failed');
+      const status = error?.response?.status ?? error?.status ?? error?.cause?.status ?? 0;
+
+      if (status === 409) throw new Error('Client registration failed, email already used!');
+
+      console.error('Client registration failed:', error);
+      throw new Error('Client registration failed');
     }
   }
 
