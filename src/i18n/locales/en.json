@@ -34,7 +34,7 @@
   "auth": {
     "signIn": "Sign in to Caschi Gialli",
     "dontHaveAccount": "Don't have an account?",
-    "createAccount": "create a new account",
+    "createAccount": "Create a new account",
     "client": "Client",
     "cascoGiallo": "Casco Giallo",
     "emailAddress": "Email Address",
