@@ -60,13 +60,13 @@ function App() {
       <AuthProvider>
         <OnlineStatusProvider>
           <ServiceProvider>
-            <ChatProvider>
               <NotificationProvider>
-                <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                  <AppRoutes />
-                </Router>
+                 <ChatProvider>
+                    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                      <AppRoutes />
+                    </Router>
+                </ChatProvider>
               </NotificationProvider>
-            </ChatProvider>
           </ServiceProvider>
         </OnlineStatusProvider>
       </AuthProvider>

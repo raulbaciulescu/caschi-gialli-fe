@@ -180,18 +180,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {t('footer.description')}
                 </p>
                 <div className="flex space-x-4">
-                  <a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">
-                    <Facebook className="h-5 w-5" />
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">
-                    <Instagram className="h-5 w-5" />
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">
-                    <Linkedin className="h-5 w-5" />
-                  </a>
+                  {/*<a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">*/}
+                  {/*  <Facebook className="h-5 w-5" />*/}
+                  {/*</a>*/}
+                  {/*<a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">*/}
+                  {/*  <Twitter className="h-5 w-5" />*/}
+                  {/*</a>*/}
+                  {/*<a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">*/}
+                  {/*  <Instagram className="h-5 w-5" />*/}
+                  {/*</a>*/}
+                  {/*<a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">*/}
+                  {/*  <Linkedin className="h-5 w-5" />*/}
+                  {/*</a>*/}
                 </div>
               </div>
 

@@ -207,7 +207,6 @@ class WebSocketService {
     // this.ws.send(JSON.stringify(payload));
   }
 
-  // New methods for message status handling
   public acknowledgeMessage(messageId: string, recipientId: string): void {
     if (!this.isConnected || !this.ws) return;
 

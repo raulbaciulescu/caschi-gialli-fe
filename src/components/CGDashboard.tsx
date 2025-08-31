@@ -13,7 +13,6 @@ import { MapPin, Clock, DollarSign, Star, MessageSquare, Settings, Loader2, Aler
 const CGDashboard: React.FC = () => {
   const { user } = useAuth();
   const { createChat } = useChat();
-  const { addNotification } = useNotifications();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'opportunities' | 'active' | 'completed'>('opportunities');

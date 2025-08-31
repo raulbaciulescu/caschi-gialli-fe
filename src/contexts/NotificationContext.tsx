@@ -15,7 +15,7 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   avatar?: string;
-  data?: any; // include aici notificationId (server), kind, etc.
+  data?: any;
 }
 
 interface NotificationContextType {
@@ -111,34 +111,26 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, [isAuthenticated, user?.id]);
 
   const setupWebSocketListeners = () => {
-    websocketService.onMessage('chat_message', (data: any) => {
-      if (!user) return;
-
-      const messageSenderId = data.senderId?.toString();
-      const currentUserId = user.id.toString();
-
-      if (messageSenderId !== currentUserId && data.notificationId) {
-        if (typeof (websocketService as any).acknowledgeNotification === 'function') {
-          (websocketService as any).acknowledgeNotification(String(data.notificationId));
-        } else if (typeof (websocketService as any).acknowledgeNotification === 'function') {
-          (websocketService as any).acknowledgeMessage(String(data.notificationId), currentUserId);
-        }
-      }
-
-      if (messageSenderId !== currentUserId) {
-        addNotification({
-          type: 'message',
-          title: t('notifications.newMessage2'),
-          // title: `New message from ${data.senderName || 'User'}`,
-          message: data.content,
-          chatId: String(data.chatId),
-          senderId: messageSenderId,
-          senderName: data.senderName,
-          avatar: data.senderAvatar,
-          data
-        });
-      }
-    });
+    // websocketService.onMessage('chat_message', (data: any) => {
+    //   console.log("received notification " + data)
+    //   if (!user) return;
+    //
+    //   const messageSenderId = data.senderId?.toString();
+    //   const currentUserId = user.id.toString();
+    //
+    //   if (messageSenderId !== currentUserId) {
+    //     addNotification({
+    //       type: 'message',
+    //       title: t('notifications.newMessage2'),
+    //       message: data.content,
+    //       chatId: String(data.chatId),
+    //       senderId: messageSenderId,
+    //       senderName: data.senderName,
+    //       avatar: data.senderAvatar,
+    //       data
+    //     });
+    //   }
+    // });
 
     websocketService.onMessage('chat_created', (data: any) => {
       if (!user) return;
@@ -159,7 +151,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     });
 
-    // Exemple păstrate — dacă le emiți pe WS
     websocketService.onMessage('job_assigned', (data: any) => {
       addNotification({
         type: 'job_assigned',
@@ -223,18 +214,14 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     websocketService.offMessage('unread_count');
   };
 
-  // PULL “offline” din REST + marcare DELIVERED (REST) după afișare
   const pullPending = async () => {
     try {
       setLoading(true);
       const list = await fetchPending(50);
-
-      // 1) adaugă în UI (folosim id din server ca să evităm duplicate)
       for (const n of list) {
         addNotification(mapServerDtoToUi(n));
       }
 
-      // 2) marchează DELIVERED pe REST după ce le-ai afișat
       await Promise.allSettled(list.map(n => markDelivered(n.id, 'REST')));
     } catch (e) {
       console.error('pullPending failed', e);

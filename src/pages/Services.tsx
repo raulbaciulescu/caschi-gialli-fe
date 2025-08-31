@@ -36,7 +36,6 @@ const Services: React.FC = () => {
   const { serviceCategories } = useService();
   const { user } = useAuth();
   const { createChat } = useChat();
-  const { addNotification } = useNotifications();
   const { data: cgInRange, loading, error, searchCGInRange, reset } = useCGInRange();
   const { t } = useTranslation();
   const navigate = useNavigate();

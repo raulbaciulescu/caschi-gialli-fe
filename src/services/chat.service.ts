@@ -6,6 +6,7 @@ export interface MessageDto {
     senderId: string;
     content: string;
     type: string;
+    read: string;
     timestamp: string; // ISO string from backend
 }
 
