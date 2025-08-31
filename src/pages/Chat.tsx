@@ -69,7 +69,12 @@ const Chat: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log("chat page open")
+    console.log("changing active chat id")
+    const id = searchParams.get('chatId');
+    if (id && id !== activeChat) setActiveChat(id);
+  }, []);
+
+  useEffect(() => {
     scrollToBottom();
   }, [currentMessages]);
 
@@ -86,6 +91,7 @@ const Chat: React.FC = () => {
   };
 
   const handleChatSelect = (chatId: string) => {
+    console.log("handle chat select")
     setActiveChat(chatId);
     setShowMobileChat(true);
 
@@ -569,13 +575,13 @@ const Chat: React.FC = () => {
                     />
 
                         {/* Emoji Button */}
-                        <button
-                            type="button"
-                            className="absolute right-3 bottom-3 p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                            title="Add emoji"
-                        >
-                          <Smile className="h-4 w-4" />
-                        </button>
+                        {/*<button*/}
+                        {/*    type="button"*/}
+                        {/*    className="absolute right-3 bottom-3 p-1 text-gray-500 hover:text-gray-700 transition-colors"*/}
+                        {/*    title="Add emoji"*/}
+                        {/*>*/}
+                        {/*  <Smile className="h-4 w-4" />*/}
+                        {/*</button>*/}
                       </div>
 
                       {/* Send Button */}

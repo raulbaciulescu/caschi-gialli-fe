@@ -4,6 +4,7 @@ import {chatService, MessageDto} from '../services/chat.service';
 import {useAuth} from './AuthContext';
 import {useNotifications} from "./NotificationContext.tsx";
 import {t} from "i18next";
+import { useSearchParams } from 'react-router-dom';
 
 interface ChatContextType {
     chats: ChatRoom[];
@@ -36,6 +37,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     const [isConnected, setIsConnected] = useState(false);
     const [loading, setLoading] = useState(false);
     const {addNotification} = useNotifications();
+
+    const activeChatRef = React.useRef<string | null>(null);
+    React.useEffect(() => { activeChatRef.current = activeChat; }, [activeChat]);
+
+    const userRef = React.useRef(user);
+    React.useEffect(() => { userRef.current = user; }, [user]);
 
     useEffect(() => {
         if (isAuthenticated && user) {
@@ -153,29 +160,27 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     };
 
     const handleNotifications = (data) => {
-        if (!user) return;
-
         const messageSenderId = data.senderId?.toString();
-        const currentUserId = user.id.toString();
-
-        if (messageSenderId !== currentUserId) {
-            addNotification({
-                type: 'message',
-                title: t('notifications.newMessage2'),
-                message: data.content,
-                chatId: String(data.chatId),
-                senderId: messageSenderId,
-                senderName: data.senderName,
-                avatar: data.senderAvatar,
-                data
-            });
-        }
+        console.log("notification triggered2")
+        addNotification({
+            type: 'message',
+            title: t('notifications.newMessage2'),
+            message: data.content,
+            chatId: String(data.chatId),
+            senderId: messageSenderId,
+            senderName: data.senderName,
+            avatar: data.senderAvatar,
+            data
+        });
     }
 
     const setupMessageHandlers = () => {
         // Handle incoming chat messages
         websocketService.onMessage('chat_message', (data: any) => {
-            handleNotifications(data);
+            const isOwnMessage = user && data.senderId.toString() === user.id.toString();
+            if (!isOwnMessage)
+                handleNotifications(data);
+
             const message: ChatMessage = {
                 id: data.id.toString(),
                 chatId: data.chatId,
@@ -186,14 +191,31 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
                 delivered: false,
                 read: false
             };
-            console.log("receiving message")
 
-            setMessages(prev => ({
-                ...prev,
-                [data.chatId]: [...(prev[data.chatId] || []), message]
-            }));
+            const chatIdFromUrl = new URL(window.location.href).searchParams.get('chatId');
+            if (chatIdFromUrl && String(data.chatId) === chatIdFromUrl) {
+                const isOwn = user && data.senderId.toString() === user.id.toString();
 
-            const isOwnMessage = user && data.senderId.toString() === user.id.toString();
+                setMessages((prev: Record<string, ChatMessage[]>) => {
+                    const list = prev[data.chatId] || [];
+                    const newMsg: ChatMessage = {
+                        ...message,
+                        read: !isOwn,
+                        readAt: !isOwn ? new Date() : undefined,
+                    };
+                    return { ...prev, [data.chatId]: [...list, newMsg] };
+                });
+
+                if (!isOwn && user) {
+                  websocketService.acknowledgeMessage(data.id, user.id.toString());
+                  setChats(prev => prev.map(c => c.id === data.chatId ? { ...c, unreadCount: 0 } : c));
+                }
+            } else {
+                setMessages(prev => ({
+                    ...prev,
+                    [data.chatId]: [...(prev[data.chatId] || []), message],
+                }));
+            }
             const shouldIncrementUnread = !isOwnMessage && activeChat !== data.chatId;
 
             setChats(prev =>
