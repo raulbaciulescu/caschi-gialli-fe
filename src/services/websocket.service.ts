@@ -12,7 +12,6 @@ export interface ChatMessage {
   read?: boolean;
   deliveredAt?: Date;
   readAt?: Date;
-  // NEW:
   notificationId?: string;
   unreadCount?: number;
 }

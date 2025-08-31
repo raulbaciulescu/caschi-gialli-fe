@@ -50,23 +50,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       return;
     }
 
-    const onChatCreated = (data: any) => {
-      const currentUserId = user.id.toString();
-      const isInitiator = data.initiatorId?.toString() === currentUserId;
-      if (isInitiator) return;
-
-      const initiatorName = data.initiatorName || 'Utilizator';
-      addNotification({
-        type: 'message',
-        title: 'Conversație Nouă',
-        message: `${initiatorName} a început o conversație cu tine`,
-        chatId: String(data.id),
-        senderId: data.initiatorId?.toString(),
-        senderName: initiatorName,
-        data
-      });
-    };
-
     const onJobAssigned = (data: any) => {
       addNotification({
         type: 'job_assigned',
@@ -112,29 +95,21 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       });
     };
 
-    websocketService.onMessage('chat_created', onChatCreated);
     websocketService.onMessage('job_assigned', onJobAssigned);
     websocketService.onMessage('job_completed', onJobCompleted);
     websocketService.onMessage('new_service_request', onNewServiceRequest);
     websocketService.onMessage('request_status_updated', onRequestStatusUpdated);
-
-    // debug hooks — păstrează dacă le emiți
     websocketService.onMessage('message_delivered', (d: any) => console.log('Message delivered:', d));
     websocketService.onMessage('message_read', (d: any) => console.log('Message read:', d));
     websocketService.onMessage('unread_count', (d: any) => console.log('Unread count updated:', d));
 
-    // 2) Pull PENDING la login + când revii pe tab
     pullPending().catch(console.error);
     const onVisible = () => {
       if (document.visibilityState === 'visible') pullPending().catch(() => {});
     };
     document.addEventListener('visibilitychange', onVisible);
 
-    // Cleanup: NU dezabonăm 'chat_message' aici (e în ChatProvider).
     return () => {
-      // Dacă websocketService.offMessage acceptă și callback, folosește-l:
-      // websocketService.offMessage('chat_created', onChatCreated) etc.
-      websocketService.offMessage('chat_created');
       websocketService.offMessage('job_assigned');
       websocketService.offMessage('job_completed');
       websocketService.offMessage('new_service_request');
@@ -144,7 +119,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       websocketService.offMessage('unread_count');
       document.removeEventListener('visibilitychange', onVisible);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user?.id]);
 
   useEffect(() => {
@@ -179,7 +153,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     };
 
     setNotifications(prev => {
-      // Dedup pe message-type + chat + mesaj + sender (pentru MESSAGE_NEW)
       if (notification.type === 'message' && notification.chatId) {
         const exists = prev.find(n =>
             n.type === 'message' &&
@@ -189,17 +162,14 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         );
         if (exists) return prev;
       }
-      // Dedup pe id de server
       if (serverId && prev.some(n => n.id === String(serverId))) return prev;
       return [newNotification, ...prev];
     });
 
-    // Auto-dismiss pentru unele tipuri
     if (notification.type === 'system' || notification.type === 'job_assigned' || notification.type === 'job_completed') {
       setTimeout(() => removeNotification(newNotification.id), 10000);
     }
 
-    // Browser Notification (permisiuni)
     if ('Notification' in window && window.Notification.permission === 'granted') {
       try {
         new window.Notification(notification.title, {

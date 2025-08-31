@@ -12,7 +12,6 @@ interface ChatContextType {
     setActiveChat: (chatId: string | null) => void;
     sendMessage: (chatId: string, content: string, type?: 'text' | 'image') => void;
     createChat: (participantIds: string[], participantNames: string[]) => Promise<string>;
-    markAsRead: (chatId: string) => void;
     isConnected: boolean;
     loading: boolean;
     loadChatHistory: (chatId: string) => Promise<void>;
@@ -210,61 +209,32 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
             );
         });
 
-        // Handle message delivery confirmations
-        // websocketService.onMessage('message_delivered', (data: any) => {
-        //   const { messageId, recipientId, deliveredAt } = data;
-        //
-        //   setMessages(prev => {
-        //     const updatedMessages = { ...prev };
-        //
-        //     Object.keys(updatedMessages).forEach(chatId => {
-        //       updatedMessages[chatId] = updatedMessages[chatId].map(message =>
-        //         message.id === messageId
-        //           ? {
-        //               ...message,
-        //               delivered: true,
-        //               deliveredAt: new Date(deliveredAt)
-        //             }
-        //           : message
-        //       );
-        //     });
-        //
-        //     return updatedMessages;
-        //   });
-        //
-        //   console.log(`Message ${messageId} delivered to ${recipientId} at ${deliveredAt}`);
-        // });
+        websocketService.onMessage('message_read', (data: any) => {
+          const { chatId, readerId, upToMessageId, readAt } = data;
 
-        // Handle message read confirmations
-        // websocketService.onMessage('message_read', (data: any) => {
-        //   const { chatId, readerId, upToMessageId, readAt } = data;
-        //
-        //   setMessages(prev => {
-        //     if (!prev[chatId]) return prev;
-        //
-        //     const updatedMessages = prev[chatId].map(message => {
-        //       // Mark as read if it's up to the specified message or all messages if no upToMessageId
-        //       const shouldMarkAsRead = upToMessageId
-        //         ? parseInt(message.id) <= parseInt(upToMessageId)
-        //         : true;
-        //
-        //       return shouldMarkAsRead && message.senderId === user?.id.toString()
-        //         ? {
-        //             ...message,
-        //             read: true,
-        //             readAt: new Date(readAt)
-        //           }
-        //         : message;
-        //     });
-        //
-        //     return {
-        //       ...prev,
-        //       [chatId]: updatedMessages
-        //     };
-        //   });
-        //
-        //   console.log(`Messages in chat ${chatId} read by ${readerId} up to ${upToMessageId || 'latest'} at ${readAt}`);
-        // });
+          setMessages(prev => {
+            const updatedMessages = prev[chatId].map(message => {
+              const shouldMarkAsRead = upToMessageId
+                ? parseInt(message.id) <= parseInt(upToMessageId)
+                : true;
+
+              return shouldMarkAsRead && message.senderId === user?.id.toString()
+                ? {
+                    ...message,
+                    read: true,
+                    readAt: new Date(readAt)
+                  }
+                : message;
+            });
+
+            return {
+              ...prev,
+              [chatId]: updatedMessages
+            };
+          });
+
+          console.log(`Messages in chat ${chatId} read by ${readerId} up to ${upToMessageId || 'latest'} at ${readAt}`);
+        });
 
         // Handle unread count updates
         // websocketService.onMessage('unread_count', (data: any) => {
@@ -397,30 +367,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         }
     };
 
-    const markAsRead = (chatId: string) => {
-        // Find the latest message in the chat to mark as read up to that point
-        const chatMessages = messages[chatId] || [];
-        const latestMessage = chatMessages[chatMessages.length - 1];
-
-        if (latestMessage && user) {
-            // Send read confirmation to backend
-            websocketService.markMessagesAsRead(chatId, latestMessage.id);
-        }
-
-        // Update local state
-        setChats(prev =>
-            prev.map(chat =>
-                chat.id === chatId ? {...chat, unreadCount: 0} : chat
-            )
-        );
-    };
-
     const handleSetActiveChat = async (chatId: string | null) => {
         setActiveChat(chatId);
 
         if (chatId) {
             await loadChatHistory(chatId);
-            markAsRead(chatId);
         }
     };
 
@@ -436,7 +387,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
             setActiveChat: handleSetActiveChat,
             sendMessage,
             createChat,
-            markAsRead,
             isConnected,
             loading,
             loadChatHistory,
