@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useChat } from '../contexts/ChatContext';
 import { useOnlineStatus } from '../contexts/OnlineStatusContext';
-import OnlineStatusIndicator from '../components/OnlineStatusIndicator';
 import {
   MessageSquare,
   Send,
@@ -14,22 +13,10 @@ import {
   RefreshCw,
   Check,
   CheckCheck,
-  Search,
-  MoreVertical,
-  Paperclip,
-  Smile,
-  Mic,
-  Image as ImageIcon,
-  Plus,
-  Settings,
-  Archive,
   Trash2,
   Star,
   Info,
-  Video,
-  UserPlus,
-  Bell,
-  BellOff
+  Bell
 } from 'lucide-react';
 
 const Chat: React.FC = () => {
@@ -48,9 +35,24 @@ const Chat: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = t('chat.title') + ' - Caschi Gialli';
   }, [t]);
+
+
+  useEffect(() => {
+    const urlChatId = searchParams.get('chatId');
+
+    if (urlChatId) {
+      if (activeChat !== urlChatId) {
+        setActiveChat(urlChatId);
+      }
+      setShowMobileChat(true);
+    } else {
+      if (activeChat) setActiveChat(null);
+      setShowMobileChat(false);
+    }
+  }, [searchParams]);
 
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
@@ -67,12 +69,6 @@ const Chat: React.FC = () => {
     const otherParticipant = getOtherParticipant(chat).toLowerCase();
     return otherParticipant.includes(searchQuery.toLowerCase());
   });
-
-  useEffect(() => {
-    console.log("changing active chat id")
-    const id = searchParams.get('chatId');
-    if (id && id !== activeChat) setActiveChat(id);
-  }, []);
 
   useEffect(() => {
     scrollToBottom();
