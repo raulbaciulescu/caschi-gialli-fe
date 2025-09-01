@@ -96,6 +96,7 @@ const Chat: React.FC = () => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('chatId', chatId);
     navigate(`/chat?${newSearchParams.toString()}`, { replace: true });
+    markUnreadCount(chatId)
   };
 
   const handleBackToList = () => {
