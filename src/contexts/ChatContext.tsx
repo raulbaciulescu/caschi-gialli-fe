@@ -12,6 +12,7 @@ interface ChatContextType {
     messages: Record<string, ChatMessage[]>;
     setActiveChat: (chatId: string | null) => void;
     sendMessage: (chatId: string, content: string, type?: 'text' | 'image') => void;
+    markUnreadCount: (chatId: string) => void;
     createChat: (participantIds: string[], participantNames: string[]) => Promise<string>;
     isConnected: boolean;
     loading: boolean;
@@ -401,6 +402,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
         await loadChatsFromAPI();
     };
 
+    const markUnreadCount = async (chatId: string) => {
+        setChats(prev =>
+            prev.map(chat =>
+                chat.id === chatId
+                    ? { ...chat, unreadCount: 0 }
+                    : chat
+            )
+        );
+    }
+
     return (
         <ChatContext.Provider value={{
             chats,
@@ -408,6 +419,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
             messages,
             setActiveChat: handleSetActiveChat,
             sendMessage,
+            markUnreadCount,
             createChat,
             isConnected,
             loading,

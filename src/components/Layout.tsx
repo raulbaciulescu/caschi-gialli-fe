@@ -268,19 +268,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       info@caschigialli.com
                     </a>
                   </li>
-                  <li className="flex items-center space-x-2">
-                    <Phone className="h-4 w-4 text-yellow-500" />
-                    <a href="tel:+390123456789" className="text-gray-400 hover:text-white transition-colors text-sm">
-                      +39 012 345 6789
-                    </a>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <MapPin className="h-4 w-4 text-yellow-500 mt-0.5" />
-                    <span className="text-gray-400 text-sm">
-                    Via Roma 123<br />
-                    00100 Roma, Italia
-                  </span>
-                  </li>
+                  {/*<li className="flex items-center space-x-2">*/}
+                  {/*  <Phone className="h-4 w-4 text-yellow-500" />*/}
+                  {/*  <a href="tel:+390123456789" className="text-gray-400 hover:text-white transition-colors text-sm">*/}
+                  {/*    +39 012 345 6789*/}
+                  {/*  </a>*/}
+                  {/*</li>*/}
+                  {/*<li className="flex items-start space-x-2">*/}
+                  {/*  <MapPin className="h-4 w-4 text-yellow-500 mt-0.5" />*/}
+                  {/*  <span className="text-gray-400 text-sm">*/}
+                  {/*  Via Roma 123<br />*/}
+                  {/*  00100 Roma, Italia*/}
+                  {/*</span>*/}
+                  {/*</li>*/}
                 </ul>
               </div>
             </div>

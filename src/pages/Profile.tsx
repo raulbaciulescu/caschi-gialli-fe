@@ -307,15 +307,15 @@ const Profile: React.FC = () => {
                             {t('profile.editProfile')}
                           </button>
                       )}
-                      {isOwnProfile && user && (
-                          <button
-                              onClick={() => setShowDeleteModal(true)}
-                              className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            {t('profile.deleteAccount')}
-                          </button>
-                      )}
+                      {/*{isOwnProfile && user && (*/}
+                      {/*    <button*/}
+                      {/*        onClick={() => setShowDeleteModal(true)}*/}
+                      {/*        className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105 shadow-lg"*/}
+                      {/*    >*/}
+                      {/*      <Trash2 className="h-4 w-4 mr-2" />*/}
+                      {/*      {t('profile.deleteAccount')}*/}
+                      {/*    </button>*/}
+                      {/*)}*/}
                       {/* Only show contact button if viewing CG profile and current user is client/customer */}
                       {cgProfile && !isOwnProfile && user && (user.type === 'client' || user.type === 'customer') && (
                           <button

@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
   USERS: {
     PROFILE: '/auth/session',
     UPDATE_PROFILE: '/profile',
-    DELETE_ACCOUNT: '/delete-account',
+    DELETE_ACCOUNT: '/auth',
   },
   CG: {
     IN_RANGE: '/cg/inRange',

@@ -26,6 +26,7 @@ const Chat: React.FC = () => {
     activeChat,
     messages,
     setActiveChat,
+    markUnreadCount,
     sendMessage,
     loading,
     refreshChats
@@ -88,6 +89,7 @@ const Chat: React.FC = () => {
 
   const handleChatSelect = (chatId: string) => {
     console.log("handle chat select")
+
     setActiveChat(chatId);
     setShowMobileChat(true);
 
