@@ -332,6 +332,8 @@
     "cookiePolicy": "Politica sui Cookie"
   },
   "settings": {
+    "accountSettings": "Impostazioni Account",
+    "manageAccountSettings": "Gestisci le preferenze del tuo account e i dati",
     "notificationSettings": "Impostazioni Notifiche",
     "manageEmailNotifications": "Gestisci come ricevi le notifiche email sulle nuove opportunità",
     "notificationsOn": "Notifiche Attive",
