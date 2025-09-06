@@ -575,7 +575,7 @@ const Profile: React.FC = () => {
               )}
 
               {/* Settings Tab */}
-              {activeTab === 'settings' && isOwnProfile && user?.type === 'cg' && (
+              {activeTab === 'settings' && isOwnProfile && (
                   <NotificationSettings />
               )}
             </div>

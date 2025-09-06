@@ -132,11 +132,7 @@ export interface DeleteAccountResponse {
 }
 
 export interface NotificationPreferences {
-  emailNotifications: boolean;
   newServiceRequests: boolean;
-  messageNotifications: boolean;
-  jobUpdates: boolean;
-  marketingEmails: boolean;
 }
 
 export interface UpdateNotificationPreferencesRequest {
