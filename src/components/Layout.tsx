@@ -261,8 +261,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/imbianchino-bologna" className="text-gray-400 hover:text-yellow-500 transition-colors text-sm">
-                      Imbianchino Bologna
+                    <Link to="/elettricista-bologna" className="text-gray-400 hover:text-yellow-500 transition-colors text-sm">
+                      Elettricista Bologna
                     </Link>
                   </li>
                   <li>

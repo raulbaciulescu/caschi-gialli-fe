@@ -192,6 +192,19 @@ const ServiceCityPage: React.FC = () => {
     }
   }, [navigate]);
 
+  // Add link back to general services with current search
+  const handleBackToServices = () => {
+    if (cityData && serviceData) {
+      const searchParams = new URLSearchParams();
+      searchParams.set('category', serviceData.en);
+      searchParams.set('lat', cityData.lat.toString());
+      searchParams.set('lng', cityData.lng.toString());
+      navigate(`/services?${searchParams.toString()}`);
+    } else {
+      navigate('/services');
+    }
+  };
+
   // Set SEO meta data
   useEffect(() => {
     if (serviceData && cityData) {
@@ -296,7 +309,14 @@ const ServiceCityPage: React.FC = () => {
             <ol className="flex items-center space-x-2 text-sm text-gray-600">
               <li><Link to="/" className="hover:text-yellow-600 transition-colors">Home</Link></li>
               <li className="text-gray-400">/</li>
-              <li><Link to="/services" className="hover:text-yellow-600 transition-colors">Servizi</Link></li>
+              <li>
+                <button 
+                  onClick={handleBackToServices}
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  {isItalian ? 'Servizi' : 'Services'}
+                </button>
+              </li>
               <li className="text-gray-400">/</li>
               <li className="text-yellow-600 font-medium">{serviceName} {cityName}</li>
             </ol>
@@ -494,9 +514,13 @@ const ServiceCityPage: React.FC = () => {
                       to="/services"
                       className="inline-flex items-center text-yellow-600 hover:text-yellow-700 font-medium"
                     >
-                      {isItalian ? 'Cerca in Tutte le Città' : 'Search All Cities'}
+                      <button 
+                        onClick={handleBackToServices}
+                        className="inline-flex items-center text-yellow-600 hover:text-yellow-700 font-medium"
+                      >
+                        {isItalian ? 'Cerca in Tutte le Città' : 'Search All Cities'}
+                      </button>
                       <ArrowRight className="h-4 w-4 ml-1" />
-                    </Link>
                   </div>
                 ) : (
                   <>

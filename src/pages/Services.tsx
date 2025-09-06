@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {useService} from '../contexts/ServiceContext';
 import {useAuth} from '../contexts/AuthContext';
@@ -32,6 +32,46 @@ import {
   Zap
 } from 'lucide-react';
 
+// Italian cities mapping for URL generation
+const ITALIAN_CITIES = {
+  'roma': { name: 'Roma', lat: 41.9028, lng: 12.4964, region: 'Lazio' },
+  'milano': { name: 'Milano', lat: 45.4642, lng: 9.1900, region: 'Lombardia' },
+  'napoli': { name: 'Napoli', lat: 40.8518, lng: 14.2681, region: 'Campania' },
+  'torino': { name: 'Torino', lat: 45.0703, lng: 7.6869, region: 'Piemonte' },
+  'palermo': { name: 'Palermo', lat: 38.1157, lng: 13.3613, region: 'Sicilia' },
+  'genova': { name: 'Genova', lat: 44.4056, lng: 8.9463, region: 'Liguria' },
+  'bologna': { name: 'Bologna', lat: 44.4949, lng: 11.3426, region: 'Emilia-Romagna' },
+  'firenze': { name: 'Firenze', lat: 43.7696, lng: 11.2558, region: 'Toscana' },
+  'bari': { name: 'Bari', lat: 41.1171, lng: 16.8719, region: 'Puglia' },
+  'catania': { name: 'Catania', lat: 37.5079, lng: 15.0830, region: 'Sicilia' },
+  'venezia': { name: 'Venezia', lat: 45.4408, lng: 12.3155, region: 'Veneto' },
+  'verona': { name: 'Verona', lat: 45.4384, lng: 10.9916, region: 'Veneto' },
+  'padova': { name: 'Padova', lat: 45.4064, lng: 11.8768, region: 'Veneto' },
+  'brescia': { name: 'Brescia', lat: 45.5416, lng: 10.2118, region: 'Lombardia' },
+  'bergamo': { name: 'Bergamo', lat: 45.6983, lng: 9.6773, region: 'Lombardia' },
+  'vicenza': { name: 'Vicenza', lat: 45.5455, lng: 11.5353, region: 'Veneto' },
+  'trento': { name: 'Trento', lat: 46.0748, lng: 11.1217, region: 'Trentino-Alto Adige' },
+  'lecce': { name: 'Lecce', lat: 40.3515, lng: 18.1750, region: 'Puglia' },
+  'cagliari': { name: 'Cagliari', lat: 39.2238, lng: 9.1217, region: 'Sardegna' },
+  'pescara': { name: 'Pescara', lat: 42.4584, lng: 14.2081, region: 'Abruzzo' },
+  'perugia': { name: 'Perugia', lat: 43.1122, lng: 12.3888, region: 'Umbria' },
+  'salerno': { name: 'Salerno', lat: 40.6824, lng: 14.7681, region: 'Campania' }
+};
+
+// Service categories mapping for URL generation
+const SERVICE_URL_MAPPING = {
+  'Plumbing': 'idraulico',
+  'Electrical': 'elettricista', 
+  'Carpentry': 'falegname',
+  'Painting': 'imbianchino',
+  'Gardening': 'giardiniere',
+  'Cleaning': 'pulizie',
+  'Moving': 'traslochi',
+  'IT Support': 'informatico',
+  'Appliance Repair': 'riparazione-elettrodomestici',
+  'HVAC': 'climatizzazione'
+};
+
 const Services: React.FC = () => {
   const { serviceCategories } = useService();
   const { user } = useAuth();
@@ -39,6 +79,7 @@ const Services: React.FC = () => {
   const { data: cgInRange, loading, error, searchCGInRange, reset } = useCGInRange();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Scroll to top when component mounts
   // Set page title and meta description for SEO
@@ -57,6 +98,85 @@ const Services: React.FC = () => {
   const [showMap, setShowMap] = useState(false);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
 
+  // Initialize from URL parameters
+  useEffect(() => {
+    const category = searchParams.get('category');
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    
+    if (category) {
+      setSelectedCategory(category);
+    }
+    
+    if (lat && lng) {
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      if (!isNaN(latitude) && !isNaN(longitude)) {
+        setSearchLocation({ lat: latitude, lng: longitude });
+      }
+    }
+  }, [searchParams]);
+
+  // Function to find closest city to coordinates
+  const findClosestCity = (lat: number, lng: number): string | null => {
+    let closestCity = null;
+    let minDistance = Infinity;
+    
+    Object.entries(ITALIAN_CITIES).forEach(([key, city]) => {
+      const distance = calculateDistance(lat, lng, city.lat, city.lng);
+      if (distance < minDistance && distance < 50) { // Within 50km
+        minDistance = distance;
+        closestCity = key;
+      }
+    });
+    
+    return closestCity;
+  };
+
+  // Function to calculate distance between two points
+  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  // Function to update URL with search parameters and potentially redirect to SEO page
+  const updateSearchURL = (category: string, location: { lat: number; lng: number } | null) => {
+    // Update URL parameters
+    const newSearchParams = new URLSearchParams(searchParams);
+    
+    if (category) {
+      newSearchParams.set('category', category);
+    } else {
+      newSearchParams.delete('category');
+    }
+    
+    if (location) {
+      newSearchParams.set('lat', location.lat.toString());
+      newSearchParams.set('lng', location.lng.toString());
+    }
+    
+    // Check if we should redirect to a dedicated SEO page
+    if (category && location) {
+      const serviceUrlKey = SERVICE_URL_MAPPING[category as keyof typeof SERVICE_URL_MAPPING];
+      const closestCity = findClosestCity(location.lat, location.lng);
+      
+      if (serviceUrlKey && closestCity) {
+        // Redirect to dedicated SEO page
+        navigate(`/${serviceUrlKey}-${closestCity}`, { replace: true });
+        return;
+      }
+    }
+    
+    // Update current page URL with search parameters
+    const newUrl = newSearchParams.toString() ? `/services?${newSearchParams.toString()}` : '/services';
+    navigate(newUrl, { replace: true });
+  };
   // Get user's current location
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -156,6 +276,9 @@ const Services: React.FC = () => {
 
       console.log('Searching with params:', searchParams);
       await searchCGInRange(searchParams);
+      
+      // Update URL after successful search
+      updateSearchURL(selectedCategory, searchLocation);
     } catch (error) {
       console.error('Search failed:', error);
     }
@@ -181,6 +304,9 @@ const Services: React.FC = () => {
       };
       console.log('Auto-searching with params:', searchParams);
       searchCGInRange(searchParams);
+      
+      // Update URL when search parameters change
+      updateSearchURL(selectedCategory, searchLocation);
     }
   }, [selectedCategory, searchLocation]);
 
