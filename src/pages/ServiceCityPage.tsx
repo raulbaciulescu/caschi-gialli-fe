@@ -521,6 +521,7 @@ const ServiceCityPage: React.FC = () => {
                         {isItalian ? 'Cerca in Tutte le Città' : 'Search All Cities'}
                       </button>
                       <ArrowRight className="h-4 w-4 ml-1" />
+                    </Link>
                   </div>
                 ) : (
                   <>
