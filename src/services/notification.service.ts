@@ -1,5 +1,6 @@
 import { httpService } from './http.service';
 import { API_ENDPOINTS } from '../config/api';
+import { NotificationPreferences, NotificationPreferencesResponse } from "../types/api.ts";
 
 export type ServerNotifStatus = 'PENDING' | 'DELIVERED' | 'SEEN' | 'DISMISSED';
 export type ServerNotifKind = 'MESSAGE_NEW' | 'CHAT_CREATED';
@@ -31,41 +32,41 @@ export type DeliveryChannel = 'REST' | 'WS';
 class NotificationService {
     private base = (API_ENDPOINTS as any)?.NOTIFICATIONS?.BASE || '/notifications';
 
-    public async fetchPending(limit = 50): Promise<ServerNotificationDto[]> {
+    public fetchPending = async (limit = 50): Promise<ServerNotificationDto[]> => {
         const url = `${this.base}?status=PENDING&limit=${encodeURIComponent(String(limit))}`;
         return httpService.get<ServerNotificationDto[]>(url);
-    }
+    };
 
-    public async markDelivered(id: number, channel: DeliveryChannel = 'REST'): Promise<void> {
+    public markDelivered = async (id: number, channel: DeliveryChannel = 'REST'): Promise<void> => {
         const url = `${this.base}/${id}/delivered?channel=${encodeURIComponent(channel)}`;
         await httpService.patch<void>(url, {});
-    }
+    };
 
-    public async markSeen(id: number): Promise<void> {
+    public markSeen = async (id: number): Promise<void> => {
         const url = `${this.base}/${id}/seen`;
         await httpService.patch<void>(url, {});
-    }
+    };
 
-    public async markSeenByChat(chatId: number): Promise<void> {
+    public markSeenByChat = async (chatId: number): Promise<void> => {
         const url = `${this.base}/seen/by-chat/${encodeURIComponent(String(chatId))}`;
         await httpService.post<void>(url, {});
-    }
+    };
 
-    public async getNotificationPreferences(): Promise<NotificationPreferencesResponse> {
+    public getNotificationPreferences = async (): Promise<NotificationPreferencesResponse> => {
         const url = `${this.base}/preferences`;
         return httpService.get<NotificationPreferencesResponse>(url);
-    }
+    };
 
-    public async updateNotificationPreferences(preferences: NotificationPreferences): Promise<NotificationPreferencesResponse> {
+    public updateNotificationPreferences = async (preferences: NotificationPreferences): Promise<NotificationPreferencesResponse> => {
         const url = `${this.base}/preferences`;
         return httpService.put<NotificationPreferencesResponse>(url, { preferences });
-    }
+    };
 
-    public async markManyDelivered(dtos: ServerNotificationDto[], channel: DeliveryChannel = 'REST'): Promise<void> {
+    public markManyDelivered = async (dtos: ServerNotificationDto[], channel: DeliveryChannel = 'REST'): Promise<void> => {
         await Promise.allSettled(dtos.map(n => this.markDelivered(n.id, channel)));
-    }
+    };
 
-    public toUi(dto: ServerNotificationDto, t?: (key: string) => string): UiNotificationInput {
+    public toUi = (dto: ServerNotificationDto, t?: (key: string) => string): UiNotificationInput => {
         const isMessage = dto.kind === 'MESSAGE_NEW';
 
         const defaultTitles = {
@@ -93,7 +94,7 @@ class NotificationService {
                 status: dto.status,
             },
         };
-    }
+    };
 }
 
 export const notificationService = new NotificationService();
