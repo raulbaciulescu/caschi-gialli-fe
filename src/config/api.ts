@@ -46,5 +46,6 @@ export const API_ENDPOINTS = {
     PREFERENCES: '/notifications/preferences',
     PUSH_SUBSCRIBE: '/notifications/push-subscribe',
     PUSH_UNSUBSCRIBE: '/notifications/push-unsubscribe',
+    BASE: '/notifications'
   },
 } as const;

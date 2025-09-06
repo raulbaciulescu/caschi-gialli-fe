@@ -8,6 +8,7 @@ import { profileService } from '../services/profile.service';
 import { userService } from '../services/user.service';
 import { useApi } from '../hooks/useApi';
 import ImageGalleryModal from '../components/ImageGalleryModal';
+import NotificationSettings from '../components/NotificationSettings';
 import Map from '../components/Map';
 import {
   User, Mail, Phone, MapPin, HardHat, Ruler, Edit3,
@@ -38,7 +39,7 @@ const Profile: React.FC = () => {
 
   // State declarations
   const [isOwnProfile, setIsOwnProfile] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'reviews'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'settings' | 'reviews'>('overview');
   const [cgProfile, setCgProfile] = useState<CGProfileData | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -236,6 +237,7 @@ const Profile: React.FC = () => {
   const tabs = [
     { id: 'overview', label: t('profile.overview'), count: null },
     { id: 'gallery', label: t('profile.gallery'), count: displayGallery.length },
+    { id: 'settings', label: t('profile.settings'), count: null, ownOnly: true },
     { id: 'reviews', label: t('profile.reviews'), count: null, disabled: true }
   ];
 
@@ -348,6 +350,8 @@ const Profile: React.FC = () => {
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex">
                 {tabs.map((tab) => (
+                  // Hide settings tab if not own profile
+                  (tab.ownOnly && !isOwnProfile) ? null : (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
@@ -378,6 +382,7 @@ const Profile: React.FC = () => {
                           <span className="ml-2 text-xs text-gray-400">({t('profile.reviewsComingSoon')})</span>
                       )}
                     </button>
+                  )
                 ))}
               </nav>
             </div>
@@ -567,6 +572,11 @@ const Profile: React.FC = () => {
                       {t('profile.reviewsComingSoonSubtitle')}
                     </p>
                   </div>
+              )}
+
+              {/* Settings Tab */}
+              {activeTab === 'settings' && isOwnProfile && user?.type === 'cg' && (
+                  <NotificationSettings />
               )}
             </div>
           </div>

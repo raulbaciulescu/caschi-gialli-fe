@@ -235,7 +235,8 @@
     "typeDeleteToConfirm": "Type 'DELETE' to confirm:",
     "deleting": "Deleting account...",
     "accountDeleted": "Your account has been successfully deleted.",
-    "deleteAccountError": "Failed to delete account. Please try again."
+    "deleteAccountError": "Failed to delete account. Please try again.",
+    "settings": "Settings"
   },
   "editProfile": {
     "title": "Edit Profile",

@@ -130,3 +130,20 @@ export interface DeleteAccountResponse {
   message: string;
   deletedAt: string;
 }
+
+export interface NotificationPreferences {
+  emailNotifications: boolean;
+  newServiceRequests: boolean;
+  messageNotifications: boolean;
+  jobUpdates: boolean;
+  marketingEmails: boolean;
+}
+
+export interface UpdateNotificationPreferencesRequest {
+  preferences: NotificationPreferences;
+}
+
+export interface NotificationPreferencesResponse {
+  preferences: NotificationPreferences;
+  updatedAt: string;
+}

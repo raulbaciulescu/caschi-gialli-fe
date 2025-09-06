@@ -235,7 +235,8 @@
     "typeDeleteToConfirm": "Scrivi 'DELETE' per confermare:",
     "deleting": "Eliminazione account...",
     "accountDeleted": "Il tuo account è stato eliminato con successo.",
-    "deleteAccountError": "Impossibile eliminare l'account. Riprova."
+    "deleteAccountError": "Impossibile eliminare l'account. Riprova.",
+    "settings": "Impostazioni"
   },
   "editProfile": {
     "title": "Modifica Profilo",

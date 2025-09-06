@@ -51,6 +51,16 @@ class NotificationService {
         await httpService.post<void>(url, {});
     }
 
+    public async getNotificationPreferences(): Promise<NotificationPreferencesResponse> {
+        const url = `${this.base}/preferences`;
+        return httpService.get<NotificationPreferencesResponse>(url);
+    }
+
+    public async updateNotificationPreferences(preferences: NotificationPreferences): Promise<NotificationPreferencesResponse> {
+        const url = `${this.base}/preferences`;
+        return httpService.put<NotificationPreferencesResponse>(url, { preferences });
+    }
+
     public async markManyDelivered(dtos: ServerNotificationDto[], channel: DeliveryChannel = 'REST'): Promise<void> {
         await Promise.allSettled(dtos.map(n => this.markDelivered(n.id, channel)));
     }
