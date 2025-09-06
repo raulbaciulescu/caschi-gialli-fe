@@ -45,4 +45,254 @@
     <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/login" />
   </url>
   
+  <!-- Service + City SEO Pages - Major Cities -->
+  
+  <!-- Elettricista pages -->
+  <url>
+    <loc>https://caschigialli.it/elettricista-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/elettricista-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-milano" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/elettricista-napoli</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-napoli" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/elettricista-bologna</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-bologna" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/elettricista-firenze</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-firenze" />
+  </url>
+  
+  <!-- Idraulico pages -->
+  <url>
+    <loc>https://caschigialli.it/idraulico-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/idraulico-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-milano" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/idraulico-napoli</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-napoli" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/idraulico-bologna</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-bologna" />
+  </url>
+  
+  <!-- Imbianchino pages -->
+  <url>
+    <loc>https://caschigialli.it/imbianchino-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/imbianchino-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/imbianchino-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/imbianchino-milano" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/imbianchino-napoli</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/imbianchino-napoli" />
+  </url>
+  
+  <!-- Falegname pages -->
+  <url>
+    <loc>https://caschigialli.it/falegname-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/falegname-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/falegname-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/falegname-milano" />
+  </url>
+  
+  <!-- Giardiniere pages -->
+  <url>
+    <loc>https://caschigialli.it/giardiniere-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/giardiniere-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/giardiniere-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/giardiniere-milano" />
+  </url>
+  
+  <!-- Pulizie pages -->
+  <url>
+    <loc>https://caschigialli.it/pulizie-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/pulizie-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/pulizie-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/pulizie-milano" />
+  </url>
+  
+  <!-- Traslochi pages -->
+  <url>
+    <loc>https://caschigialli.it/traslochi-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/traslochi-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/traslochi-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/traslochi-milano" />
+  </url>
+  
+  <!-- Additional service combinations for major cities -->
+  <url>
+    <loc>https://caschigialli.it/elettricista-torino</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-torino" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/idraulico-torino</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-torino" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/elettricista-palermo</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-palermo" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/idraulico-palermo</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-palermo" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/elettricista-genova</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/elettricista-genova" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/idraulico-genova</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/idraulico-genova" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/informatico-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/informatico-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/informatico-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/informatico-milano" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/climatizzazione-roma</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/climatizzazione-roma" />
+  </url>
+  
+  <url>
+    <loc>https://caschigialli.it/climatizzazione-milano</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://caschigialli.it/climatizzazione-milano" />
+  </url>
+  
 </urlset>

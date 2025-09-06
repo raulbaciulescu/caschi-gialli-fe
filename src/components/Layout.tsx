@@ -251,6 +251,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <span className="text-gray-400 text-sm">{t('categories.Gardening')}</span>
                   </li>
                   <li>
+                    <Link to="/elettricista-roma" className="text-gray-400 hover:text-yellow-500 transition-colors text-sm">
+                      Elettricista Roma
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/idraulico-milano" className="text-gray-400 hover:text-yellow-500 transition-colors text-sm">
+                      Idraulico Milano
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/imbianchino-bologna" className="text-gray-400 hover:text-yellow-500 transition-colors text-sm">
+                      Imbianchino Bologna
+                    </Link>
+                  </li>
+                  <li>
                     <Link to="/services" className="text-yellow-500 hover:text-yellow-400 transition-colors text-sm font-medium">
                       {t('footer.viewAllServices')}
                     </Link>

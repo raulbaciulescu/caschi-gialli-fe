@@ -18,6 +18,7 @@ import EditProfile from './pages/EditProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import CookiePolicy from './pages/CookiePolicy';
+import ServiceCityPage from './pages/ServiceCityPage';
 
 // Component to handle scroll to top on route change
 const ScrollToTop: React.FC = () => {
@@ -49,6 +50,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/:service-:city" element={<ServiceCityPage />} />
         </Routes>
       </Layout>
     </>
