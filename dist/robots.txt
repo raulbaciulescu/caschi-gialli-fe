@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://caschigialli.it/sitemap.xml
+
+# Specific rules for better crawling
+Allow: /services
+Allow: /register-client
+Allow: /register-cg
+Allow: /login
+
+# Block admin/private areas
+Disallow: /dashboard
+Disallow: /chat
+Disallow: /edit-profile
+Disallow: /profile/edit
+
+# Block API endpoints
+Disallow: /api/
+
+# Crawl delay (optional)
+Crawl-delay: 1
