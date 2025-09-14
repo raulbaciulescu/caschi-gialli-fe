@@ -54,6 +54,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const profile = await userService.getProfile();
       setUser(normalizeUser(profile));
       setIsAuthenticated(true);
+      
+      // Set user properties for analytics
+      analytics.setUserProperties(
+        profile.id.toString(), 
+        profile.type === 'customer' ? 'client' : profile.type,
+        profile.address ? 'Unknown' : undefined // You can implement city detection
+      );
     } catch (error) {
       console.error('Failed to initialize auth:', error);
       // Clear invalid data

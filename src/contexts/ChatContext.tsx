@@ -357,6 +357,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     const sendMessage = (chatId: string, content: string, type: 'text' | 'image' = 'text') => {
         if (!user) return;
 
+        // Track chat message
+        analytics.trackChatMessage(chatId, type);
+
         if (isConnected) {
             websocketService.sendMessage(chatId, content, type);
         } else {

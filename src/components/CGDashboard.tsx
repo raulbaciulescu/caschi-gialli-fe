@@ -81,6 +81,12 @@ const CGDashboard: React.FC = () => {
     try {
       await completeRequestApi.execute(requestId);
       
+      // Track job completion
+      const request = myRequests.find(r => r.id === requestId);
+      if (request) {
+        analytics.trackJobCompletion(requestId, request.category);
+      }
+      
       // Notification will be sent by backend via WebSocket
       
       // Refresh the requests after completion
