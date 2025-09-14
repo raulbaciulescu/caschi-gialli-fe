@@ -80,6 +80,10 @@ const Login: React.FC = () => {
       } else {
         await cgLoginApi.execute(credentials);
       }
+      
+      // Track successful login
+      analytics.trackLogin(userType);
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);

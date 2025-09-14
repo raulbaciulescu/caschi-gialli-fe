@@ -255,6 +255,10 @@ const RegisterClient: React.FC = () => {
       };
 
       await registerApi.execute(userData);
+      
+      // Track successful registration
+      analytics.trackRegistration('client');
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);

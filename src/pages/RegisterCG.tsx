@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useApi } from '../hooks/useApi';
 import { useService } from '../contexts/ServiceContext';
+import { analytics } from '../utils/analytics';
 import { hashPasswordForAuth } from '../utils/crypto';
 import Map from '../components/Map';
 import { MapPin, User, Mail, Phone, Lock, HardHat, Ruler, AlertCircle } from 'lucide-react';
@@ -276,6 +277,10 @@ const RegisterCG: React.FC = () => {
       };
 
       await registerApi.execute(userData);
+      
+      // Track successful registration
+      analytics.trackRegistration('cg');
+      
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);

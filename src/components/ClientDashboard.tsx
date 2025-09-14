@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useService } from '../contexts/ServiceContext';
 import { useChat } from '../contexts/ChatContext';
+import { analytics } from '../utils/analytics';
 import { useNotifications } from '../contexts/NotificationContext';
 import { requestsService } from '../services/requests.service';
 import { useApi } from '../hooks/useApi';
@@ -49,6 +50,10 @@ const ClientDashboard: React.FC = () => {
         address: requestForm.address
       });
 
+      // Track service request creation
+      const city = 'Unknown'; // You can implement city detection here
+      analytics.trackServiceRequestCreated(requestForm.category, city);
+      
       // Notification will be sent by backend via WebSocket
 
       setShowRequestForm(false);

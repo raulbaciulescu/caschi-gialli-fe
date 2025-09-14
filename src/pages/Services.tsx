@@ -5,6 +5,7 @@ import {useService} from '../contexts/ServiceContext';
 import {useAuth} from '../contexts/AuthContext';
 import {useChat} from '../contexts/ChatContext';
 import {useNotifications} from '../contexts/NotificationContext';
+import {analytics} from '../utils/analytics';
 import OnlineStatusIndicator from '../components/OnlineStatusIndicator';
 import {useCGInRange} from '../hooks/useCGInRange';
 import Map from '../components/Map';
@@ -173,6 +174,9 @@ const Services: React.FC = () => {
   // Auto-search when category or location changes
   useEffect(() => {
     if (searchLocation) {
+      // Update URL when search parameters change
+      updateURLWithSearchParams();
+      
       const searchParams = {
         lat: searchLocation.lat,
         lng: searchLocation.lng,
@@ -183,6 +187,63 @@ const Services: React.FC = () => {
       searchCGInRange(searchParams);
     }
   }, [selectedCategory, searchLocation]);
+
+  // Function to update URL with search parameters
+  const updateURLWithSearchParams = () => {
+    if (!searchLocation) return;
+
+    // Try to find matching city and redirect to SEO URL
+    const city = findCityFromCoordinates(searchLocation.lat, searchLocation.lng);
+    
+    if (city && selectedCategory) {
+      const serviceSlug = selectedCategory.toLowerCase();
+      const citySlug = city.toLowerCase();
+      
+      console.log(`Redirecting to SEO URL: /${serviceSlug}/${citySlug}`);
+      
+      // Track the SEO page visit
+      analytics.trackSEOPageVisit(selectedCategory, city, 'search');
+      
+      navigate(`/${serviceSlug}/${citySlug}`);
+    }
+  };
+
+  // Function to find city from coordinates
+  const findCityFromCoordinates = (lat: number, lng: number): string | null => {
+    const cities = [
+      { name: 'Rome', lat: 41.9028, lng: 12.4964 },
+      { name: 'Milan', lat: 45.4642, lng: 9.1900 },
+      { name: 'Naples', lat: 40.8518, lng: 14.2681 },
+      { name: 'Bologna', lat: 44.4949, lng: 11.3426 },
+      { name: 'Florence', lat: 43.7696, lng: 11.2558 },
+      { name: 'Turin', lat: 45.0703, lng: 7.6869 },
+      { name: 'Palermo', lat: 38.1157, lng: 13.3613 },
+      { name: 'Genoa', lat: 44.4056, lng: 8.9463 },
+      { name: 'Bari', lat: 41.1171, lng: 16.8719 },
+      { name: 'Catania', lat: 37.5079, lng: 15.0830 }
+    ];
+
+    // Find closest city within 50km radius
+    for (const city of cities) {
+      const distance = calculateDistance(lat, lng, city.lat, city.lng);
+      if (distance <= 50) {
+        return city.name;
+      }
+    }
+    
+    return null;
+  };
+
+  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
 
   const filteredOffers = cgInRange.filter(offer => {
     // Filter by search query
@@ -200,6 +261,9 @@ const Services: React.FC = () => {
     }
 
     try {
+      // Track CG contact
+      analytics.trackCGContact(cgId, cgName, 'chat');
+      
       // Create chat and navigate to chat page
       const chatId = await createChat([user.id, cgId], [user.name, cgName]);
       
@@ -214,6 +278,9 @@ const Services: React.FC = () => {
 
   const handleViewProfile = (cgId: string) => {
     console.log('Navigating to profile for CG ID:', cgId);
+    
+    // Track profile view
+    analytics.trackProfileView(cgId, user?.type || 'anonymous');
     
     // Find the CG data from current search results
     const cgData = filteredOffers.find(offer => offer.id.toString() === cgId);
