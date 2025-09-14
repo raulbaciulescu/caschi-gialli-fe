@@ -217,9 +217,9 @@ const ClientDashboard: React.FC = () => {
                           <span className="text-sm text-gray-500">
                             {new Date(request.createdAt).toLocaleDateString()}
                           </span>
-                                <button className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors">
-                                  {t('dashboard.viewDetails')}
-                                </button>
+                                {/*<button className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors">*/}
+                                {/*  {t('dashboard.viewDetails')}*/}
+                                {/*</button>*/}
                               </div>
                             </div>
                         );

@@ -265,7 +265,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <li className="flex items-center space-x-2">
                     <Mail className="h-4 w-4 text-yellow-500" />
                     <a href="mailto:info@caschigialli.com" className="text-gray-400 hover:text-white transition-colors text-sm">
-                      info@caschigialli.com
+                      info@caschigialli.it
                     </a>
                   </li>
                   {/*<li className="flex items-center space-x-2">*/}

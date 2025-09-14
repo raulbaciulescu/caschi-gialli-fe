@@ -1,6 +1,6 @@
 export const API_CONFIG = {
   // BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://57.153.18.174',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://api.caschigialli.it/',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,
